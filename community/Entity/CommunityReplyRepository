@@ -1,0 +1,12 @@
+package com.yse.dev.community.Entity;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface CommunityReplyRepository extends JpaRepository<CommunityReply, Long> {
+
+    List<CommunityReply> findByPostIdOrderByCreatedAtAsc(Long postId);
+    
+    void deleteByPostId(Long postId);
+}

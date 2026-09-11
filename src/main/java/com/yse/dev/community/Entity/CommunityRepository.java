@@ -1,0 +1,11 @@
+package com.yse.dev.community.Entity;
+
+import com.yse.dev.community.Entity.Community;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface CommunityRepository extends JpaRepository<Community, Long> {
+    
+    // 작성자 ID로 글 목록을 조회하는 메소드
+    List<Community> findByUsername(String username);
+}

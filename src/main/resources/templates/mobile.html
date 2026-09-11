@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>맛따라 여행따라 - 모바일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--primary:#2ba6cf;--primary-dark:#1f8ab0;--primary-light:#eaf8fd;--text:#202b36;--sub:#71808d;--border:#e4edf2;--bg:#f5f9fc}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth} body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);padding-bottom:78px}button,input,textarea,select{font-family:inherit}button{cursor:pointer}
+.mobile-header{position:sticky;top:0;z-index:5000;height:62px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid #edf2f5;display:flex;align-items:center;justify-content:space-between;padding:0 17px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}.brand-icon{width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,#55c9ee,#2ba6cf);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 14px rgba(43,166,207,.22)}
+.brand-text strong{display:block;color:#1c8fb5;font-size:15px;font-weight:800;line-height:1.1}.brand-text span{display:block;color:#91a0aa;font-size:9px;margin-top:2px}.header-actions{display:flex;align-items:center;gap:7px}.header-auth-btn,.header-menu-btn{width:40px;height:38px;border:0;border-radius:12px;background:#f3f8fb;color:#526a78;font-size:12px;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}.header-auth-btn.logout-mode{width:66px;font-size:10px;font-weight:800}.header-menu-btn{font-size:17px}#my-page-btn{display:none;width:40px;font-size:16px;color:#526a78}
+.page{width:100%;max-width:680px;margin:0 auto}.hero{padding:24px 17px 19px;background:linear-gradient(180deg,#eaf8fd 0%,#f7fcfe 100%)}.hero-label{color:var(--primary);font-size:11px;font-weight:800;letter-spacing:.7px;margin-bottom:6px}.hero h1{color:#197d9d;font-size:24px;line-height:1.35;font-weight:800;margin-bottom:7px}.hero p{color:#607482;font-size:12px;line-height:1.6;margin-bottom:15px}
+.search-box{height:49px;display:flex;align-items:center;background:#fff;border:1px solid #dcecf3;border-radius:16px;padding:0 6px 0 15px;box-shadow:0 7px 22px rgba(42,137,168,.09)}.search-box>i{color:#6fa7bb;font-size:15px;margin-right:9px}.search-box input{flex:1;min-width:0;height:100%;border:0;outline:0;font-size:13px;color:#263943;background:transparent}.search-box input::placeholder{color:#a6b4bc}
+.search-btn{width:40px;height:40px;border:0;border-radius:13px;background:linear-gradient(135deg,#65d3f0,#239bc9);color:#fff;font-size:14px;box-shadow:0 5px 13px rgba(43,166,207,.28);transition:.18s}.search-btn:hover{transform:translateX(1px);box-shadow:0 7px 17px rgba(43,166,207,.34)}.search-btn:active{transform:scale(.92)}
+.quick-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:13px 17px 15px;background:#fff}.quick-btn{min-height:61px;border:1px solid var(--border);border-radius:15px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#536b78;font-size:10px;font-weight:700;box-shadow:0 3px 10px rgba(30,80,100,.035);transition:.15s}.quick-btn i{color:var(--primary);font-size:17px}.quick-btn:active{transform:scale(.97);background:var(--primary-light)}
+.section{padding:0 17px;margin-top:10px}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.section-title h2{font-size:16px;font-weight:800;color:#263943}.section-title span{font-size:10px;color:#91a0aa}.map-card{overflow:hidden;border-radius:18px;background:#fff;border:1px solid var(--border);box-shadow:0 5px 16px rgba(40,90,110,.06)}#map{width:100%;height:300px;background:#edf2f4}.map-help{padding:9px 12px;color:#82929c;font-size:10px;display:flex;align-items:center;gap:6px}.map-help i{color:var(--primary)}
+#selected-place-box{margin-top:10px}.selected-mobile{background:#fff;border:1px solid #dcecf3;border-radius:16px;padding:14px}.selected-mobile .pin{color:#e95c5c;margin-right:4px}.selected-mobile h3{color:var(--primary-dark);font-size:14px;margin-bottom:4px}.selected-mobile p{color:var(--sub);font-size:11px;line-height:1.5}.selected-actions{display:flex;gap:8px;margin-top:12px}.selected-actions button{display:none;flex:1;border:0;border-radius:10px;padding:10px;color:#fff;font-weight:700;font-size:11px}#open-modal-btn{background:#2b82d9}#open-review-btn{background:#f59f00}#empty-state{display:none}
+.restaurant-section{margin-top:16px}#restaurant-list,#restaurant-results,#search-results{display:flex;flex-direction:column;gap:9px}.rest-card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:13px;min-height:76px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 12px rgba(30,80,100,.035)}.rest-card:active,.rest-card.active{border-color:var(--primary)}.rest-card-info{flex:1;min-width:0}.rest-card-badge{display:inline-block;padding:3px 7px;border-radius:6px;background:#e8f7fc;color:var(--primary);font-size:8px;font-weight:800;margin-bottom:4px}.rest-card h4{color:#273943;font-size:13px;margin-bottom:3px}.rest-card p{color:#81919b;font-size:10px;line-height:1.45}.reaction-wrap{display:flex;align-items:center;gap:1px}.reaction-wrap button{border:0;background:transparent;padding:4px;font-size:12px}.heart-btn{border:0;background:transparent;color:#bdc9cf;font-size:21px;padding:7px}.course-banner{margin-top:16px;padding:16px;border-radius:17px;background:linear-gradient(135deg,#dff7fd,#effcff);border:1px solid #d4edf5}.course-banner h3{color:#227f9d;font-size:14px;margin-bottom:4px}.course-banner p{color:#6d8490;font-size:10px;line-height:1.5;margin-bottom:11px}.course-btn{border:0;background:var(--primary);color:#fff;border-radius:10px;padding:8px 12px;font-size:10px;font-weight:700}
+.weather-card{display:none;margin-top:10px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:13px}.weather-top{display:flex;justify-content:space-between;align-items:center}.weather-title{font-size:12px;font-weight:800;color:#344c58}.weather-icon{width:44px;height:44px}.weather-text{font-size:10px;color:#71808d;line-height:1.5;margin:4px 0 9px}.weather-recommend-btn{border:0;background:#eaf8fd;color:#2389ad;border-radius:9px;padding:8px 10px;font-size:10px;font-weight:700}
+.bottom-nav{position:fixed;z-index:4999;left:0;right:0;bottom:0;height:68px;background:rgba(255,255,255,.97);backdrop-filter:blur(15px);border-top:1px solid #e8eff3;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom)}.bottom-nav a{text-decoration:none;color:#8797a1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;font-weight:600}.bottom-nav a i{font-size:17px}.bottom-nav a.active{color:var(--primary)}
+#travel-playlist-widget{position:fixed;right:14px;bottom:82px;z-index:9000}#playlist-toggle-btn{position:relative;width:55px;height:55px;border:0;border-radius:18px;background:linear-gradient(135deg,#65d3f0,#35a9da);color:#fff;font-size:19px;box-shadow:0 9px 25px rgba(45,157,198,.3);display:flex;align-items:center;justify-content:center}#playlist-toggle-btn:active{transform:scale(.94)}.playlist-music-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:#fff}
+#travel-playlist-panel{position:absolute;right:0;bottom:66px;width:min(350px,calc(100vw - 28px));max-height:72vh;background:rgba(255,255,255,.98);border:1px solid #dceef5;border-radius:21px;overflow:hidden;box-shadow:0 18px 50px rgba(35,120,155,.22);opacity:0;visibility:hidden;transform:translateY(14px) scale(.97);transition:.22s ease}#travel-playlist-panel.active{opacity:1;visibility:visible;transform:translateY(0) scale(1)}.playlist-header{padding:14px;background:linear-gradient(135deg,#e2f8fd,#f3fcfe);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5f0f4}.playlist-title-area{display:flex;align-items:center;gap:9px}.playlist-title-icon{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#55c9ee,#39a9dc);color:#fff;display:flex;align-items:center;justify-content:center}.playlist-title-area h3{color:#263f4b;font-size:13px}.playlist-title-area p{color:#78909c;font-size:9px;margin-top:2px}.playlist-close-btn{width:30px;height:30px;border:0;border-radius:50%;background:#fff;color:#79909b}.playlist-player-wrap{width:100%;aspect-ratio:16/9;background:#eef9fc;position:relative}#youtube-playlist-player{width:100%;height:100%;border:0}#playlist-loading{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:linear-gradient(135deg,#e8faff,#f8fdff);color:#5f8fa1;font-size:10px}#playlist-loading i{color:var(--primary);font-size:20px}.playlist-info{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #edf3f6}.playlist-info-main{display:flex;align-items:center;gap:8px;min-width:0}.playlist-small-icon{width:29px;height:29px;flex-shrink:0;border-radius:9px;background:#e6f8fd;color:#36a8d4;display:flex;align-items:center;justify-content:center}.playlist-info-main strong,.playlist-info-main span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}.playlist-info-main strong{color:#304650;font-size:10px}.playlist-info-main span{color:#8ca0a9;font-size:8px;margin-top:2px}.playlist-youtube-btn{width:29px;height:29px;border:0;border-radius:50%;background:#fff0f0;color:#ff4d4d}.playlist-track-area{padding:10px 12px 12px;max-height:155px;overflow-y:auto}.playlist-track-title{display:flex;justify-content:space-between;margin-bottom:5px;color:#526a75;font-size:9px;font-weight:800}.playlist-track-item{display:flex;align-items:center;gap:7px;padding:7px 5px;border-radius:9px}.playlist-track-number{width:17px;color:#9eb1ba;font-size:8px;text-align:center}.playlist-track-thumb{width:37px;height:25px;object-fit:cover;border-radius:5px}.playlist-track-name{min-width:0;color:#526671;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.playlist-empty{color:#8ca0a9;font-size:10px;padding:6px 0}
+.modal{position:fixed;inset:0;z-index:10000;background:rgba(15,30,40,.5);display:none;align-items:flex-end;justify-content:center}.modal-box{width:100%;max-width:680px;max-height:90vh;overflow-y:auto;background:#fff;border-radius:22px 22px 0 0;padding:17px;box-shadow:0 -10px 40px rgba(0,0,0,.18);animation:sheetUp .2s ease}.modal-box.large{max-height:92vh}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.modal-head h3{font-size:16px;color:#263943}.modal-close-btn{width:32px;height:32px;border:0;border-radius:50%;background:#f3f7f9;color:#6f818c}.modal-map{width:100%;height:230px;border-radius:14px;overflow:hidden;background:#edf2f4;margin-bottom:12px}.modal-list{display:flex;flex-direction:column;gap:8px}.tour-card{background:#f8fbfd;border:1px solid #e2edf2;border-radius:13px;padding:12px}.tour-card-badge{display:inline-block;background:#fff3d4;color:#b27a00;border-radius:6px;padding:3px 7px;font-size:8px;font-weight:800;margin-bottom:5px}.tour-card h5{font-size:13px;color:#273943;margin-bottom:5px}.tour-card p{font-size:10px;color:#71808d;line-height:1.5}.tour-card .reaction-wrap{margin-top:7px}.tour-review-btn{width:100%;margin-top:9px;background:linear-gradient(135deg,#f59f00,#e67e22);color:#fff;border:0;padding:8px 0;border-radius:8px;font-weight:700;font-size:10px}
+.review-write{display:flex;flex-direction:column;gap:8px;margin-bottom:15px}.review-write textarea{width:100%;min-height:90px;border:1px solid #dce6eb;border-radius:12px;padding:11px;resize:vertical;outline:0;font-size:12px}.review-submit-btn{border:0;background:linear-gradient(135deg,#f59f00,#e67e22);color:#fff;border-radius:10px;padding:10px;font-weight:800;font-size:11px}.login-alert{background:#f7fafc;border:1px solid #e2ebef;border-radius:12px;padding:12px;text-align:center;color:#748590;font-size:11px;margin-bottom:12px}.login-alert button{margin-top:8px;border:0;background:#2ba6cf;color:#fff;border-radius:8px;padding:7px 12px;font-size:10px;font-weight:700}.review-list{display:flex;flex-direction:column;gap:7px}.review-item{background:#f8fafc;border-radius:10px;padding:11px;border:1px solid #e2e8f0}.review-item-head{display:flex;justify-content:space-between;align-items:center}.review-item strong{font-size:11px;color:#1e293b}.review-item span{font-size:9px;color:#94a3b8}.review-item p{font-size:11px;color:#475569;line-height:1.5;margin-top:5px;word-break:break-word}
+.auth-tabs{display:flex;gap:6px;margin-bottom:12px}.auth-tabs button{flex:1;border:1px solid #dce7ec;background:#fff;border-radius:10px;padding:9px;font-size:11px;color:#71808d}.auth-tabs button.active{background:#eaf8fd;border-color:#a8dceb;color:#1f8ab0;font-weight:800}.auth-form{display:none;flex-direction:column;gap:8px}.auth-form input,.auth-form select{height:42px;border:1px solid #dce6eb;border-radius:10px;padding:0 11px;outline:0;font-size:12px}.auth-main-btn{height:42px;border:0;border-radius:10px;background:linear-gradient(135deg,#55c9ee,#2ba6cf);color:#fff;font-size:12px;font-weight:800}.auth-sub-buttons{display:flex;gap:6px}.auth-sub-buttons button{flex:1;border:0;background:#f3f7f9;color:#607482;border-radius:9px;padding:8px;font-size:10px}.auth-description{font-size:10px;color:#8a9aa3;line-height:1.5}.favorite-list{display:flex;flex-direction:column;gap:8px}.fav-item{display:flex;align-items:center;gap:8px;background:#f8fbfd;border:1px solid #e1ebef;border-radius:12px;padding:11px}.fav-item-info{flex:1;min-width:0;cursor:pointer}.fav-item-info h5{font-size:12px;color:#273943;margin-bottom:4px}.fav-item-info p{font-size:9px;color:#7a8b95;line-height:1.45}.fav-del-btn{width:33px;height:33px;border:0;border-radius:9px;background:#fff0f0;color:#e85c5c}.empty-favorite{text-align:center;padding:35px 0;color:#8293a1;font-size:11px}
+.mobile-menu-modal{position:fixed;inset:0;z-index:10001;display:none;align-items:flex-end;background:rgba(0,0,0,.45)}.mobile-menu-modal.show{display:flex}.mobile-sheet{width:100%;max-width:680px;margin:0 auto;max-height:85vh;overflow-y:auto;background:#fff;border-radius:22px 22px 0 0;padding:16px;animation:sheetUp .2s ease}.sheet-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.sheet-top h3{font-size:16px}.sheet-close{width:32px;height:32px;border:0;border-radius:50%;background:#f3f7f9;color:#6f818c}.menu-list{display:flex;flex-direction:column;gap:9px}.menu-item{min-height:52px;border:1px solid var(--border);border-radius:13px;background:#fff;display:flex;align-items:center;gap:11px;padding:0 14px;color:#536b78;font-size:11px;font-weight:700;text-align:left}.menu-item i{width:22px;text-align:center;color:var(--primary);font-size:16px}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(max-width:380px){.hero h1{font-size:22px}.rest-card{padding:11px}.reaction-wrap{display:none}}
+@media(min-width:700px){body{background:#eef3f6}.page{background:var(--bg);min-height:100vh;box-shadow:0 0 30px rgba(0,0,0,.06)}.mobile-header{max-width:680px;left:50%;transform:translateX(-50%);right:auto;width:100%}.bottom-nav{max-width:680px;left:50%;right:auto;transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+<header class="mobile-header">
+<a href="/mobile" class="brand"><div class="brand-icon"><i class="fa-solid fa-location-dot"></i></div><div class="brand-text"><strong>맛따라 여행따라</strong><span>맛집과 여행을 한 곳에서</span></div></a>
+<div class="header-actions">
+<button id="header-auth-btn" class="header-auth-btn" onclick="openAuthModal()" aria-label="로그인"><i class="fa-solid fa-user"></i></button>
+<button id="my-page-btn" class="header-auth-btn" onclick="openFavoriteModal()" aria-label="찜 목록"><i class="fa-solid fa-heart"></i></button>
+<button class="header-menu-btn" onclick="openMobileMenu()" aria-label="메뉴"><i class="fa-solid fa-bars"></i></button>
+</div></header>
+
+<main class="page">
+<section class="hero">
+<div class="hero-label">TASTE & TRAVEL</div><h1>오늘은 어디로<br>떠나볼까요?</h1>
+<p>맛있는 곳을 찾고<br>주변 여행지까지 함께 둘러보세요.</p>
+<div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="search-input" placeholder="맛집이나 여행지를 검색해보세요" onkeydown="if(event.key==='Enter') searchByInput();"><button class="search-btn" onclick="searchByInput()" aria-label="검색"><i class="fa-solid fa-arrow-right"></i></button></div>
+</section>
+<section class="quick-menu">
+<button class="quick-btn" onclick="searchTag('대전 맛집')"><i class="fa-solid fa-utensils"></i><span>맛집 찾기</span></button>
+<button class="quick-btn" onclick="mobileSearchTourist('대전 관광지')"><i class="fa-solid fa-camera"></i><span>관광지 찾기</span></button>
+<button class="quick-btn" onclick="location.href='/trip'"><i class="fa-solid fa-route"></i><span>추천 코스</span></button>
+</section>
+
+<section class="section">
+<div class="section-title"><h2><i class="fa-solid fa-map-location-dot" style="color:#2ba6cf;margin-right:4px"></i>주변 지도</h2><span>검색 결과가 지도에 표시됩니다</span></div>
+<div class="map-card"><div id="map"></div><div class="map-help"><i class="fa-solid fa-circle-info"></i>장소를 선택하면 상세 정보를 확인할 수 있어요.</div></div>
+<div id="selected-place-box"><div class="selected-mobile"><h3 id="selected-name"><i class="fa-solid fa-location-dot pin"></i>장소를 선택해주세요</h3><p id="selected-sub">지도에서 맛집을 선택하면 이곳에 선택한 장소가 표시됩니다.</p><div class="selected-actions"><button id="open-modal-btn" onclick="openTourModal()">🗺️ 주변 관광지</button><button id="open-review-btn" onclick="openReviewModal()">📝 리뷰</button></div></div></div>
+<div id="empty-state"></div>
+<div id="weather-card" class="weather-card"><div class="weather-top"><span id="weather-title" class="weather-title">현재 날씨</span><span id="weather-icon-area" class="weather-icon"></span></div><div id="weather-recommend-text" class="weather-text">선택한 지역의 날씨에 맞는 메뉴를 추천합니다.</div><button id="weather-recommend-btn" class="weather-recommend-btn" onclick="searchRecommendFood()">추천 메뉴 보기</button></div>
+</section>
+
+<section class="section restaurant-section"><div class="section-title"><h2>🍽️ 주변 맛집</h2><span>검색 결과</span></div><div id="restaurant-list"></div><div id="restaurant-results"></div><div id="search-results"></div></section>
+<section class="section"><div class="course-banner"><h3><i class="fa-solid fa-route"></i> 나만의 여행 코스를 만들어보세요</h3><p>마음에 드는 맛집을 선택하면<br>주변 관광지를 함께 둘러볼 수 있어요.</p><button class="course-btn" onclick="location.href='/trip'">추천 코스 더보기 <i class="fa-solid fa-chevron-right"></i></button></div></section>
+</main>
+
+<div id="travel-playlist-widget"><div id="travel-playlist-panel">
+<div class="playlist-header"><div class="playlist-title-area"><div class="playlist-title-icon"><i class="fa-solid fa-music"></i></div><div><h3>여행 플레이리스트</h3><p>여행하면서 듣기 좋은 음악</p></div></div><button class="playlist-close-btn" onclick="toggleTravelPlaylist()"><i class="fa-solid fa-xmark"></i></button></div>
+<div class="playlist-player-wrap"><iframe id="youtube-playlist-player" src="" title="여행 플레이리스트" allow="autoplay; encrypted-media" allowfullscreen></iframe><div id="playlist-loading"><i class="fa-solid fa-spinner fa-spin"></i><span>플레이리스트를 불러오는 중...</span></div></div>
+<div class="playlist-info"><div class="playlist-info-main"><div class="playlist-small-icon"><i class="fa-solid fa-headphones"></i></div><div><strong id="playlist-name">오늘의 여행 음악</strong><span id="playlist-channel">여행 플레이리스트</span></div></div><button class="playlist-youtube-btn" onclick="openCurrentPlaylistOnYoutube()"><i class="fa-brands fa-youtube"></i></button></div>
+<div class="playlist-track-area"><div class="playlist-track-title"><span>TRACK LIST</span><span id="playlist-track-count">오늘의 추천</span></div><div id="playlist-track-list"><div class="playlist-empty">플레이리스트를 불러오는 중입니다.</div></div></div>
+</div><button id="playlist-toggle-btn" onclick="toggleTravelPlaylist()"><i class="fa-solid fa-music"></i><span class="playlist-music-dot"></span></button></div>
+
+<!-- 관광지 모달 -->
+<div id="tour-modal" class="modal" onclick="closeTourModal(event)"><div class="modal-box large"><div class="modal-head"><h3 id="modal-title">주변 관광지</h3><button class="modal-close-btn" onclick="closeTourModal()"><i class="fa-solid fa-xmark"></i></button></div><div id="modal-map" class="modal-map"></div><div id="modal-tour-list" class="modal-list"><p style="text-align:center;color:#888;padding:30px">관광지를 불러오는 중입니다...</p></div></div></div>
+
+<!-- 리뷰 모달 -->
+<div id="review-modal" class="modal" onclick="closeReviewModal(event)"><div class="modal-box"><div class="modal-head"><h3 id="review-modal-title">리뷰</h3><button class="modal-close-btn" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button></div><div id="review-login-alert" class="login-alert" style="display:none">리뷰를 작성하려면 로그인이 필요합니다.<br><button onclick="closeReviewModal();openAuthModal()">로그인하기</button></div><div id="review-write-section" class="review-write" style="display:none"><textarea id="review-content-input" placeholder="이 장소에 대한 리뷰를 남겨주세요."></textarea><button class="review-submit-btn" onclick="submitReview(event)"><i class="fa-solid fa-pen"></i> 리뷰 등록</button></div><div id="review-list-container" class="review-list"></div></div></div>
+
+<!-- 찜 목록 모달 -->
+<div id="favorite-modal" class="modal" onclick="closeFavoriteModal(event)"><div class="modal-box"><div class="modal-head"><h3><i class="fa-solid fa-heart" style="color:#e95c5c"></i> 내 찜 목록</h3><button class="modal-close-btn" onclick="closeFavoriteModal()"><i class="fa-solid fa-xmark"></i></button></div><div id="favorite-list-content" class="favorite-list"></div></div></div>
+
+<!-- 로그인/회원가입 -->
+
+<div id="auth-modal" class="modal" onclick="closeAuthModal(event)">
+    <div class="modal-box">
+
+        <div class="modal-head">
+            <h3 id="auth-modal-title">
+                <i class="fa-solid fa-user-lock"></i> 로그인
+            </h3>
+            <button class="modal-close-btn" onclick="closeAuthModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- 로그인 / 회원가입 탭 -->
+        <div id="auth-main-tabs" class="auth-tabs">
+            <button id="tab-login" class="active" onclick="switchAuthTab('login')">
+                로그인
+            </button>
+            <button id="tab-register" onclick="switchAuthTab('register')">
+                회원가입
+            </button>
+        </div>
+
+        <!-- 로그인 -->
+        <div id="login-form-area" class="auth-form">
+            <input id="login-id" type="text" placeholder="아이디">
+
+            <input id="login-pw"
+                   type="password"
+                   placeholder="비밀번호">
+
+            <button class="auth-main-btn" onclick="requestLogin()">
+                로그인
+            </button>
+
+            <div class="auth-sub-buttons">
+                <button onclick="switchAuthTab('find-id')">
+                    아이디 찾기
+                </button>
+
+                <button onclick="switchAuthTab('find-pw')">
+                    비밀번호 찾기
+                </button>
+            </div>
+        </div>
+
+        <!-- 회원가입 -->
+        <div id="register-form-area" class="auth-form">
+
+            <input id="reg-nickname"
+                   type="text"
+                   placeholder="닉네임">
+
+            <input id="reg-id"
+                   type="text"
+                   placeholder="아이디 (영문/숫자 4~12자리)">
+
+            <input id="reg-pw"
+                   type="password"
+                   placeholder="비밀번호 (영문/숫자 4~16자리)">
+
+            <!-- 보안질문 -->
+            <select id="reg-question">
+                <option value="가장 기억에 남는 장소는?">
+                    가장 기억에 남는 장소는?
+                </option>
+
+                <option value="가장 좋아하는 음식은?">
+                    가장 좋아하는 음식은?
+                </option>
+
+                <option value="나의 어릴 적 별명은?">
+                    나의 어릴 적 별명은?
+                </option>
+
+                <option value="나의 보물 1호는?">
+                    나의 보물 1호는?
+                </option>
+            </select>
+
+            <input id="reg-answer"
+                   type="text"
+                   placeholder="보안 질문 답변">
+
+            <button class="auth-main-btn" onclick="requestRegister()">
+                회원가입
+            </button>
+
+        </div>
+
+        <!-- 아이디 찾기 -->
+        <div id="find-id-form-area" class="auth-form">
+
+            <p class="auth-description">
+                가입할 때 입력한 닉네임과 보안 질문 답변을 입력해주세요.
+            </p>
+
+            <input id="find-id-nickname"
+                   type="text"
+                   placeholder="닉네임">
+
+            <!-- 보안질문 -->
+            <select id="find-id-question">
+                <option value="가장 기억에 남는 장소는?">
+                    가장 기억에 남는 장소는?
+                </option>
+
+                <option value="가장 좋아하는 음식은?">
+                    가장 좋아하는 음식은?
+                </option>
+
+                <option value="나의 어릴 적 별명은?">
+                    나의 어릴 적 별명은?
+                </option>
+
+                <option value="나의 보물 1호는?">
+                    나의 보물 1호는?
+                </option>
+            </select>
+
+            <input id="find-id-answer"
+                   type="text"
+                   placeholder="보안 질문 답변">
+
+            <button class="auth-main-btn" onclick="requestFindId()">
+                아이디 찾기
+            </button>
+
+            <button class="auth-sub-buttons"
+                    onclick="switchAuthTab('login')"
+                    style="border:0;
+                           background:#f3f7f9;
+                           color:#607482;
+                           border-radius:9px;
+                           padding:8px;
+                           font-size:10px">
+                로그인으로 돌아가기
+            </button>
+
+        </div>
+
+        <!-- 비밀번호 찾기 -->
+        <div id="find-pw-form-area" class="auth-form">
+
+            <p class="auth-description">
+                아이디와 보안 질문 답변을 입력해주세요.
+            </p>
+
+            <input id="find-pw-id"
+                   type="text"
+                   placeholder="아이디">
+
+            <!-- 보안질문 -->
+            <select id="find-pw-question">
+                <option value="가장 기억에 남는 장소는?">
+                    가장 기억에 남는 장소는?
+                </option>
+
+                <option value="가장 좋아하는 음식은?">
+                    가장 좋아하는 음식은?
+                </option>
+
+                <option value="나의 어릴 적 별명은?">
+                    나의 어릴 적 별명은?
+                </option>
+
+                <option value="나의 보물 1호는?">
+                    나의 보물 1호는?
+                </option>
+            </select>
+
+            <input id="find-pw-answer"
+                   type="text"
+                   placeholder="보안 질문 답변">
+
+            <button class="auth-main-btn" onclick="requestFindPw()">
+                비밀번호 찾기
+            </button>
+
+            <button class="auth-sub-buttons"
+                    onclick="switchAuthTab('login')"
+                    style="border:0;
+                           background:#f3f7f9;
+                           color:#607482;
+                           border-radius:9px;
+                           padding:8px;
+                           font-size:10px">
+                로그인으로 돌아가기
+            </button>
+
+        </div>
+
+        <!-- 비밀번호 재설정 -->
+        <div id="reset-pw-form-area" class="auth-form">
+
+            <p class="auth-description">
+                현재 비밀번호를 확인한 후 새 비밀번호를 설정합니다.
+            </p>
+
+            <input id="reset-pw-id"
+                   type="text"
+                   placeholder="아이디"
+                   readonly>
+
+            <input id="reset-pw-current"
+                   type="password"
+                   placeholder="현재 비밀번호">
+
+            <input id="reset-pw-new"
+                   type="password"
+                   placeholder="새 비밀번호">
+
+            <input id="reset-pw-confirm"
+                   type="password"
+                   placeholder="새 비밀번호 확인">
+
+            <button class="auth-main-btn" onclick="requestDirectResetPw()">
+                비밀번호 변경
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- 모바일 메뉴 -->
+<div id="mobile-menu-modal" class="mobile-menu-modal"><div class="mobile-sheet"><div class="sheet-top"><h3>메뉴</h3><button class="sheet-close" onclick="closeMobileMenu()"><i class="fa-solid fa-xmark"></i></button></div><div class="menu-list">
+<button class="menu-item" onclick="location.href='/mobile'"><i class="fa-solid fa-house"></i>홈</button>
+<button class="menu-item" onclick="location.href='/mobile-mypage'"><i class="fa-solid fa-user"></i>마이페이지</button>
+<button class="menu-item" onclick="location.href='/trip'"><i class="fa-solid fa-route"></i>추천 여행 코스</button>
+<button class="menu-item" onclick="closeMobileMenu();document.getElementById('search-input').focus()"><i class="fa-solid fa-magnifying-glass"></i>장소 검색</button>
+<button class="menu-item" onclick="closeMobileMenu();mobileSearchTourist('대전 관광지')"><i class="fa-solid fa-camera"></i>관광지 찾기</button>
+<button class="menu-item" onclick="closeMobileMenu();openFavoriteModal()"><i class="fa-solid fa-heart"></i>내 찜 목록</button>
+<button class="menu-item" onclick="closeMobileMenu();toggleTravelPlaylist()"><i class="fa-solid fa-music"></i>여행 플레이리스트</button>
+</div></div></div>
+
+<nav class="bottom-nav"><a href="/mobile" class="active"><i class="fa-solid fa-house"></i><span>홈</span></a><a href="#map" onclick="scrollToMap();return false"><i class="fa-solid fa-map"></i><span>지도</span></a><a href="/trip"><i class="fa-solid fa-route"></i><span>여행코스</span></a><a href="/community"><i class="fa-solid fa-comments"></i><span>커뮤니티</span></a></nav>
+
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1adedc9e3c5d08a47849648c7f6a8864&libraries=services"></script>
+<script src="/map.js"></script>
+<script>
+function openMobileMenu(){const m=document.getElementById('mobile-menu-modal');if(m)m.classList.add('show')}
+function closeMobileMenu(){const m=document.getElementById('mobile-menu-modal');if(m)m.classList.remove('show')}
+function openCurrentPlaylistOnYoutube(){try{if(typeof currentTravelPlaylistUrl!=='undefined'&&currentTravelPlaylistUrl){window.open(currentTravelPlaylistUrl,'_blank');return}}catch(e){console.log(e)}alert('현재 플레이리스트를 불러오는 중입니다.')}
+function scrollToMap(){const m=document.getElementById('map');if(m)m.scrollIntoView({behavior:'smooth',block:'center'})}
+
+/* 모바일 관광지 검색: map.js의 관광지 모달은 맛집 선택 후 주변 관광지를 찾는 구조라서,
+   모바일의 '관광지 찾기' 버튼은 별도 AT4 검색으로 처리한다. */
+async function mobileSearchTourist(query){
+    const input = document.getElementById('search-input');
+    const list = document.getElementById('restaurant-list');
+    const empty = document.getElementById('empty-state');
+
+    if (input) input.value = query;
+    if (empty) empty.style.display = 'none';
+    if (!list) return;
+
+    list.style.display = 'flex';
+    list.innerHTML = '<p style="text-align:center;color:#888;padding:30px">관광지를 찾는 중입니다...</p>';
+
+    try {
+        // 관광지 검색은 Kakao Local의 "키워드 검색 + AT4"를 사용합니다.
+        // 기존 category.json에 query를 넣던 방식은 모바일 관광지 검색에 맞지 않습니다.
+        const keyword = (query || '대전 관광지').replace(/관광지/g, '').trim() || '대전';
+        const url = 'https://dapi.kakao.com/v2/local/search/keyword.json'
+            + '?query=' + encodeURIComponent(keyword + ' 관광지')
+            + '&category_group_code=AT4&size=15';
+
+        const res = await fetch(url, {
+            headers: { Authorization: `KakaoAK ${KAKAO_REST_API_KEY}` }
+        });
+        if (!res.ok) throw new Error(`관광지 검색 실패: HTTP ${res.status}`);
+
+        const data = await res.json();
+        const places = data.documents || [];
+        currentTourPlaces = places;
+        currentPlaces = [];
+
+        if (typeof clearMarkers === 'function') clearMarkers(mainMarkers);
+        list.innerHTML = '';
+
+        if (!places.length) {
+            list.innerHTML = '<p style="text-align:center;color:#888;padding:30px">검색 결과가 없습니다.</p>';
+            return;
+        }
+
+        places.forEach((place, index) => {
+            const card = document.createElement('div');
+            card.className = 'rest-card';
+            card.id = `tour-${place.id}`;
+
+            const info = document.createElement('div');
+            info.className = 'rest-card-info';
+            info.innerHTML = `
+                <span class="rest-card-badge">관광명소</span>
+                <h4>${index + 1}. ${escapeMobile(place.place_name)}</h4>
+                <p>📍 ${escapeMobile(place.road_address_name || place.address_name || '주소 정보 없음')}</p>
+                <p>📏 ${place.distance ? escapeMobile(place.distance) + 'm' : '거리 정보 없음'}</p>
+                <div class="reaction-wrap">
+                    <button class="reaction-btn like-btn" id="like-btn-${place.id}">👍 <span id="like-count-${place.id}">0</span></button>
+                    <button class="reaction-btn dislike-btn" id="dislike-btn-${place.id}">👎 <span id="dislike-count-${place.id}">0</span></button>
+                </div>`;
+
+            const reviewBtn = document.createElement('button');
+            reviewBtn.className = 'heart-btn';
+            reviewBtn.style.color = '#f59f00';
+            reviewBtn.title = '관광지 리뷰';
+            reviewBtn.innerHTML = '<i class="fa-solid fa-comment"></i>';
+            reviewBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                selectMobileTourist(place);
+                openTourReviewModal(place);
+            });
+
+            card.appendChild(info);
+            card.appendChild(reviewBtn);
+            list.appendChild(card);
+
+            card.addEventListener('click', function() {
+                selectMobileTourist(place);
+            });
+
+            const likeBtn = document.getElementById(`like-btn-${place.id}`);
+            const dislikeBtn = document.getElementById(`dislike-btn-${place.id}`);
+            if (likeBtn) likeBtn.addEventListener('click', e => toggleReaction(e, place.id, 'LIKE'));
+            if (dislikeBtn) dislikeBtn.addEventListener('click', e => toggleReaction(e, place.id, 'DISLIKE'));
+
+            if (typeof loadReactions === 'function') loadReactions(place.id);
+
+            if (typeof kakao !== 'undefined' && mainMap) {
+                const pos = new kakao.maps.LatLng(parseFloat(place.y), parseFloat(place.x));
+                const marker = new kakao.maps.Marker({ position: pos, map: mainMap });
+                mainMarkers.push(marker);
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    selectMobileTourist(place);
+                });
+            }
+        });
+
+        if (mainMap && places[0]) {
+            mainMap.setCenter(new kakao.maps.LatLng(parseFloat(places[0].y), parseFloat(places[0].x)));
+        }
+
+        document.querySelector('.restaurant-section')?.scrollIntoView({behavior:'smooth', block:'start'});
+    } catch (e) {
+        console.error('모바일 관광지 검색 오류:', e);
+        list.innerHTML = '<p style="text-align:center;color:#e74c3c;padding:30px">관광지 정보를 불러오지 못했습니다.<br><small>잠시 후 다시 시도해주세요.</small></p>';
+    }
+}
+function escapeMobile(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
+function selectMobileTourist(place){
+    currentSelectedTourSpot = place;
+    currentSelectedPlace = null;
+    currentReviewType = 'TOUR';
+
+    const name = document.getElementById('selected-name');
+    const sub = document.getElementById('selected-sub');
+    const tourBtn = document.getElementById('open-modal-btn');
+    const reviewBtn = document.getElementById('open-review-btn');
+
+    if (name) {
+        name.innerHTML = '<i class="fa-solid fa-camera pin"></i>' + escapeMobile(place.place_name);
+    }
+    if (sub) {
+        const url = place.place_url || '#';
+        sub.innerHTML = '주소: ' + escapeMobile(place.road_address_name || place.address_name || '')
+            + ' | <a href="' + escapeMobile(url) + '" target="_blank" rel="noopener" style="color:#2ba6cf;font-weight:bold;text-decoration:none">🔗 카카오맵</a>';
+    }
+
+    if (tourBtn) tourBtn.style.display = 'none';
+    if (reviewBtn) {
+        reviewBtn.style.display = 'inline-block';
+        reviewBtn.onclick = function() { openTourReviewModal(place); };
+    }
+
+    if (mainMap && typeof kakao !== 'undefined') {
+        mainMap.panTo(new kakao.maps.LatLng(parseFloat(place.y), parseFloat(place.x)));
+    }
+
+    document.getElementById('selected-place-box')?.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// map.js가 로그인 상태를 'innerText = 로그인/로그아웃'으로 바꾸기 때문에
+// 모바일에서는 아이콘 + 가로형 버튼으로 다시 표시합니다.
+function syncMobileHeader(){
+    const auth = document.getElementById('header-auth-btn');
+    const myPage = document.getElementById('my-page-btn');
+    if (!auth) return;
+
+    const loggedIn = !!localStorage.getItem('currentLoggedInUser');
+    const state = loggedIn ? 'logged-in' : 'logged-out';
+
+    // 이미 올바른 상태면 DOM을 다시 건드리지 않습니다.
+    if (auth.dataset.mobileHeaderState !== state) {
+        auth.classList.toggle('logout-mode', loggedIn);
+        auth.innerHTML = loggedIn
+            ? '<i class="fa-solid fa-right-from-bracket"></i>&nbsp;로그아웃'
+            : '<i class="fa-solid fa-user"></i>';
+        auth.setAttribute('aria-label', loggedIn ? '로그아웃' : '로그인');
+        auth.dataset.mobileHeaderState = state;
+    }
+    if (myPage) myPage.style.display = loggedIn ? 'flex' : 'none';
+}
+
+function watchMobileHeader(){
+    syncMobileHeader();
+    const auth = document.getElementById('header-auth-btn');
+    if (!auth) return;
+    const observer = new MutationObserver(function(){
+        // map.js가 로그인/로그아웃 문자열로 바꾸면 다시 모바일 표시로 복구합니다.
+        syncMobileHeader();
+    });
+    observer.observe(auth, {childList:true, characterData:true, subtree:true});
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+    const menu=document.getElementById('mobile-menu-modal');
+    if(menu) menu.addEventListener('click',function(e){if(e.target===this)closeMobileMenu()});
+    const input=document.getElementById('search-input');
+    if(input) input.addEventListener('focus',function(){
+        setTimeout(()=>input.scrollIntoView({behavior:'smooth',block:'center'}),250);
+    });
+    watchMobileHeader();
+});
+
+</script>
+</body>
+</html>

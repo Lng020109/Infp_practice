@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>추천 코스 보기</title>
+
+    <style>
+
+        body {
+            background: #f5f8fc;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 650px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        /* 선택한 맛집 */
+
+        .restaurant-box {
+            border: 2px solid #315b9c;
+        }
+
+        .restaurant-name {
+            font-size: 23px;
+            margin: 15px 0 10px;
+        }
+
+        .restaurant-address {
+            color: #666;
+        }
+
+
+        /* 추천 코스 */
+
+        .course-box {
+            background: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        /* 1번 추천 코스 */
+
+        .best-course {
+            border: 4px solid #315b9c;
+            box-shadow: 0 5px 20px rgba(49, 91, 156, 0.25);
+        }
+
+        .best-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* 일반 코스 */
+
+        .normal-course {
+            border: 1px solid #ddd;
+        }
+
+        .course-title {
+            text-align: center;
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .course-item {
+            background: #f5f8fc;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            font-size: 17px;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 20px;
+            margin: 5px 0;
+        }
+
+        .distance {
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .address {
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+
+        /* 버튼 */
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #315b9c;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <h1>나만의 여행 코스</h1>
+
+        <p>
+            선택한 맛집을 기준으로 주변 관광지를 추천합니다.
+        </p>
+
+
+        <!-- 선택한 맛집 -->
+
+        <div class="box restaurant-box">
+
+            <h2>📍 선택한 맛집</h2>
+
+            <div
+                id="restaurantName"
+                class="restaurant-name">
+            </div>
+
+            <div
+                id="restaurantAddress"
+                class="restaurant-address">
+            </div>
+
+        </div>
+
+
+        <!-- 추천 여행 코스 -->
+
+        <h2>🗺️ 추천 여행 코스</h2>
+
+
+        <!-- 코스 1 -->
+
+        <div
+            id="course1"
+            class="course-box best-course">
+
+            <div class="best-title">
+                ⭐ BEST 추천 코스
+            </div>
+
+            <div id="course1Content"></div>
+
+        </div>
+
+
+        <!-- 코스 2 -->
+
+        <div
+            id="course2"
+            class="course-box normal-course">
+
+            <div class="course-title">
+                🌿 추천 코스 2
+            </div>
+
+            <div id="course2Content"></div>
+
+        </div>
+
+
+        <!-- 코스 3 -->
+
+        <div
+            id="course3"
+            class="course-box normal-course">
+
+            <div class="course-title">
+                🌸 추천 코스 3
+            </div>
+
+            <div id="course3Content"></div>
+
+        </div>
+
+
+        <button onclick="location.href='/map'">
+            🗺 지도에서 다시 검색
+        </button>
+
+
+    </div>
+
+
+    <script>
+
+
+        // localStorage에서 선택한 맛집 정보 가져오기
+
+        let restaurantName =
+            localStorage.getItem("restaurantName");
+
+        let restaurantAddress =
+            localStorage.getItem("restaurantAddress");
+
+        let restaurantLat =
+            localStorage.getItem("restaurantLat");
+
+        let restaurantLng =
+            localStorage.getItem("restaurantLng");
+
+
+        // 선택한 맛집이 없는 경우
+
+        if (!restaurantName ||
+            !restaurantLat ||
+            !restaurantLng) {
+
+            document.getElementById("restaurantName").innerText =
+                "선택한 맛집이 없습니다.";
+
+            document.getElementById("restaurantAddress").innerText =
+                "지도에서 맛집을 먼저 선택해주세요.";
+
+        }
+
+        else {
+
+            // 맛집 정보 표시
+
+            document.getElementById("restaurantName").innerText =
+                "🍴 " + restaurantName;
+
+            document.getElementById("restaurantAddress").innerText =
+                restaurantAddress;
+
+
+            // 주변 관광지 검색
+
+            getTourList();
+
+        }
+
+
+        // 주변 관광지 가져오기
+
+        async function getTourList() {
+
+            try {
+
+                const response = await fetch(
+                    `/api/nearby-tour?lat=${restaurantLat}&lng=${restaurantLng}`
+                );
+
+
+                const data = await response.json();
+
+
+                const tours = data.documents;
+
+
+                if (tours.length === 0) {
+
+                    document.getElementById("course1Content").innerHTML =
+                        "<p>주변 관광지가 없습니다.</p>";
+
+                    document.getElementById("course2Content").innerHTML =
+                        "<p>주변 관광지가 없습니다.</p>";
+
+                    document.getElementById("course3Content").innerHTML =
+                        "<p>주변 관광지가 없습니다.</p>";
+
+                    return;
+
+                }
+
+
+                // 최대 6개의 관광지 사용
+
+                const tour1 = tours[0];
+
+                const tour2 = tours[1];
+
+                const tour3 = tours[2];
+
+                const tour4 = tours[3];
+
+                const tour5 = tours[4];
+
+                const tour6 = tours[5];
+
+
+                // 코스 1
+                // 가장 가까운 관광지 2개
+
+                let course1HTML = "";
+
+                course1HTML += createRestaurant();
+
+                course1HTML += createArrow();
+
+                course1HTML += createTour(tour1);
+
+                if (tour2) {
+
+                    course1HTML += createArrow();
+
+                    course1HTML += createTour(tour2);
+
+                }
+
+
+                document.getElementById("course1Content").innerHTML =
+                    course1HTML;
+
+
+                // 코스 2
+
+                let course2HTML = "";
+
+                course2HTML += createRestaurant();
+
+                if (tour3) {
+
+                    course2HTML += createArrow();
+
+                    course2HTML += createTour(tour3);
+
+                }
+
+                if (tour4) {
+
+                    course2HTML += createArrow();
+
+                    course2HTML += createTour(tour4);
+
+                }
+
+
+                document.getElementById("course2Content").innerHTML =
+                    course2HTML;
+
+
+                // 코스 3
+
+                let course3HTML = "";
+
+                course3HTML += createRestaurant();
+
+                if (tour5) {
+
+                    course3HTML += createArrow();
+
+                    course3HTML += createTour(tour5);
+
+                }
+
+                if (tour6) {
+
+                    course3HTML += createArrow();
+
+                    course3HTML += createTour(tour6);
+
+                }
+
+
+                document.getElementById("course3Content").innerHTML =
+                    course3HTML;
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById("course1Content").innerHTML =
+                    "<p>관광지를 불러오지 못했습니다.</p>";
+
+            }
+
+        }
+
+
+        // 맛집 HTML
+
+        function createRestaurant() {
+
+            return `
+
+                <div class="course-item">
+
+                    🍴 <strong>${restaurantName}</strong>
+
+                    <div class="address">
+                        ${restaurantAddress}
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        // 화살표
+
+        function createArrow() {
+
+            return `
+
+                <div class="arrow">
+                    ↓
+                </div>
+
+            `;
+
+        }
+
+
+        // 관광지 HTML
+		
+        function createTour(tour) {
+
+            return `
+
+                <div class="course-item">
+
+                    🏛️ <strong>
+                        ${tour.place_name}
+                    </strong>
+
+                    <div class="distance">
+                        📍 ${tour.distance}m
+                    </div>
+
+                    <div class="address">
+                        ${tour.road_address_name ||
+                          tour.address_name}
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>

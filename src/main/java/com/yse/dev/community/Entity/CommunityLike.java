@@ -1,0 +1,43 @@
+package com.yse.dev.community.Entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(
+    name = "community_like",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"post_id", "username"})
+    }
+)
+public class CommunityLike {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "post_id", nullable = false)
+    private Long postId;
+
+    @Column(nullable = false)
+    private String username;
+
+    public CommunityLike() {
+    }
+
+    public CommunityLike(Long postId, String username) {
+        this.postId = postId;
+        this.username = username;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+}

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>마이페이지 - 맛따라 여행따라</title>
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: 'Noto Sans KR', sans-serif;
+		}
+
+		body {
+			background: #f7fbfe;
+			color: #202b36;
+			line-height: 1.15;
+		}
+
+		/* 1. 상단 네비게이션 헤더 (map.html과 100% 동일 규격) */
+		header {
+			height: 70px;
+			background: #ffffff;
+			border-bottom: 1px solid #eef2f6;
+			display: flex;
+			align-items: center;
+		}
+
+		.header-inner {
+			width: 100%;
+			max-width: 1240px;
+			margin: 0 auto;
+			padding: 0 24px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.brand-logo {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.brand-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #4ecdc4, #2ba6cf);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 1.2rem;
+			box-shadow: 0 2px 6px rgba(43, 166, 207, 0.3);
+			/* 파란 원만 위로 살짝 올림 */
+			transform: translateY(-1px);
+
+			/* 계란 이모티콘만 원래 위치로 보정 (올라간 2px만큼 아래로 패딩 추가) */
+			padding-top: 1px;
+			box-sizing: border-box;
+		}
+
+		.brand-text h1 {
+			font-size: 1.2rem;
+			font-weight: 800;
+			color: #2ba6cf;
+			line-height: 1.1;
+			margin: 0 0 2px 0;
+			transform: translateY(-4px);
+			/* 글자만 위로 2px 살짝 올림 */
+		}
+
+		.brand-text span {
+			font-size: 0.72rem;
+			color: #8ea0b0;
+			font-weight: 500;
+			line-height: 1;
+			display: block;
+			margin-top: 5px;
+			/* 요 수치로 위아래 간격을 자연스럽게 벌려줍니다 */
+		}
+
+		/* map.html의 login-btn 스타일을 그대로 적용한 메인으로 버튼 */
+		.back-btn {
+			background-color: #2ba6cf;
+			color: #fff;
+			border: none;
+			padding: 7px 18px;
+			border-radius: 20px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background-color 0.2s;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.back-btn:hover {
+			background-color: #1f8ab0;
+		}
+
+		main {
+			width: 100%;
+			max-width: 800px;
+			margin: 50px auto;
+			padding: 0 20px;
+		}
+
+		.title {
+			margin-bottom: 25px;
+		}
+
+		.title h2 {
+			color: #208caf;
+			font-size: 2rem;
+			margin-bottom: 7px;
+		}
+
+		.title p {
+			color: #7a8995;
+			font-size: 0.9rem;
+		}
+
+		.card {
+			background: white;
+			border: 1px solid #dfe9ef;
+			border-radius: 18px;
+			padding: 30px;
+			margin-bottom: 20px;
+			box-shadow: 0 4px 15px rgba(43, 166, 207, 0.07);
+		}
+
+		.card h3 {
+			margin-bottom: 20px;
+			color: #334e5d;
+		}
+
+		.profile {
+			display: flex;
+			align-items: center;
+			gap: 18px;
+			margin-bottom: 25px;
+			padding-bottom: 20px;
+			border-bottom: 1px solid #edf1f4;
+		}
+
+		.profile-icon {
+			width: 65px;
+			height: 65px;
+			min-width: 65px;
+			border-radius: 50%;
+			overflow: hidden;
+			background: linear-gradient(135deg, #4ecdc4, #2ba6cf);
+			color: white;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 1.6rem;
+		}
+
+		.profile-icon img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.profile h3 {
+			margin: 0 0 5px;
+		}
+
+		.profile p {
+			color: #87939d;
+			font-size: 0.85rem;
+		}
+
+		.profile-image-buttons {
+			display: flex;
+			gap: 8px;
+			margin-top: -10px;
+			margin-bottom: 20px;
+		}
+
+		.profile-image-buttons button {
+			border: none;
+			border-radius: 8px;
+			padding: 7px 12px;
+			cursor: pointer;
+			font-size: 12px;
+			background: #f1f5f9;
+		}
+
+		.profile-image-buttons button:hover {
+			background: #e2e8f0;
+		}
+
+		.row {
+			margin-bottom: 17px;
+		}
+
+		.row label {
+			display: block;
+			margin-bottom: 7px;
+			font-size: 0.85rem;
+			font-weight: 700;
+			color: #526373;
+		}
+
+		.row input,
+		.row select {
+			width: 100%;
+			padding: 11px 13px;
+			border: 1px solid #d5e1e8;
+			border-radius: 8px;
+			outline: none;
+			font-size: 0.9rem;
+			background-color: white;
+		}
+
+		.row input:focus,
+		.row select:focus {
+			border-color: #2ba6cf;
+		}
+
+		.btn {
+			border: none;
+			border-radius: 8px;
+			padding: 11px 20px;
+			cursor: pointer;
+			font-weight: 700;
+			font-size: 14px;
+		}
+
+		.btn-primary {
+			background: #2ba6cf;
+			color: white;
+		}
+
+		.btn-danger {
+			background: #ef6262;
+			color: white;
+		}
+
+		.btn:hover {
+			opacity: 0.9;
+		}
+
+		.button-area {
+			display: flex;
+			gap: 10px;
+			margin-top: 20px;
+		}
+
+		.danger-area {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		/* 리뷰 */
+		.review-item {
+			padding: 15px 0;
+			border-bottom: 1px solid #edf1f4;
+		}
+
+		.review-item:last-child {
+			border-bottom: none;
+		}
+
+		.review-place {
+			font-weight: 700;
+			font-size: 17px;
+			margin-bottom: 8px;
+		}
+
+		.review-address {
+			font-size: 14px;
+			color: #777;
+			margin-bottom: 8px;
+		}
+
+		.kakao-link {
+			font-size: 14px;
+			color: #2ba6cf;
+			cursor: pointer;
+			margin-bottom: 10px;
+		}
+
+		.review-content {
+			margin: 0;
+			line-height: 1.6;
+			white-space: pre-wrap;
+		}
+
+		.review-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 8px;
+		}
+
+		.edit-btn {
+			border: 1px solid #d5e1e8;
+			background: white;
+			color: #526373;
+			padding: 5px 10px;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 12px;
+			font-weight: 700;
+		}
+
+		.edit-btn:hover {
+			background: #f1f7fa;
+		}
+
+		/* 좋아요 / 싫어요 맛집 */
+		.reaction-restaurant {
+			padding: 18px 0;
+			border-bottom: 1px solid #edf1f4;
+		}
+
+		.reaction-restaurant:last-child {
+			border-bottom: none;
+		}
+
+		.restaurant-name {
+			font-weight: 700;
+			font-size: 17px;
+			margin-bottom: 8px;
+		}
+
+		.restaurant-address {
+			font-size: 14px;
+			color: #777;
+			margin-bottom: 8px;
+		}
+
+		.restaurant-link {
+			font-size: 14px;
+			color: #2ba6cf;
+			cursor: pointer;
+			margin-bottom: 10px;
+		}
+
+		/* mypage_4의 맛집별 리뷰 연동 영역 스타일 */
+		.restaurant-reviews {
+			margin-top: 10px;
+			padding-top: 10px;
+			border-top: 1px dashed #ddd;
+			font-size: 13px;
+			color: #555;
+		}
+
+		/* 마이페이지 내 작성 커뮤니티 네모칸 카드 스타일 */
+		.my-post-card {
+			background-color: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 12px;
+			padding: 18px;
+			margin-bottom: 12px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+			transition: all 0.2s ease-in-out;
+			cursor: pointer;
+		}
+
+		.my-post-card:hover {
+			border-color: #2ba6cf;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(43, 166, 207, 0.12);
+		}
+
+		.my-post-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.card-header-post {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 10px;
+		}
+
+		.user-profile-thumb {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			background-color: #f1f5f9;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			border: 1px solid #e2e8f0;
+		}
+
+		.user-profile-thumb img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.user-profile-thumb i {
+			font-size: 14px;
+			color: #94a3b8;
+		}
+
+		.post-author-name {
+			font-weight: 600;
+			font-size: 13px;
+			color: #334e5d;
+		}
+
+		.card-body-post {
+			margin-bottom: 10px;
+		}
+
+		.post-title-text {
+			font-size: 15px;
+			font-weight: 700;
+			color: #1e293b;
+			margin-bottom: 6px;
+		}
+
+		.post-content-preview {
+			font-size: 13.5px;
+			color: #64748b;
+			line-height: 1.5;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		/* 내부 스크롤 설정 */
+		#my-review-list,
+		#my-like-list,
+		#my-dislike-list,
+		#my-community-list {
+			max-height: 420px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			padding-right: 10px;
+			box-sizing: border-box;
+		}
+
+		#my-review-list::-webkit-scrollbar,
+		#my-like-list::-webkit-scrollbar,
+		#my-dislike-list::-webkit-scrollbar,
+		#my-community-list::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		#my-review-list::-webkit-scrollbar-thumb,
+		#my-like-list::-webkit-scrollbar-thumb,
+		#my-dislike-list::-webkit-scrollbar-thumb,
+		#my-community-list::-webkit-scrollbar-thumb {
+			background: #cfd9df;
+			border-radius: 10px;
+		}
+
+		#my-review-list::-webkit-scrollbar-track,
+		#my-like-list::-webkit-scrollbar-track,
+		#my-dislike-list::-webkit-scrollbar-track,
+		#my-community-list::-webkit-scrollbar-track {
+			background: #f5f8fa;
+			border-radius: 10px;
+		}
+
+		/* 좋아요 / 싫어요 좌우 배치 그리드 */
+		.reaction-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			align-items: start;
+		}
+
+		.reaction-grid .card {
+			margin-bottom: 0;
+		}
+
+		@media (max-width: 700px) {
+			.reaction-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.toast-message {
+			position: fixed;
+			top: 25px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-20px);
+			background: #2e9d63;
+			color: white;
+			padding: 14px 25px;
+			border-radius: 30px;
+			font-size: 0.9rem;
+			font-weight: 700;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.4s ease;
+			z-index: 9999;
+		}
+
+		.toast-message.show {
+			opacity: 1;
+			visibility: visible;
+			transform: translateX(-50%) translateY(0);
+		}
+
+		footer {
+			margin-top: 60px;
+			padding: 30px;
+			background: #209bb5;
+			color: white;
+			text-align: center;
+		}
+
+		footer p {
+			font-size: 0.8rem;
+			margin-top: 5px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="toast-message" class="toast-message">
+		<i class="fa-solid fa-circle-check"></i>
+		수정이 완료되었습니다.
+	</div>
+
+	<header>
+		<div class="header-inner">
+			<div class="brand-logo" onclick="location.href='/map'">
+				<div class="brand-icon">🍳</div>
+				<div class="brand-text">
+					<h1>맛따라 여행따라</h1>
+					<span>food & travel</span>
+				</div>
+			</div>
+			<button class="back-btn" onclick="location.href='/map'">
+				<i class="fa-solid fa-arrow-left"></i>
+				메인으로
+			</button>
+		</div>
+	</header>
+
+	<main>
+		<div class="title">
+			<h2>마이페이지</h2>
+			<p>내 회원정보를 관리할 수 있습니다.</p>
+		</div>
+
+		<!-- 회원정보 섹션 (보안 질문/답변 포함) -->
+		<section class="card">
+			<div class="profile">
+				<div class="profile-icon" id="profile-icon">
+					<i class="fa-solid fa-user" id="default-profile-icon"></i>
+					<img id="profile-image" src="" alt="프로필 사진" style="display: none;">
+				</div>
+				<div>
+					<h3 id="profile-nickname">회원</h3>
+					<p>맛따라 여행따라 회원</p>
+				</div>
+			</div>
+
+			<div class="profile-image-buttons">
+				<button type="button" onclick="document.getElementById('profileImageInput').click()">
+					프로필 사진 변경
+				</button>
+				<input type="file" id="profileImageInput" accept="image/*" style="display: none;"
+					onchange="uploadProfileImage(this)">
+				<button type="button" onclick="deleteProfileImage()">
+					사진 삭제
+				</button>
+			</div>
+
+			<h3>
+				<i class="fa-solid fa-user-pen"></i>
+				회원정보
+			</h3>
+
+			<div class="row">
+				<label>아이디</label>
+				<input type="text" id="username" readonly>
+			</div>
+
+			<div class="row">
+				<label>닉네임</label>
+				<input type="text" id="nickname">
+			</div>
+
+			<div class="row">
+				<label>새 비밀번호</label>
+				<input type="password" id="password" placeholder="변경할 경우에만 입력">
+			</div>
+
+			<div class="row">
+				<label>새 비밀번호 확인</label>
+				<input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력해주세요." oninput="checkPassword()">
+				<p id="passwordMessage" style="font-size:0.8rem; margin-top:6px;"></p>
+			</div>
+
+			<!-- mypage_4의 보안 질문/답변 필드 추가 -->
+			<div class="row">
+				<label for="securityQuestion">보안 질문</label>
+				<select id="securityQuestion">
+					<option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option>
+					<option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option>
+					<option value="나의 어릴 적 별명은?">나의 어릴 적 별명은?</option>
+					<option value="나의 보물 1호는?">나의 보물 1호는?</option>
+				</select>
+			</div>
+
+			<div class="row">
+				<label for="securityAnswer">보안 답변</label>
+				<input type="text" id="securityAnswer" placeholder="변경할 답변을 입력해주세요">
+			</div>
+
+			<div class="button-area">
+				<button class="btn btn-primary" onclick="updateMember()">
+					회원정보 수정
+				</button>
+			</div>
+		</section>
+
+		<!-- 내가 작성한 리뷰 섹션 -->
+		<section class="card">
+			<h3>
+				<i class="fa-solid fa-comments"></i>
+				내가 작성한 리뷰
+			</h3>
+			<div id="my-review-list">
+				<p style="color:#888;">작성한 리뷰를 불러오는 중입니다...</p>
+			</div>
+		</section>
+
+		<!-- 좋아요 / 싫어요 장소 그리드 섹션 -->
+		<div class="reaction-grid">
+			<!-- 내가 좋아요한 목록 -->
+			<section class="card">
+				<h3>
+					<i class="fa-solid fa-thumbs-up" style="color:#2563eb;"></i>
+					내가 좋아요한 목록
+					<span id="my-like-count" style="font-size:0.8rem; color:#888;">(0)</span>
+				</h3>
+				<div id="my-like-list">
+					<p style="color:#888;">좋아요한 목록을 불러오는 중입니다...</p>
+				</div>
+			</section>
+
+			<!-- 내가 싫어요한 목록 -->
+			<section class="card">
+				<h3>
+					<i class="fa-solid fa-thumbs-down" style="color:#ef4444;"></i>
+					내가 싫어요한 목록
+					<span id="my-dislike-count" style="font-size:0.8rem; color:#888;">(0)</span>
+				</h3>
+				<div id="my-dislike-list">
+					<p style="color:#888;">싫어요한 목록을 불러오는 중입니다...</p>
+				</div>
+			</section>
+		</div>
+
+		<!-- 내가 작성한 커뮤니티 글 섹션 -->
+		<section class="card" style="margin-top: 20px;">
+			<h3>
+				<i class="fa-solid fa-pen-to-square" style="color:#2ba6cf;"></i>
+				내가 작성한 커뮤니티 글
+			</h3>
+			<div id="my-community-list">
+				<p style="color:#888;">작성한 커뮤니티 글을 불러오는 중입니다...</p>
+			</div>
+		</section>
+
+		<!-- 회원탈퇴 섹션 -->
+		<section class="card" style="margin-top: 20px;">
+			<h3>
+				<i class="fa-solid fa-user-xmark"></i>
+				회원탈퇴
+			</h3>
+			<p style="color:#888; font-size:0.85rem; margin-bottom:15px;">
+				회원탈퇴를 하면 회원정보가 삭제됩니다.
+			</p>
+			<div class="danger-area">
+				<button class="btn btn-danger" onclick="deleteMember()">
+					회원탈퇴
+				</button>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<strong>맛따라 여행따라</strong>
+		<p>맛집을 따라 새로운 여행을 발견하세요.</p>
+	</footer>
+
+	<script>
+		const currentUser = JSON.parse(sessionStorage.getItem("currentLoggedInUser"));
+
+		if (!currentUser) {
+			alert("로그인이 필요한 페이지입니다.");
+			location.href = "/map";
+		} else {
+			loadMember();
+			loadMyReviews();
+			loadMyReactions();
+			loadMyCommunityPosts();
+		}
+
+		// 회원정보 조회 (보안 질문/답변 바인딩 추가)
+		function loadMember() {
+			const username = currentUser.username || currentUser.id;
+
+			fetch(`/api/member/${encodeURIComponent(username)}`)
+				.then(res => {
+					if (!res.ok) throw new Error();
+					return res.json();
+				})
+				.then(member => {
+					document.getElementById("username").value = member.username || "";
+					document.getElementById("nickname").value = member.nickname || "";
+					document.getElementById("profile-nickname").innerText = member.nickname || "회원";
+
+					// 보안 질문/답변 데이터 매핑 (API 응답 필드명에 맞춰 사용)
+					if (document.getElementById("securityQuestion")) {
+						const questionSelect = document.getElementById("securityQuestion");
+						if (member.securityQuestion) {
+							questionSelect.value = member.securityQuestion;
+						}
+					}
+					if (document.getElementById("securityAnswer")) {
+						document.getElementById("securityAnswer").value = member.securityAnswer || "";
+					}
+
+					loadProfileImage();
+				})
+				.catch(() => {
+					alert("회원정보를 불러오지 못했습니다.");
+				});
+		}
+
+		// 회원정보 수정 (보안 질문/답변 포함 전송)
+		function updateMember() {
+			const username = document.getElementById("username").value;
+			const nickname = document.getElementById("nickname").value.trim();
+			const password = document.getElementById("password").value.trim();
+			const passwordConfirm = document.getElementById("passwordConfirm").value.trim();
+			const securityQuestion = document.getElementById("securityQuestion").value.trim();
+			const securityAnswer = document.getElementById("securityAnswer").value.trim();
+
+			if (password && password !== passwordConfirm) {
+				alert("비밀번호가 일치하지 않습니다.");
+				return;
+			}
+
+			if (!nickname) {
+				alert("닉네임을 입력해주세요.");
+				return;
+			}
+
+			fetch(`/api/member/${encodeURIComponent(username)}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					username: username,
+					nickname: nickname,
+					password: password,
+					securityQuestion: securityQuestion,
+					securityAnswer: securityAnswer
+				})
+			})
+				.then(async res => {
+					const message = await res.text();
+					if (!res.ok) throw new Error(message);
+					return message;
+				})
+				.then(message => {
+					showToast();
+					currentUser.nickname = nickname;
+					sessionStorage.setItem("currentLoggedInUser", JSON.stringify(currentUser));
+
+					document.getElementById("password").value = "";
+					document.getElementById("passwordConfirm").value = "";
+					loadMember();
+				})
+				.catch(error => {
+					alert(error.message || "회원정보 수정에 실패했습니다.");
+				});
+		}
+
+		// 회원탈퇴
+		function deleteMember() {
+			if (!confirm("정말 회원탈퇴 하시겠습니까?\n삭제된 회원정보는 복구할 수 없습니다.")) {
+				return;
+			}
+
+			const username = document.getElementById("username").value;
+
+			fetch(`/api/member/${encodeURIComponent(username)}`, {
+				method: "DELETE"
+			})
+				.then(async res => {
+					const message = await res.text();
+					if (!res.ok) throw new Error(message);
+					return message;
+				})
+				.then(message => {
+					sessionStorage.removeItem("currentLoggedInUser");
+					alert(message);
+					location.href = "/map";
+				})
+				.catch(error => {
+					alert(error.message || "회원탈퇴에 실패했습니다.");
+				});
+		}
+
+		// 내가 작성한 리뷰 조회 (맛집 리뷰 + 관광지 리뷰 통합)
+		async function loadMyReviews() {
+			const username = currentUser.username || currentUser.id;
+			const nickname = currentUser.nickname || username;
+			const reviewList = document.getElementById("my-review-list");
+
+			reviewList.innerHTML = `<p style="color:#888;">작성한 리뷰를 불러오는 중입니다...</p>`;
+
+			try {
+				// 1. 맛집 리뷰와 관광지 리뷰를 동시에 병렬 호출
+				const [restRes, tourRes] = await Promise.all([
+					fetch(`/api/reviews/my/${encodeURIComponent(username)}`),
+					fetch(`/api/tour-reviews/my/${encodeURIComponent(nickname)}`)
+				]);
+
+				const restReviews = restRes.ok ? await restRes.json() : [];
+				const tourReviews = tourRes.ok ? await tourRes.json() : [];
+
+				// 2. 맛집 리뷰 데이터 가공
+				const normalizedRest = restReviews.map(r => ({
+					id: r.id,
+					type: 'RESTAURANT',
+					placeName: r.restaurantName || "맛집 정보 없음",
+					address: r.restaurantAddress || "주소 정보 없음",
+					url: r.restaurantUrl || "",
+					content: r.content,
+					createdAt: r.id
+				}));
+
+				// 3. 관광지 리뷰 데이터 가공
+				const normalizedTour = tourReviews.map(r => ({
+					id: r.id,
+					type: 'TOUR',
+					placeName: r.spotName || "관광지 정보 없음",
+					address: "관광명소",
+					url: `https://map.kakao.com/link/search/${encodeURIComponent(r.spotName || '')}`,
+					content: r.content,
+					createdAt: r.id
+				}));
+
+				// 4. 합쳐서 최신순 정렬
+				const allReviews = [...normalizedRest, ...normalizedTour].sort((a, b) => b.createdAt - a.createdAt);
+
+				if (allReviews.length === 0) {
+					reviewList.innerHTML = `<p style="color:#888;">작성한 리뷰가 없습니다.</p>`;
+					return;
+				}
+
+				reviewList.innerHTML = "";
+
+				allReviews.forEach(review => {
+					const reviewItem = document.createElement("div");
+					reviewItem.className = "review-item";
+
+					const isTour = review.type === 'TOUR';
+					const badgeColor = isTour ? "#f59f00" : "#2ba6cf";
+					const badgeBg = isTour ? "#fff9db" : "#e1f4fc";
+					const badgeText = isTour ? "🏞️ 관광지" : "🍴 맛집";
+
+					reviewItem.innerHTML = `
+								<div class="review-header">
+									<div class="review-place" style="display:flex; align-items:center; gap:8px;">
+										<span style="background:${badgeBg}; color:${badgeColor}; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:bold;">${badgeText}</span>
+										<span>📍 ${escapeHtml(review.placeName)}</span>
+									</div>
+									<div style="display: flex; gap: 6px;">
+									    <button class="edit-btn" onclick='editReview(${JSON.stringify(review)})'>수정</button>
+									    <button class="edit-btn" style="color: #ef6262; border-color: #f1caca;" onclick='deleteReview(${review.id}, "${review.type}")'>삭제</button>
+									</div>
+								</div>
+								<div class="review-address">
+									주소: ${escapeHtml(review.address)}
+								</div>
+								${review.url ? `
+									<div class="kakao-link" onclick='openRestaurant(${JSON.stringify(review.url)})'>
+										🔗 카카오맵에서 보기
+									</div>
+								` : ""}
+								<p class="review-content">${escapeHtml(review.content)}</p>
+							`;
+					reviewList.appendChild(reviewItem);
+				});
+
+			} catch (e) {
+				console.error("리뷰 조회 에러:", e);
+				reviewList.innerHTML = `<p style="color:#ef6262;">리뷰 목록을 불러오지 못했습니다.</p>`;
+			}
+		}
+
+		// 좋아요 / 싫어요한 맛집 조회
+		function loadMyReactions() {
+			const username = currentUser.username || currentUser.id;
+
+			fetch(`/api/reactions/my/${encodeURIComponent(username)}`)
+				.then(res => {
+					if (!res.ok) throw new Error();
+					return res.json();
+				})
+				.then(reactions => {
+					const likes = reactions.filter(reaction => reaction.reactionType === "LIKE");
+					const dislikes = reactions.filter(reaction => reaction.reactionType === "DISLIKE");
+
+					document.getElementById("my-like-count").innerText = `(${likes.length})`;
+					document.getElementById("my-dislike-count").innerText = `(${dislikes.length})`;
+
+					renderReactionRestaurants(likes, document.getElementById("my-like-list"), "LIKE");
+					renderReactionRestaurants(dislikes, document.getElementById("my-dislike-list"), "DISLIKE");
+				})
+				.catch(error => {
+					console.error("좋아요 / 싫어요 조회 오류:", error);
+					document.getElementById("my-like-list").innerHTML = `<p style="color:#888;">좋아요 정보를 불러오지 못했습니다.</p>`;
+					document.getElementById("my-dislike-list").innerHTML = `<p style="color:#888;">싫어요 정보를 불러오지 못했습니다.</p>`;
+				});
+		}
+
+		// 좋아요 / 싫어요 장소 + 장소별 리뷰 연동 영역 표시
+		function renderReactionRestaurants(reactions, listElement, type) {
+			if (!reactions || reactions.length === 0) {
+				const message = type === "LIKE" ? "좋아요한 장소가 없습니다." : "싫어요한 장소가 없습니다.";
+				listElement.innerHTML = `<p style="color:#888; font-size:0.85rem;">${message}</p>`;
+				return;
+			}
+
+			listElement.innerHTML = "";
+
+			reactions.forEach(reaction => {
+				const item = document.createElement("div");
+				item.className = "reaction-restaurant";
+
+				const restaurantName = reaction.restaurantName || reaction.placeName || "장소 정보 없음";
+				const restaurantAddress = reaction.restaurantAddress || reaction.address || "주소 정보 없음";
+				const restaurantUrl = reaction.restaurantUrl || reaction.placeUrl || "";
+
+				item.innerHTML = `
+		                <div class="restaurant-name">
+		                    📍 ${escapeHtml(restaurantName)}
+		                </div>
+		                <div class="restaurant-address">
+		                    주소: ${escapeHtml(restaurantAddress)}
+		                </div>
+		                ${restaurantUrl ? `
+		                    <div class="restaurant-link" onclick='openRestaurant(${JSON.stringify(restaurantUrl)})'>
+		                        🔗 카카오맵 바로가기
+		                    </div>
+		                ` : ""}
+		                <!-- 장소별 리뷰 영역 -->
+		                <div class="restaurant-reviews">
+		                    <strong>💬 장소 리뷰 요약</strong>
+		                    <p>${escapeHtml(reaction.latestReview || "등록된 리뷰가 없습니다.")}</p>
+		                </div>
+		            `;
+				listElement.appendChild(item);
+			});
+		}
+
+		// 내가 작성한 커뮤니티 글 조회 (네모칸 카드 스타일 & 프사 대체 로직 적용)
+		function loadMyCommunityPosts() {
+			const username = currentUser.username || currentUser.id;
+
+			fetch(`/api/community/my/${encodeURIComponent(username)}`)
+				.then(res => {
+					if (!res.ok) throw new Error();
+					return res.json();
+				})
+				.then(posts => {
+					const communityList = document.getElementById("my-community-list");
+
+					if (!posts || posts.length === 0) {
+						communityList.innerHTML = `<p style="color:#888;">작성한 커뮤니티 글이 없습니다.</p>`;
+						return;
+					}
+
+					communityList.innerHTML = "";
+
+					posts.forEach(post => {
+						const item = document.createElement("div");
+						item.className = "my-post-card";
+						item.onclick = function () {
+							location.href = `/community?id=${post.id}`;
+						};
+						const editButton = document.createElement("button");
+						editButton.type = "button";
+						editButton.textContent = "수정";
+						editButton.style.cssText = `
+						    padding: 6px 12px;
+						    border: 1px solid #2ba6cf;
+						    border-radius: 6px;
+						    background: #fff;
+						    color: #2ba6cf;
+						    cursor: pointer;
+						    font-size: 12px;
+						`;
+
+						editButton.onclick = function (event) {
+						    event.stopPropagation();
+
+						    const title = prompt(
+						        "게시글 제목을 입력하세요.",
+						        post.title || ""
+						    );
+
+						    if (title === null) {
+						        return;
+						    }
+
+						    const content = prompt(
+						        "게시글 내용을 입력하세요.",
+						        post.content || ""
+						    );
+
+						    if (content === null) {
+						        return;
+						    }
+
+						    fetch(`/api/community/${post.id}`, {
+						        method: "PUT",
+						        headers: {
+						            "Content-Type": "application/json"
+						        },
+						        body: JSON.stringify({
+						            title: title.trim(),
+						            content: content.trim()
+						        })
+						    })
+						        .then(res => {
+						            if (!res.ok) {
+						                throw new Error("게시글 수정 실패");
+						            }
+
+						            return res.json();
+						        })
+						        .then(() => {
+						            alert("게시글이 수정되었습니다.");
+						            loadMyCommunityPosts();
+						        })
+						        .catch(error => {
+						            console.error(error);
+						            alert("게시글 수정 중 오류가 발생했습니다.");
+						        });
+						};
+
+
+						const deleteButton = document.createElement("button");
+						deleteButton.type = "button";
+						deleteButton.textContent = "삭제";
+						deleteButton.style.cssText = `
+						    padding: 6px 12px;
+						    border: 1px solid #e74c3c;
+						    border-radius: 6px;
+						    background: #fff;
+						    color: #e74c3c;
+						    cursor: pointer;
+						    font-size: 12px;
+						`;
+
+						deleteButton.onclick = function (event) {
+						    event.stopPropagation();
+
+						    const ok = confirm(
+						        "이 게시글을 삭제하시겠습니까?\n답글도 모두 삭제됩니다."
+						    );
+
+						    if (!ok) {
+						        return;
+						    }
+
+						    fetch(`/api/community/${post.id}`, {
+						        method: "DELETE"
+						    })
+						        .then(res => {
+						            if (!res.ok) {
+						                throw new Error("게시글 삭제 실패");
+						            }
+
+						            return res.json();
+						        })
+						        .then(() => {
+						            alert("게시글이 삭제되었습니다.");
+						            loadMyCommunityPosts();
+						        })
+						        .catch(error => {
+						            console.error(error);
+						            alert("게시글 삭제 중 오류가 발생했습니다.");
+						        });
+						};
+
+						const authorUsername = post.username || username;
+						const profileImgUrl = `/api/member/${encodeURIComponent(authorUsername)}/profile-image`;
+
+						item.innerHTML = `
+							<div class="card-header-post">
+								<div class="user-profile-thumb">
+									<img src="${profileImgUrl}" alt="프로필" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+									<i class="fa-solid fa-user" style="display: none;"></i>
+								</div>
+								<span class="post-author-name">${escapeHtml(authorUsername)}</span>
+							</div>
+							<div class="card-body-post">
+								<div class="post-title-text">📝 ${escapeHtml(post.title || "제목 없음")}</div>
+								<div class="post-content-preview">${escapeHtml(post.content || "")}</div>
+							</div>
+						`;
+						const buttonWrap = document.createElement("div");
+
+						buttonWrap.style.cssText = `
+						    display: flex;
+						    justify-content: flex-end;
+						    gap: 6px;
+						    padding: 0 14px 14px;
+						`;
+
+						buttonWrap.appendChild(editButton);
+						buttonWrap.appendChild(deleteButton);
+
+						item.appendChild(buttonWrap);
+						communityList.appendChild(item);
+					});
+				})
+				.catch(() => {
+					document.getElementById("my-community-list").innerHTML = `
+						<p style="color:#888;">작성한 커뮤니티 글을 불러오지 못했습니다.</p>
+					`;
+				});
+		}
+		function editReview(review) {
+			const content = prompt("리뷰 내용을 수정해주세요.", review.content || "");
+			if (content === null) return;
+			if (!content.trim()) return alert("리뷰 내용을 입력해주세요.");
+
+			const username = currentUser.username || currentUser.id;
+			const nickname = currentUser.nickname || username;
+
+			if (review.type === 'TOUR') {
+				// 관광지 리뷰 수정 API 호출
+				fetch(`/api/community/${post.id}`, {
+				    method: "PUT",
+				    headers: {
+				        "Content-Type": "application/json"
+				    },
+				    body: JSON.stringify({
+				        title: title.trim(),
+				        content: content.trim(),
+				        category: post.category
+				    })
+				})
+					.then(async res => {
+						if (!res.ok) {
+							const err = await res.json().catch(() => ({}));
+							throw new Error(err.error || "수정에 실패했습니다.");
+						}
+						alert("관광지 리뷰가 수정되었습니다.");
+						loadMyReviews();
+					})
+					.catch(err => alert(err.message));
+			} else {
+				// 기존 맛집 리뷰 수정
+				fetch(`/api/reviews/${review.id}`, {
+					method: "PUT",
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify({
+						username: username,
+						content: content.trim()
+					})
+				})
+					.then(async res => {
+						const message = await res.text();
+						if (!res.ok) throw new Error(message);
+						alert(message);
+						loadMyReviews();
+						loadMyReactions();
+					})
+					.catch(error => alert(error.message || "리뷰 수정에 실패했습니다."));
+			}
+		}
+
+		// 리뷰 삭제 (맛집 / 관광지 분기)
+		function deleteReview(reviewId, type) {
+			if (!confirm("정말 이 리뷰를 삭제하시겠습니까?")) return;
+
+			const username = currentUser.username || currentUser.id;
+			const nickname = currentUser.nickname || username;
+
+			if (type === 'TOUR') {
+				// 관광지 리뷰 삭제 API 호출
+				fetch(`/api/tour-reviews/${reviewId}?writer=${encodeURIComponent(nickname)}`, {
+					method: "DELETE"
+				})
+					.then(async res => {
+						const msg = await res.text();
+						if (!res.ok) throw new Error(msg);
+						alert(msg);
+						loadMyReviews();
+					})
+					.catch(err => alert(err.message || "관광지 리뷰 삭제에 실패했습니다."));
+			} else {
+				// 기존 맛집 리뷰 삭제
+				fetch(`/api/reviews/${reviewId}?username=${encodeURIComponent(username)}`, {
+					method: "DELETE"
+				})
+					.then(async res => {
+						const message = await res.text();
+						if (!res.ok) throw new Error(message);
+						alert(message);
+						loadMyReviews();
+						loadMyReactions();
+					})
+					.catch(error => alert(error.message || "리뷰 삭제에 실패했습니다."));
+			}
+		}
+
+		// 카카오맵 열기
+		function openRestaurant(url) {
+			if (!url) return;
+			window.open(url, "_blank");
+		}
+
+		// HTML 문자 이스케이프 처리
+		function escapeHtml(value) {
+			if (value === null || value === undefined) return "";
+			return String(value)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#039;");
+		}
+
+		// 비밀번호 확인 검증
+		function checkPassword() {
+			const password = document.getElementById("password").value;
+			const passwordConfirm = document.getElementById("passwordConfirm").value;
+			const message = document.getElementById("passwordMessage");
+
+			if (!passwordConfirm) {
+				message.innerText = "";
+				return;
+			}
+
+			if (password === passwordConfirm) {
+				message.innerText = "비밀번호가 일치합니다.";
+				message.style.color = "#2ba6cf";
+			} else {
+				message.innerText = "비밀번호가 일치하지 않습니다.";
+				message.style.color = "#ef6262";
+			}
+		}
+
+		// 토스트 메시지 표시
+		function showToast() {
+			const toast = document.getElementById("toast-message");
+			toast.classList.add("show");
+			setTimeout(() => {
+				toast.classList.remove("show");
+			}, 2500);
+		}
+
+		// 프로필 이미지 불러오기
+		function loadProfileImage() {
+			if (!currentUser) return;
+			const username = currentUser.username || currentUser.id;
+			if (!username) return;
+
+			const image = document.getElementById("profile-image");
+			const defaultIcon = document.getElementById("default-profile-icon");
+			const url = `/api/member/${encodeURIComponent(username)}/profile-image`;
+
+			image.src = url + "?t=" + new Date().getTime();
+
+			image.onload = function () {
+				image.style.display = "block";
+				defaultIcon.style.display = "none";
+			};
+
+			image.onerror = function () {
+				image.style.display = "none";
+				defaultIcon.style.display = "block";
+			};
+		}
+
+		// 프로필 이미지 업로드
+		function uploadProfileImage(input) {
+			if (!input.files || input.files.length === 0) return;
+			const file = input.files[0];
+
+			if (!file.type.startsWith("image/")) {
+				alert("이미지 파일만 선택해주세요.");
+				input.value = "";
+				return;
+			}
+
+			if (file.size > 5 * 1024 * 1024) {
+				alert("프로필 사진은 5MB 이하만 가능합니다.");
+				input.value = "";
+				return;
+			}
+
+			if (!currentUser) {
+				alert("로그인이 필요합니다.");
+				input.value = "";
+				return;
+			}
+
+			const username = currentUser.username || currentUser.id;
+			const formData = new FormData();
+			formData.append("file", file);
+
+			fetch(`/api/member/${encodeURIComponent(username)}/profile-image`, {
+				method: "PUT",
+				body: formData
+			})
+				.then(async response => {
+					const message = await response.text();
+					if (!response.ok) throw new Error(message);
+					return message;
+				})
+				.then(message => {
+					alert(message);
+					loadProfileImage();
+					input.value = "";
+				})
+				.catch(error => {
+					console.error(error);
+					alert(error.message || "프로필 사진 변경에 실패했습니다.");
+					input.value = "";
+				});
+		}
+
+		// 프로필 이미지 삭제
+		function deleteProfileImage() {
+			if (!currentUser) {
+				alert("로그인이 필요합니다.");
+				return;
+			}
+
+			const username = currentUser.username || currentUser.id;
+			if (!confirm("프로필 사진을 삭제하시겠습니까?")) return;
+
+			fetch(`/api/member/${encodeURIComponent(username)}/profile-image`, {
+				method: "DELETE"
+			})
+				.then(async response => {
+					const message = await response.text();
+					if (!response.ok) throw new Error(message);
+					return message;
+				})
+				.then(message => {
+					alert(message);
+					const image = document.getElementById("profile-image");
+					const defaultIcon = document.getElementById("default-profile-icon");
+
+					image.src = "";
+					image.style.display = "none";
+					defaultIcon.style.display = "block";
+				})
+				.catch(error => {
+					console.error(error);
+					alert(error.message || "프로필 사진 삭제에 실패했습니다.");
+				});
+		}
+	</script>
+
+</body>
+
+</html>

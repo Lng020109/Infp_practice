@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>맛따라 여행따라 - food & travel</title>
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="map.css">
+
+</head>
+
+<body>
+
+	<!-- 헤더 -->
+	<header>
+		<div class="header-inner">
+			<div class="brand-logo" onclick="location.reload()">
+				<div class="brand-icon">🍳</div>
+				<div class="brand-text">
+					<h1>맛따라 여행따라</h1>
+					<span>food & travel</span>
+				</div>
+			</div>
+			<div class="header-menu">
+				<!-- 찜한 맛집 -->
+				<div class="menu-item" onclick="openFavoriteModal()">
+					<i class="fa-regular fa-heart"></i>
+					<span>찜한 맛집</span>
+				</div>
+				<!-- 커뮤니티 -->
+				<div class="menu-item" onclick="location.href='/community'">
+					<i class="fa-regular fa-comments"></i>
+					<span>커뮤니티</span>
+				</div>
+				<!-- 마이페이지 버튼 (로그인 성공 시 표시됨) -->
+				<div class="menu-item" id="my-page-btn" style="display: none;" onclick="location.href='/mypage'">
+					<i class="fa-regular fa-user"></i>
+					<span>마이페이지</span>
+				</div>
+
+				<!-- 로그인 / 로그아웃 버튼 -->
+				<button class="login-btn" id="header-auth-btn" type="button" onclick="openAuthModal()">로그인</button>
+			</div>
+		</div>
+	</header>
+
+	<!-- 히어로 배너 & 검색 -->
+	<section class="hero-section">
+		<div class="hero-inner">
+			<div class="hero-left">
+				<span class="sub-tag">FOOD x TRAVEL</span>
+				<h2 class="hero-title">맛있는 곳을 찾아<br>여행을 떠나보세요!</h2>
+				<p class="hero-desc">가고 싶은 맛집을 검색하면<br>주변의 여행지와 날씨까지 같이 찾아드려요.</p>
+
+				<div class="search-box-wrap">
+					<i class="fa-solid fa-magnifying-glass"></i>
+					<input type="text" id="search-input" placeholder="지역 또는 맛집을 검색하세요."
+						onkeyup="if(event.key==='Enter') searchByInput()">
+					<button onclick="searchByInput()">검색</button>
+				</div>
+
+				<div class="popular-tags">
+					<span class="popular-label">인기 검색</span>
+					<div id="popular-keywords" style="display: inline-flex; gap: 8px;"></div>
+				</div>
+			</div>
+
+			<div class="hero-right">
+				<div class="twin-card">
+					<!-- 1. 날씨 위젯 -->
+					<div class="twin-col">
+						<div class="twin-icon" id="weather-icon-area">
+							<i class="fa-solid fa-cloud-sun" style="color:#2ba6cf;"></i>
+						</div>
+						<h4 id="weather-title">지금 날씨는?</h4>
+						<p id="weather-recommend-text">날씨 정보를<br>불러오는 중입니다...</p>
+						<button class="twin-btn" id="weather-recommend-btn" onclick="searchRecommendFood()">추천 음식
+							보기</button>
+					</div>
+
+					<!-- 2. 추천 맛집 -->
+					<div class="twin-col">
+						<div class="twin-icon"><i class="fa-solid fa-utensils"></i></div>
+						<h4>맛집 추천</h4>
+						<p>주변 맛집을<br>추천해드려요</p>
+						<button class="twin-btn" onclick="findNearbyRestaurants()">추천 맛집 더보기</button>
+					</div>
+
+					<!-- 3. 추천 코스 -->
+					<div class="twin-col">
+						<div class="twin-icon"><i class="fa-solid fa-plane-departure" style="color:#48a9e6;"></i></div>
+						<h4>오늘은 어디로 ?</h4>
+						<p>여행지 추천 코스를<br>확인해보세요!</p>
+						<button class="twin-btn" onclick="location.href='/trip'">추천 코스 더보기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 메인 레이아웃 -->
+	<main class="main-content">
+		<!-- 좌측 맛집 리스트 -->
+		<section class="content-left" id="content-left">
+			<div class="empty-placeholder" id="empty-state">
+				<div class="empty-icon"><i class="fa-solid fa-train"></i></div>
+				<h3>여행지를 검색해 보세요.</h3>
+				<p>지역이나 음식 이름을 입력하면<br>카카오맵에서 맛집을 찾아드려요.</p>
+			</div>
+			<div class="restaurant-list" id="restaurant-list" style="display: none;"></div>
+		</section>
+
+		<!-- 우측 기본 지도 및 선택 카드 -->
+		<section class="content-right">
+			<div id="map"></div>
+			<div class="selected-place-box" id="selected-info-box">
+				<div class="pin-icon"><i class="fa-solid fa-location-dot"></i></div>
+				<h3 id="selected-name">맛집을 선택해주세요.</h3>
+				<p id="selected-sub">선택한 맛집과 주변 여행지를 찾을 수 있어요.</p>
+				<!-- 버튼 그룹 (주변 관광지 + 리뷰) -->
+				<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+					<button class="tour-modal-open-btn" id="open-modal-btn" onclick="openTourModal()">🗺️ 주변 관광지 같이
+						보기</button>
+					<button class="tour-modal-open-btn" id="open-review-btn" onclick="openReviewModal()"
+						style="display: none; background: linear-gradient(135deg, #f59f00, #e67e22);">📝 리뷰
+						남기기/보기</button>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<!-- 푸터 -->
+	<footer>
+		<div class="footer-inner">
+			<div style="line-height: 1.5;">
+				<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+					<span style="font-size: 20px;">🍳</span>
+					<h3 style="margin: 0; font-size: 1.15rem;">맛따라 여행따라</h3>
+				</div>
+				<p style="margin: 6px 0; font-size: 13px; opacity: 0.95;">맛집을 따라 새로운 여행을 발견하세요.</p>
+				<p style="margin: 6px 0; font-size: 13px; opacity: 0.9;">
+					<a href="/terms.html" style="color: inherit; text-decoration: none;">이용약관</a> |
+					<a href="/privacy.html" style="color: inherit; text-decoration: none;">개인정보처리방침</a> |
+					<a href="/help.html" style="color: inherit; text-decoration: none;">고객센터</a> |
+					<a href="javascript:void(0)" onclick="openAiChatbot()"
+						style="color: inherit; text-decoration: none;">
+						<i class="fa-solid fa-robot"></i> AI 맛집/여행 상담봇 (24시간)
+					</a>
+				</p>
+				<p style="margin: 6px 0; font-size: 12px; opacity: 0.8;">© 2026 맛따라 여행따라. All rights reserved.</p>
+			</div>
+
+			<div style="text-align: center;">
+				<p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #e3f7ff;">다양한 소식을 받아보세요!</p>
+				<div style="display: flex; gap: 12px;">
+					<!-- 인스타그램 -->
+					<a href="https://www.instagram.com/food.n.travell?igsi=Z3lhcGhkYTMxdm5l&utm_source=qr"
+						target="_blank"
+						style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; font-size: 11px;">
+						<img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+							alt="Instagram"
+							style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+						<span style="opacity: 0.9;">Instagram ↗</span>
+					</a>
+
+					<!-- 유튜브 -->
+					<a href="https://www.youtube.com/@맛따라여행따라-m2z" target="_blank"
+						style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; font-size: 11px;">
+						<img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"
+							alt="YouTube"
+							style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+						<span style="opacity: 0.9;">YouTube ↗</span>
+					</a>
+					<!-- 블로그 -->
+					<a href="https://blog.naver.com/foodntravel-" target="_blank"
+						style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; font-size: 11px;">
+						<img src="https://blog.naver.com/favicon.ico" alt="Blog"
+							style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); background: #000000; padding: 7px; box-sizing: border-box;">
+						<span style="opacity: 0.9;">블로그 ↗</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- 주변 관광지 팝업 모달창 -->
+	<div class="modal-overlay" id="tour-modal" onclick="closeTourModal(event)">
+		<div class="modal-window" onclick="event.stopPropagation()">
+			<div class="modal-header">
+				<h3 id="modal-title"><i class="fa-solid fa-map-location-dot"></i> 맛집 주변 관광지 탐색</h3>
+				<button class="modal-close-btn" onclick="closeTourModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="modal-map-wrap">
+					<div class="marker-guide">
+						<div class="marker-guide-item"><span class="dot-blue"></span> 파란색: 선택한 맛집</div>
+						<div class="marker-guide-item"><span class="dot-yellow"></span> 노란색: 주변 관광지 (반경 3km)</div>
+					</div>
+					<div id="modal-map"></div>
+				</div>
+				<div class="modal-tour-list" id="modal-tour-list">
+					<p style="text-align:center; color:#888; padding:30px;">관광지를 탐색 중입니다...</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 리뷰 관리 팝업 모달창 -->
+	<div class="modal-overlay" id="review-modal" onclick="closeReviewModal(event)">
+		<div class="modal-window" onclick="event.stopPropagation()"
+			style="max-width: 600px; height: auto; max-height: 80vh;">
+			<div class="modal-header">
+				<h3 id="review-modal-title"><i class="fa-solid fa-comments"></i> 맛집 리뷰</h3>
+				<button class="modal-close-btn" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body" style="flex-direction: column; gap: 16px; overflow-y: auto;">
+
+				<!-- 리뷰 작성 영역 (로그인 시에만 활성화) -->
+				<div id="review-write-section"
+					style="background: #f8fbfd; padding: 16px; border-radius: 12px; border: 1px solid #e3edf5;">
+					<h4 style="font-size: 0.95rem; margin-bottom: 8px; color: #202b36;">✍️ 솔직한 리뷰를 남겨주세요 (AI 부적절 내용 필터링
+						적용)</h4>
+					<textarea id="review-content-input" placeholder="리뷰 내용을 입력하세요 (비속어, 광고성 내용 작성 불가)"
+						style="width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; resize: none; font-size: 0.9rem; outline: none;"></textarea>
+					<div
+						style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 8px;">
+
+						<button type="button" onclick="submitReview()"
+							style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+							리뷰 등록
+						</button>
+
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+
+				<!-- 비로그인 안내 -->
+				<div id="review-login-alert"
+					style="display: none; text-align: center; padding: 12px; background: #fff3cd; color: #856404; border-radius: 8px; font-size: 0.85rem; font-weight: bold;">
+					🔒 리뷰를 작성하려면 로그인이 필요합니다. 우측 상단에서 로그인해 주세요!
+				</div>
+
+				<hr style="border: 0; border-top: 1px solid #eef2f6;">
+
+				<!-- 리뷰 목록 영역 -->
+				<div>
+					<h4 style="font-size: 0.95rem; margin-bottom: 12px; color: #202b36;">💬 다른 사용자들의 리뷰</h4>
+					<div id="review-list-container"
+						style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
+						<p style="text-align: center; color: #888; font-size: 0.85rem;">리뷰를 불러오는 중...</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- 찜 목록 모달 팝업창 -->
+	<div class="modal-overlay" id="favorite-modal" onclick="closeFavoriteModal(event)">
+		<div class="favorite-modal-window" onclick="event.stopPropagation()">
+			<div class="modal-header">
+				<h3><i class="fa-solid fa-heart" style="color: #ef4444;"></i> 내가 찜한 맛집</h3>
+				<button class="modal-close-btn" onclick="closeFavoriteModal()"><i
+						class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="favorite-modal-body" id="favorite-list-content"></div>
+		</div>
+	</div>
+
+	<!-- 로그인 / 회원가입 / 계정 찾기 팝업 모달창 -->
+	<div class="modal-overlay" id="auth-modal" onclick="closeAuthModal(event)">
+		<div class="auth-modal-window" onclick="event.stopPropagation()">
+			<div class="modal-header">
+				<h3 id="auth-modal-title"><i class="fa-solid fa-user-lock"></i> 로그인</h3>
+				<button class="modal-close-btn" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+
+			<!-- 탭 전환 버튼 -->
+			<div class="auth-tabs" id="auth-main-tabs">
+				<button type="button" class="auth-tab-btn active" id="tab-login"
+					onclick="switchAuthTab('login')">로그인</button>
+				<button type="button" class="auth-tab-btn" id="tab-register"
+					onclick="switchAuthTab('register')">회원가입</button>
+			</div>
+
+			<!-- 1) 로그인 폼 -->
+			<div class="auth-form-wrap" id="login-form-area">
+				<div class="auth-input-group">
+					<label for="login-id">아이디</label>
+					<input type="text" id="login-id" placeholder="아이디를 입력하세요">
+				</div>
+				<div class="auth-input-group">
+					<label for="login-pw">비밀번호</label>
+					<input type="password" id="login-pw" placeholder="비밀번호를 입력하세요"
+						onkeyup="if(event.key==='Enter') requestLogin()">
+				</div>
+				<button type="button" class="auth-submit-btn" onclick="requestLogin()">로그인</button>
+
+				<!-- 아이디/비밀번호 찾기 링크 -->
+				<div style="display: flex; justify-content: center; gap: 14px; margin-top: 10px; font-size: 13px;">
+					<a href="javascript:void(0)" onclick="switchAuthTab('find-id')"
+						style="color: #64748b; text-decoration: none;">아이디 찾기</a>
+					<span style="color: #cbd5e1;">|</span>
+					<a href="javascript:void(0)" onclick="switchAuthTab('find-pw')"
+						style="color: #64748b; text-decoration: none;">비밀번호 찾기</a>
+				</div>
+			</div>
+
+			<!-- 2) 회원가입 폼 -->
+			<div class="auth-form-wrap" id="register-form-area" style="display: none;">
+				<div class="auth-input-group">
+					<label for="reg-nickname">닉네임</label>
+					<input type="text" id="reg-nickname" placeholder="사용할 닉네임을 입력하세요">
+				</div>
+				<div class="auth-input-group">
+					<label for="reg-id">아이디</label>
+					<input type="text" id="reg-id" placeholder="아이디를 입력하세요 (영문/숫자 4~12자)">
+				</div>
+				<div class="auth-input-group">
+					<label for="reg-pw">비밀번호</label>
+					<input type="password" id="reg-pw" placeholder="비밀번호를 입력하세요 (4~16자)">
+				</div>
+				<div class="auth-input-group">
+					<label for="reg-question">비밀번호 분실 질문</label>
+					<select id="reg-question"
+						style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; outline: none;">
+						<option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option>
+						<option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option>
+						<option value="나의 어릴 적 별명은?">나의 어릴 적 별명은?</option>
+						<option value="나의 보물 1호는?">나의 보물 1호는?</option>
+					</select>
+				</div>
+				<div class="auth-input-group">
+					<label for="reg-answer">답변</label>
+					<input type="text" id="reg-answer" placeholder="답변을 입력하세요"
+						onkeyup="if(event.key==='Enter') requestRegister()">
+				</div>
+				<button type="button" class="auth-submit-btn" onclick="requestRegister()">회원가입 완료</button>
+			</div>
+
+			<!-- 3) 아이디 찾기 폼 -->
+			<div class="auth-form-wrap" id="find-id-form-area" style="display: none;">
+				<div class="auth-input-group">
+					<label for="find-id-nickname">가입 시 등록한 닉네임</label>
+					<input type="text" id="find-id-nickname" placeholder="닉네임을 입력하세요">
+				</div>
+				<div class="auth-input-group">
+					<label for="find-id-question">보안 질문</label>
+					<select id="find-id-question"
+						style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; outline: none;">
+						<option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option>
+						<option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option>
+						<option value="나의 어릴 적 별명은?">나의 어릴 적 별명은?</option>
+						<option value="나의 보물 1호는?">나의 보물 1호는?</option>
+					</select>
+				</div>
+				<div class="auth-input-group">
+					<label for="find-id-answer">답변</label>
+					<input type="text" id="find-id-answer" placeholder="등록한 답변을 입력하세요"
+						onkeyup="if(event.key==='Enter') requestFindId()">
+				</div>
+				<button type="button" class="auth-submit-btn" onclick="requestFindId()">아이디 찾기</button>
+				<button type="button"
+					style="background: none; border: none; color: #64748b; font-size: 13px; cursor: pointer; margin-top: 5px;"
+					onclick="switchAuthTab('login')">← 로그인으로 돌아가기</button>
+			</div>
+
+			<!-- 4) 비밀번호 찾기 폼 -->
+			<div class="auth-form-wrap" id="find-pw-form-area" style="display: none;">
+				<div class="auth-input-group">
+					<label for="find-pw-id">아이디</label>
+					<input type="text" id="find-pw-id" placeholder="아이디를 입력하세요">
+				</div>
+				<div class="auth-input-group">
+					<label for="find-pw-question">보안 질문</label>
+					<select id="find-pw-question"
+						style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; outline: none;">
+						<option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option>
+						<option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option>
+						<option value="나의 어릴 적 별명은?">나의 어릴 적 별명은?</option>
+						<option value="나의 보물 1호는?">나의 보물 1호는?</option>
+					</select>
+				</div>
+				<div class="auth-input-group">
+					<label for="find-pw-answer">답변</label>
+					<input type="text" id="find-pw-answer" placeholder="등록한 답변을 입력하세요"
+						onkeyup="if(event.key==='Enter') requestFindPw()">
+				</div>
+				<button type="button" class="auth-submit-btn" onclick="requestFindPw()">비밀번호 찾기</button>
+				<button type="button"
+					style="background: none; border: none; color: #64748b; font-size: 13px; cursor: pointer; margin-top: 5px;"
+					onclick="switchAuthTab('login')">← 로그인으로 돌아가기</button>
+			</div>
+
+			<!-- 5) 비밀번호 재설정 폼 -->
+			<div class="auth-form-wrap" id="reset-pw-form-area" style="display: none;">
+				<div class="auth-input-group">
+					<label for="reset-pw-id">아이디</label>
+					<input type="text" id="reset-pw-id" readonly style="background-color: #f1f5f9; color: #64748b;">
+				</div>
+				<div class="auth-input-group">
+					<label for="reset-pw-current">현재 비밀번호</label>
+					<input type="password" id="reset-pw-current" placeholder="현재 비밀번호를 입력하세요">
+				</div>
+				<div class="auth-input-group">
+					<label for="reset-pw-new">새로운 비밀번호를 입력하세요</label>
+					<input type="password" id="reset-pw-new" placeholder="새 비밀번호를 입력하세요 (4~16자)">
+				</div>
+				<div class="auth-input-group">
+					<label for="reset-pw-confirm">새로운 비밀번호를 한 번 더 입력하세요</label>
+					<input type="password" id="reset-pw-confirm" placeholder="새 비밀번호를 한 번 더 입력하세요"
+						onkeyup="if(event.key==='Enter') requestDirectResetPw()">
+				</div>
+				<button type="button" class="auth-submit-btn" onclick="requestDirectResetPw()">비밀번호 변경하기</button>
+				<button type="button"
+					style="background: none; border: none; color: #64748b; font-size: 13px; cursor: pointer; margin-top: 5px;"
+					onclick="switchAuthTab('login')">← 로그인으로 돌아가기</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- AI 챗봇 패널 -->
+	<div id="ai-chat-panel"
+		style="display: none; position: fixed; right: 25px; bottom: 25px; width: 360px; height: 520px; background: white; border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.25); z-index: 10000; flex-direction: column; overflow: hidden; border: 1px solid #dbe5ee;">
+		<div
+			style="background: linear-gradient(135deg, #2ba6cf, #1f8ab0); color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+			<div style="display: flex; align-items: center; gap: 8px;">
+				<span style="font-size: 20px;">🤖</span>
+				<div>
+					<strong style="font-size: 15px; display: block;">맛따라 AI 가이드</strong>
+					<small style="font-size: 11px; opacity: 0.85;">무엇이든 물어보세요!</small>
+				</div>
+			</div>
+			<button onclick="closeAiChatbot()"
+				style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+		</div>
+
+		<div id="ai-chat-messages"
+			style="flex: 1; padding: 16px; overflow-y: auto; background: #f8fbfd; display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+			<div
+				style="background: white; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 12px; max-width: 85%; line-height: 1.5; color: #334155;">
+				안녕하세요! 여행지와 맛집을 추천해 드리는 <strong>맛따라 AI 가이드</strong>입니다. 🗺️<br><br>
+				예: <em>"대전 1박 2일 데이트 코스 추천해줘", "수원 비 오는 날 가기 좋은 실내 카페 알려줘"</em>
+			</div>
+		</div>
+
+		<div style="padding: 12px; background: white; border-top: 1px solid #eef2f6; display: flex; gap: 8px;">
+			<input type="text" id="ai-chat-input" placeholder="질문을 입력하세요..."
+				onkeydown="if(event.key==='Enter') sendAiMessage()"
+				style="flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 13px;">
+			<button onclick="sendAiMessage()"
+				style="background: #2ba6cf; color: white; border: none; padding: 0 16px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+				<i class="fa-solid fa-paper-plane"></i>
+			</button>
+		</div>
+	</div>
+
+	<!-- 🎵 여행 플레이리스트 -->
+	<div id="travel-playlist-widget">
+
+		<!-- 플레이리스트 버튼 -->
+		<button id="playlist-toggle-btn" onclick="toggleTravelPlaylist()" aria-label="여행 플레이리스트">
+			<i class="fa-solid fa-headphones"></i>
+			<span class="playlist-music-dot"></span>
+		</button>
+
+		<!-- 플레이리스트 패널 -->
+		<div id="travel-playlist-panel">
+
+			<div class="playlist-header">
+				<div class="playlist-title-area">
+					<div class="playlist-title-icon">
+						<i class="fa-solid fa-music"></i>
+					</div>
+
+					<div>
+						<h3>오늘의 여행 플레이리스트</h3>
+						<p>여행하면서 듣기 좋은 신나는 음악 🎵</p>
+					</div>
+				</div>
+
+				<button class="playlist-close-btn" onclick="toggleTravelPlaylist()">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+			</div>
+
+			<!-- 유튜브 플레이어 -->
+			<div class="playlist-player-wrap">
+				<div id="playlist-loading">
+					<i class="fa-solid fa-spinner fa-spin"></i>
+					<span>오늘의 플레이리스트를 찾는 중...</span>
+				</div>
+
+				<iframe id="youtube-playlist-player" title="오늘의 여행 플레이리스트" src=""
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allowfullscreen>
+				</iframe>
+			</div>
+
+			<!-- 플레이리스트 정보 -->
+			<div class="playlist-info">
+				<div class="playlist-info-main">
+					<span class="playlist-small-icon">
+						<i class="fa-solid fa-location-dot"></i>
+					</span>
+
+					<div>
+						<strong id="playlist-name">오늘은 어디로 떠나볼까요?</strong>
+						<span id="playlist-channel">YouTube에서 추천 음악을 가져오고 있어요.</span>
+					</div>
+				</div>
+
+				<button onclick="openCurrentYouTubePlaylist()" class="playlist-youtube-btn">
+					<i class="fa-brands fa-youtube"></i>
+				</button>
+			</div>
+
+			<!-- 곡 목록 -->
+			<div class="playlist-track-area">
+				<div class="playlist-track-title">
+					<span>🎧 오늘의 추천곡</span>
+					<span id="playlist-track-count">0곡</span>
+				</div>
+
+				<div id="playlist-track-list">
+					<div class="playlist-empty">
+						음악 목록을 불러오는 중...
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 카카오 지도 SDK -->
+	<script type="text/javascript"
+		src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1adedc9e3c5d08a47849648c7f6a8864&libraries=services"></script>
+
+	<!-- 분리된 자바스크립트 파일 로드 -->
+	<script src="map.js" defer></script>
+</body>
+
+</html>

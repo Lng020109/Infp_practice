@@ -1,0 +1,244 @@
+package com.yse.dev.Community.Handler;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yse.dev.Community.Entity.ChatMessage;
+import com.yse.dev.Community.Entity.ChatMessageRepository;
+import com.yse.dev.Community.Service.CommunityService;
+import com.yse.dev.Member.Member;
+import com.yse.dev.Member.MemberRepository;
+
+@Component
+public class ChatWebSocketHandler extends TextWebSocketHandler {
+
+    private final Set<WebSocketSession> sessions =
+            new CopyOnWriteArraySet<>();
+
+    private final ObjectMapper objectMapper =
+            new ObjectMapper();
+
+    private final MemberRepository memberRepository;
+
+    private final ChatMessageRepository chatMessageRepository;
+    
+    private final CommunityService communityService;
+
+    private static final DateTimeFormatter TIME_FORMAT =
+            DateTimeFormatter.ofPattern("HH:mm");
+
+    public ChatWebSocketHandler(
+
+            MemberRepository memberRepository,
+
+            ChatMessageRepository chatMessageRepository,
+
+            CommunityService communityService) {
+
+        this.memberRepository = memberRepository;
+
+        this.chatMessageRepository = chatMessageRepository;
+
+        this.communityService = communityService;
+
+    }
+
+    @Override
+    public void afterConnectionEstablished(
+            WebSocketSession session) {
+
+        sessions.add(session);
+
+        System.out.println(
+                "채팅 연결됨: " + session.getId()
+        );
+    }
+
+    @Override
+    protected void handleTextMessage(
+            WebSocketSession session,
+            TextMessage message) throws Exception {
+
+        JsonNode data =
+                objectMapper.readTree(message.getPayload());
+
+        String type =
+                data.path("type").asText();
+
+        // ==========================================
+        // 입장
+        // ==========================================
+
+        if ("join".equals(type)) {
+
+            String username =
+                    data.path("username")
+                            .asText("");
+
+            if (!username.isBlank()) {
+
+                Member member =
+                        memberRepository
+                                .findByUsername(username)
+                                .orElse(null);
+
+                if (member != null) {
+
+                    session.getAttributes()
+                            .put(
+                                    "username",
+                                    member.getUsername()
+                            );
+
+                    session.getAttributes()
+                            .put(
+                                    "nickname",
+                                    member.getNickname()
+                            );
+                }
+            }
+
+            return;
+        }
+
+        // ==========================================
+        // 채팅 메시지
+        // ==========================================
+
+        if (!"message".equals(type)) {
+            return;
+        }
+
+        // 로그인한 계정 ID
+        String username =
+                data.path("username")
+                        .asText("");
+
+        // 화면에 표시할 닉네임
+        String nickname = "여행자";
+
+        if (!username.isBlank()) {
+
+            Member member =
+                    memberRepository
+                            .findByUsername(username)
+                            .orElse(null);
+
+            if (member != null) {
+                nickname = member.getNickname();
+            }
+        }
+
+        String chatMessage =
+                data.path("message")
+                        .asText("");
+
+        if (chatMessage.isBlank()) {
+            return;
+        }
+        
+        try {
+        	communityService.validateChatContent(chatMessage);
+        } catch (IllegalArgumentException e) {
+            ObjectNode errorResponse = objectMapper.createObjectNode();
+            errorResponse.put("type", "error");
+            errorResponse.put("message", e.getMessage());
+
+            session.sendMessage(
+                    new TextMessage(
+                            objectMapper.writeValueAsString(errorResponse)
+                    )
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // DB에 채팅 저장
+        // ==========================================
+
+        ChatMessage savedMessage =
+                new ChatMessage();
+
+        savedMessage.setUsername(username);
+        savedMessage.setNickname(nickname);
+        savedMessage.setMessage(chatMessage);
+        savedMessage.setCreatedAt(
+                LocalDateTime.now()
+        );
+
+        chatMessageRepository.save(savedMessage);
+
+        // ==========================================
+        // 현재 시간
+        // ==========================================
+
+        String time =
+                TIME_FORMAT.format(
+                        savedMessage.getCreatedAt()
+                );
+
+        // ==========================================
+        // 모든 접속자에게 전송
+        // ==========================================
+
+        ObjectNode response =
+                objectMapper.createObjectNode();
+
+        response.put("type", "message");
+
+        response.put("username", username);
+
+        response.put("nickname", nickname);
+
+        response.put("message", chatMessage);
+
+        response.put("time", time);
+
+        String responseJson =
+                objectMapper.writeValueAsString(response);
+
+        for (WebSocketSession target : sessions) {
+
+            if (target.isOpen()) {
+
+                try {
+
+                    target.sendMessage(
+                            new TextMessage(responseJson)
+                    );
+
+                } catch (Exception e) {
+
+                    System.out.println(
+                            "메시지 전송 실패: "
+                                    + e.getMessage()
+                    );
+                }
+            }
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(
+            WebSocketSession session,
+            CloseStatus status) {
+
+        sessions.remove(session);
+
+        System.out.println(
+                "채팅 연결 종료: " + session.getId()
+        );
+    }
+}

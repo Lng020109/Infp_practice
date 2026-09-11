@@ -1,0 +1,365 @@
+package com.yse.dev.community.Service;
+
+import com.yse.dev.community.Entity.Community;
+import com.yse.dev.community.Entity.CommunityRepository;
+import com.yse.dev.community.Entity.CommunityReplyRepository;
+import com.yse.dev.member.Entity.Member;
+import com.yse.dev.member.Entity.MemberRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class CommunityService {
+
+    private final CommunityRepository communityRepository;
+    private final MemberRepository memberRepository;
+    private final CommunityReplyRepository replyRepository;
+
+    @Value("${gemini.api.key:}")
+    private String geminiApiKey;
+
+    private final List<String> forbiddenWords = List.of(
+            "바보","멍청이", "존나", "씨발", "병신", "개새끼", "쓰레기", "죽어", "꺼져"
+    );
+
+    public CommunityService(
+            CommunityRepository communityRepository,
+            MemberRepository memberRepository,
+            CommunityReplyRepository replyRepository) {
+
+        this.communityRepository = communityRepository;
+        this.memberRepository = memberRepository;
+        this.replyRepository = replyRepository;
+    }
+
+
+    // ==========================================
+    // 게시글 전체 조회
+    // ==========================================
+    public List<Community> getAllPosts() {
+
+        List<Community> posts = communityRepository.findAll();
+
+        for (Community post : posts) {
+            if (post.getUsername() != null) {
+                memberRepository.findByUsername(post.getUsername())
+                        .ifPresent(member -> {
+                            post.setAuthor(member.getNickname());
+                            post.setUsername(member.getUsername());
+                        });
+            }
+        }
+
+        return posts;
+    }
+
+
+    // ==========================================
+    // 작성자 기준 작성 글 목록 조회
+    // ==========================================
+    public List<Community> getMyPosts(String username) {
+
+        List<Community> posts =
+                communityRepository.findByUsername(username);
+
+        for (Community post : posts) {
+            if (post.getUsername() != null) {
+                memberRepository.findByUsername(post.getUsername())
+                        .ifPresent(member -> {
+                            post.setAuthor(member.getNickname());
+                            post.setUsername(member.getUsername());
+                        });
+            }
+        }
+
+        return posts;
+    }
+
+
+    // ==========================================
+    // 게시글 작성
+    // ==========================================
+    public Community createPost(Community community) {
+
+        // 제목 필터
+        validateContent(community.getTitle());
+
+        // 내용 필터
+        validateContent(community.getContent());
+
+        Member member = memberRepository
+                .findByUsername(community.getAuthor())
+                .orElseThrow(() ->
+                        new RuntimeException("존재하지 않는 회원입니다.")
+                );
+
+        community.setAuthor(member.getNickname());
+        community.setUsername(member.getUsername());
+
+        // 카테고리가 없으면 여행으로 설정
+        if (community.getCategory() == null ||
+                community.getCategory().isBlank()) {
+
+            community.setCategory("travel");
+        }
+
+        return communityRepository.save(community);
+    }
+    
+
+    // ==========================================
+    // 게시글 수정용 필터
+    // ==========================================
+    public void validatePostContent(
+            String title,
+            String content) {
+
+        validateContent(title);
+        validateContent(content);
+    }
+
+
+    // ==========================================
+    // 댓글용 필터
+    // ==========================================
+    public void validateChatContent(String content) {
+        checkForbiddenWords(content);
+    }
+
+
+    // ==========================================
+    // 금칙어 + Gemini 검사
+    // ==========================================
+    private void validateContent(String content) {
+
+        if (content == null || content.isBlank()) {
+            return;
+        }
+
+        // 1차: 금칙어 검사
+        checkForbiddenWords(content);
+
+        // 2차: Gemini 검사
+        if (isContentInappropriate(content)) {
+
+            throw new IllegalArgumentException(
+                    "부적절한 내용이 포함되어 있어 등록할 수 없습니다."
+            );
+        }
+    }
+
+
+    // ==========================================
+    // 금칙어 직접 검사
+    // ==========================================
+    private void checkForbiddenWords(String content) {
+
+        String normalizedContent =
+                content.replaceAll("\\s+", "")
+                        .toLowerCase();
+
+        for (String word : forbiddenWords) {
+
+            String normalizedWord =
+                    word.replaceAll("\\s+", "")
+                            .toLowerCase();
+
+            if (normalizedContent.contains(normalizedWord)) {
+
+                throw new IllegalArgumentException(
+                        "부적절한 단어('" + word +
+                                "')가 포함되어 있어 등록할 수 없습니다."
+                );
+            }
+        }
+    }
+
+
+    // ==========================================
+    // Gemini AI 검사
+    // ==========================================
+    private boolean isContentInappropriate(String content) {
+
+        if (geminiApiKey == null ||
+                geminiApiKey.isBlank()) {
+
+            return false;
+        }
+
+        try {
+
+            RestTemplate restTemplate =
+                    new RestTemplate();
+
+            String url =
+                    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key="
+                            + geminiApiKey;
+
+            HttpHeaders headers =
+                    new HttpHeaders();
+
+            headers.setContentType(
+                    MediaType.APPLICATION_JSON
+            );
+
+            String prompt =
+                    "다음 문장에 욕설, 비속어, 광고성 내용 또는 유해한 내용이 포함되어 있는지 판단해줘. "
+                            + "반드시 true 또는 false 중 하나만 답변해. "
+                            + "문장: " + content;
+
+            Map<String, Object> part =
+                    new HashMap<>();
+
+            part.put("text", prompt);
+
+            Map<String, Object> contentMap =
+                    new HashMap<>();
+
+            contentMap.put(
+                    "parts",
+                    List.of(part)
+            );
+
+            Map<String, Object> requestBody =
+                    new HashMap<>();
+
+            requestBody.put(
+                    "contents",
+                    List.of(contentMap)
+            );
+
+            HttpEntity<Map<String, Object>> request =
+                    new HttpEntity<>(
+                            requestBody,
+                            headers
+                    );
+
+            Map<String, Object> response =
+                    restTemplate.postForObject(
+                            url,
+                            request,
+                            Map.class
+                    );
+
+            String responseText =
+                    extractTextFromResponse(response);
+
+            return "true".equalsIgnoreCase(
+                    responseText.trim()
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Gemini 금칙어 검사 실패: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
+
+
+    // ==========================================
+    // Gemini 응답에서 text 추출
+    // ==========================================
+    @SuppressWarnings("unchecked")
+    private String extractTextFromResponse(
+            Map<String, Object> responseBody) {
+
+        if (responseBody == null) {
+            return "";
+        }
+
+        try {
+
+            List<Map<String, Object>> candidates =
+                    (List<Map<String, Object>>)
+                            responseBody.get("candidates");
+
+            if (candidates == null ||
+                    candidates.isEmpty()) {
+
+                return "";
+            }
+
+            Map<String, Object> candidate =
+                    candidates.get(0);
+
+            Map<String, Object> content =
+                    (Map<String, Object>)
+                            candidate.get("content");
+
+            if (content == null) {
+                return "";
+            }
+
+            List<Map<String, Object>> parts =
+                    (List<Map<String, Object>>)
+                            content.get("parts");
+
+            if (parts == null ||
+                    parts.isEmpty()) {
+
+                return "";
+            }
+
+            Object text =
+                    parts.get(0).get("text");
+
+            return text != null
+                    ? text.toString()
+                    : "";
+
+        } catch (Exception e) {
+
+            return "";
+        }
+    }
+
+
+    // ==========================================
+    // 게시글 삭제
+    // ==========================================
+    @Transactional
+    public void deletePost(Long id) {
+
+        // 해당 게시글의 답글을 먼저 삭제
+        replyRepository.deleteByPostId(id);
+
+        // 게시글 삭제
+        communityRepository.deleteById(id);
+    }
+
+
+    // ==========================================
+    // 게시글 조회
+    // ==========================================
+    public Community getPost(Long id) {
+
+        return communityRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "게시글이 없습니다."
+                        )
+                );
+    }
+
+
+    // ==========================================
+    // 게시글 저장
+    // ==========================================
+    public Community savePost(Community post) {
+
+        return communityRepository.save(post);
+    }
+}
