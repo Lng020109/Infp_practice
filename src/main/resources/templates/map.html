@@ -105,6 +105,22 @@
 	<main class="main-content">
 		<!-- 좌측 맛집 리스트 -->
 		<section class="content-left" id="content-left">
+			<!-- [추가] 배민 스타일 맛집 정렬 바 -->
+			<div id="rest-filter-bar"
+				style="display: none; justify-content: space-between; align-items: center; padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #edf2f7;">
+				<span id="rest-total-count" style="font-size: 13px; color: #64748b; font-weight: bold;">검색 결과</span>
+				<div style="display: flex; align-items: center; gap: 6px;">
+					<i class="fa-solid fa-arrow-down-wide-short" style="font-size: 12px; color: #2ba6cf;"></i>
+					<select id="rest-sort-select" onchange="sortAndRenderRestaurants()"
+						style="padding: 5px 8px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 12px; color: #1e293b; font-weight: 700; background: #f8fafc; outline: none; cursor: pointer;">
+						<option value="default">기본순</option>
+						<option value="likes">👍 좋아요 많은 순</option>
+						<option value="reviews">📝 리뷰 많은 순</option>
+						<option value="favorites">❤️ 찜 많은 순</option>
+					</select>
+				</div>
+			</div>
+
 			<div class="empty-placeholder" id="empty-state">
 				<div class="empty-icon"><i class="fa-solid fa-train"></i></div>
 				<h3>여행지를 검색해 보세요.</h3>

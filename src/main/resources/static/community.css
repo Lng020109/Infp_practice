@@ -38,7 +38,338 @@ body {
             #f4f8fa 100%
         );
 }
+/* =========================================================
+   ☁️ 좌우 하늘 여행 장식
+   게시글 / 배너 크기에는 영향 없음
+========================================================= */
 
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------
+   왼쪽 큰 구름
+--------------------------------------------------------- */
+
+body::before {
+    content: "";
+    position: fixed;
+    left: -90px;
+    top: 24%;
+    width: 300px;
+    height: 180px;
+
+    background:
+        radial-gradient(
+            circle at 28% 68%,
+            rgba(255,255,255,0.92) 0 42px,
+            transparent 43px
+        ),
+        radial-gradient(
+            circle at 48% 50%,
+            rgba(255,255,255,0.94) 0 58px,
+            transparent 59px
+        ),
+        radial-gradient(
+            circle at 70% 68%,
+            rgba(255,255,255,0.9) 0 43px,
+            transparent 44px
+        );
+
+    opacity: 0.75;
+    z-index: 0;
+    pointer-events: none;
+
+    filter: blur(0.3px);
+
+    animation: cloudFloatLeft 7s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   오른쪽 큰 구름 + 작은 구름 분위기
+--------------------------------------------------------- */
+
+body::after {
+    content: "☁";
+    position: fixed;
+    right: -25px;
+    top: 48%;
+
+    color: rgba(255,255,255,0.78);
+    font-size: 145px;
+    line-height: 1;
+
+    opacity: 0.8;
+    z-index: 0;
+    pointer-events: none;
+
+    filter: blur(0.3px);
+
+    animation: cloudFloatRight 8s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   커뮤니티 전체를 장식보다 위로
+--------------------------------------------------------- */
+
+.community-container {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* ---------------------------------------------------------
+   비행기
+--------------------------------------------------------- */
+
+.community-header::after {
+    content: "✈";
+
+    position: fixed;
+
+    left: 50%;
+    top: 20%;
+
+    font-size: 30px;
+    color: #82cde9;
+    opacity: 0.72;
+
+    transform: translateX(-600px) rotate(-12deg);
+
+    pointer-events: none;
+    z-index: 0;
+
+    filter:
+        drop-shadow(0 5px 8px rgba(70,160,195,0.12));
+
+    animation: planeMove 9s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   비행기 지나간 흔적
+--------------------------------------------------------- */
+
+.community-header::before {
+    content: "";
+    position: fixed;
+
+    left: calc(50% + 390px);
+    top: calc(20% + 20px);
+
+    width: 115px;
+    height: 55px;
+
+    border-top: 2px dashed rgba(126,201,227,0.35);
+    border-radius: 50%;
+
+    transform: scaleX(-1) rotate(-8deg);
+
+    pointer-events: none;
+    z-index: 1;
+
+    animation: trailMove 9s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   작은 구름 1
+--------------------------------------------------------- */
+
+.category-area::before {
+    content: "☁";
+    position: fixed;
+
+    left: 10%;
+    top: 17%;
+
+    color: rgba(255,255,255,0.7);
+    font-size: 48px;
+
+    pointer-events: none;
+    z-index: -1;
+
+    animation: smallCloud1 10s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   작은 구름 2
+--------------------------------------------------------- */
+
+.category-area::after {
+    content: "☁";
+    position: fixed;
+
+    right: 10%;
+    top: 72%;
+
+    color: rgba(255,255,255,0.65);
+    font-size: 58px;
+
+    pointer-events: none;
+    z-index: -1;
+
+    animation: smallCloud2 12s ease-in-out infinite;
+}
+
+
+/* ---------------------------------------------------------
+   ✦ 반짝이는 포인트
+--------------------------------------------------------- */
+
+.write-area::before {
+    content: "✦";
+    position: fixed;
+
+    left: 14%;
+    top: 34%;
+
+    color: #9edff5;
+    font-size: 19px;
+
+    opacity: 0.65;
+    pointer-events: none;
+
+    animation: sparkle 3s ease-in-out infinite;
+}
+
+.write-area::after {
+    content: "✦";
+    position: fixed;
+
+    right: 15%;
+    top: 57%;
+
+    color: #a9e3f5;
+    font-size: 15px;
+
+    opacity: 0.7;
+    pointer-events: none;
+
+    animation: sparkle 4s ease-in-out infinite reverse;
+}
+
+
+/* =========================================================
+   애니메이션
+========================================================= */
+
+@keyframes cloudFloatLeft {
+
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+
+    50% {
+        transform: translateX(18px) translateY(-8px);
+    }
+
+}
+
+
+@keyframes cloudFloatRight {
+
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-18px) translateY(-10px);
+    }
+
+}
+
+
+@keyframes planeMove {
+
+    0% {
+        transform: translateX(-600px) rotate(-12deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.72;
+    }
+
+    50% {
+        transform: translateX(0) rotate(-12deg);
+        opacity: 0.72;
+    }
+
+    90% {
+        opacity: 0.72;
+    }
+
+    100% {
+        transform: translateX(600px) rotate(-12deg);
+        opacity: 0;
+    }
+
+}
+
+
+@keyframes trailMove {
+
+    0% {
+        opacity: 0;
+        transform: translateX(0) rotate(-8deg);
+    }
+
+    40% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-110px) rotate(-8deg);
+    }
+
+}
+
+
+@keyframes smallCloud1 {
+
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(25px);
+    }
+
+}
+
+
+@keyframes smallCloud2 {
+
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-30px);
+    }
+
+}
+
+
+@keyframes sparkle {
+
+    0%, 100% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.35;
+    }
+
+    50% {
+        transform: scale(1.25) rotate(20deg);
+        opacity: 0.9;
+    }
+
+}
 button,
 input,
 textarea,
@@ -1021,4 +1352,494 @@ button {
     .modal-box {
         padding: 19px;
     }
+}
+/* =========================================================
+   🌷 커뮤니티 귀여운 여행 감성 추가 디자인
+   기존 HTML / JS / 기능 변경 없음
+   ========================================================= */
+
+/* 전체 배경을 조금 더 포근하게 */
+body {
+    background:
+        radial-gradient(
+            circle at 8% 12%,
+            rgba(255, 224, 157, 0.35) 0,
+            transparent 120px
+        ),
+        radial-gradient(
+            circle at 92% 28%,
+            rgba(184, 231, 255, 0.45) 0,
+            transparent 150px
+        ),
+        linear-gradient(
+            180deg,
+            #eefaff 0%,
+            #f8fcff 45%,
+            #fffdf8 100%
+        );
+}
+
+
+/* =========================================================
+   🏠 상단
+   ========================================================= */
+
+.logo-mark {
+    border-radius: 16px;
+    transform: rotate(-2deg);
+}
+
+.home-btn {
+    transition: 0.2s ease;
+}
+
+.home-btn:hover {
+    transform: rotate(-8deg) scale(1.08);
+    background: #f1fbff;
+    border-color: #bfe8f8;
+    color: var(--blue);
+}
+
+
+/* =========================================================
+   ✈️ 여행 배너
+   ========================================================= */
+
+.community-intro {
+    border-radius: 26px;
+    box-shadow:
+        0 15px 35px rgba(35, 156, 207, 0.18);
+}
+
+/* 기존 아이콘을 조금 더 귀엽게 */
+.hero-icons {
+    font-size: 25px;
+    gap: 13px;
+}
+
+.hero-icons span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 13px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   🔎 검색창
+   ========================================================= */
+
+.search-box {
+    border-radius: 18px;
+    border-color: #d8edf5;
+    box-shadow:
+        0 6px 18px rgba(40, 130, 160, 0.06);
+    transition: 0.2s ease;
+}
+
+.search-box:focus-within {
+    border-color: #8ed5f0;
+    box-shadow:
+        0 0 0 4px rgba(53,169,232,0.08),
+        0 8px 22px rgba(40,130,160,0.08);
+}
+
+.sort-select {
+    border-radius: 18px;
+}
+
+
+/* =========================================================
+   🏷️ 카테고리 버튼
+   ========================================================= */
+
+.category-btn {
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.category-btn:hover {
+    transform: translateY(-2px);
+    background: #f5fcff;
+}
+
+.category-btn.active {
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   🔥 인기 게시글
+   ========================================================= */
+
+.section-label strong::before {
+    content: "🌟 ";
+}
+
+.popular-card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.popular-card::after {
+    content: "✦";
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    color: #ffd76a;
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+.popular-card:hover {
+    transform: translateY(-4px) rotate(-0.5deg);
+    box-shadow:
+        0 12px 25px rgba(40,130,160,0.10);
+}
+
+.popular-rank {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 10px;
+    background: #eaf8ff;
+}
+
+
+/* =========================================================
+   📝 글쓰기
+   ========================================================= */
+
+.list-title::before {
+    content: "🌴 ";
+}
+
+.write-btn {
+    border-radius: 18px;
+    background:
+        linear-gradient(
+            135deg,
+            #17394d,
+            #24627d
+        );
+    transition: all 0.2s ease;
+}
+
+.write-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 10px 22px rgba(18,52,74,0.20);
+}
+
+
+/* =========================================================
+   🍀 게시글 카드
+   ========================================================= */
+
+.post-list {
+    gap: 13px;
+}
+
+.post-card {
+    border-radius: 21px;
+    padding: 19px;
+    border-color: #e0edf2;
+    box-shadow:
+        0 6px 18px rgba(30,90,110,0.045);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* 카드 왼쪽에 귀여운 포인트 */
+.post-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18px;
+    bottom: 18px;
+    width: 4px;
+    border-radius: 0 8px 8px 0;
+    background: #cceefa;
+    transition: 0.2s ease;
+}
+
+.post-card:hover::before {
+    background: #ffca70;
+}
+
+.post-card:hover {
+    transform: translateY(-3px);
+    border-color: #c9e8f4;
+    box-shadow:
+        0 12px 28px rgba(33,126,170,0.10);
+}
+
+
+/* =========================================================
+   👤 프로필
+   ========================================================= */
+
+.user-icon {
+    border: 2px solid white;
+    box-shadow:
+        0 3px 9px rgba(40,120,150,0.12);
+}
+
+.post-category {
+    border-radius: 12px;
+    background: #edf9fd;
+    color: #4d91aa;
+}
+
+
+/* =========================================================
+   💬 댓글 표시
+   ========================================================= */
+
+.post-footer .comment {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 7px;
+    border-radius: 9px;
+    background: #effaff;
+}
+
+
+/* =========================================================
+   💙 채팅 버튼
+   ========================================================= */
+
+.chat-fab {
+    width: 62px;
+    height: 62px;
+    border: 4px solid rgba(255,255,255,0.75);
+    box-shadow:
+        0 10px 28px rgba(25,142,205,0.28);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.chat-fab:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow:
+        0 14px 32px rgba(25,142,205,0.35);
+}
+
+
+/* =========================================================
+   🌼 빈 화면
+   ========================================================= */
+
+.empty {
+    border-radius: 22px;
+    box-shadow:
+        0 7px 20px rgba(30,90,110,0.05);
+}
+
+
+/* =========================================================
+   💌 모달
+   ========================================================= */
+
+.modal-box {
+    border-radius: 25px;
+}
+
+.close-btn {
+    transition: 0.2s ease;
+}
+
+.close-btn:hover {
+    transform: rotate(90deg);
+    background: #eaf8ff;
+    color: var(--blue);
+}
+
+
+/* =========================================================
+   💬 채팅창
+   ========================================================= */
+
+.chat-panel {
+    border-radius: 25px;
+    box-shadow:
+        0 20px 55px rgba(15,65,90,0.18);
+}
+
+.chat-head {
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-head::after {
+    content: "☁️  ✦";
+    position: absolute;
+    right: 18px;
+    top: 13px;
+    font-size: 19px;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.bubble {
+    border-radius: 15px;
+}
+
+.message.me .bubble {
+    border-radius: 15px 15px 4px 15px;
+}
+
+.message:not(.me) .bubble {
+    border-radius: 15px 15px 15px 4px;
+}
+
+
+/* =========================================================
+   📱 모바일
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .community-intro {
+        border-radius: 21px;
+    }
+
+    .hero-icons {
+        font-size: 20px;
+    }
+
+    .hero-icons span {
+        width: 31px;
+        height: 31px;
+    }
+
+    .post-card {
+        border-radius: 18px;
+    }
+
+    .chat-fab {
+        width: 58px;
+        height: 58px;
+    }
+
+}
+/* =========================================================
+   ☁️ 여행 하늘 장식
+   기존 HTML / JS / 게시글 크기 변경 없음
+========================================================= */
+
+/* 장식이 콘텐츠보다 뒤에 있도록 */
+body {
+    position: relative;
+}
+
+/* 왼쪽 큰 구름 */
+body::before {
+    content: "☁";
+    position: fixed;
+    left: 4%;
+    top: 48%;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 105px;
+    line-height: 1;
+    filter: blur(0.3px);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 오른쪽 구름 */
+body::after {
+    content: "☁";
+    position: fixed;
+    right: 4%;
+    top: 30%;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 82px;
+    line-height: 1;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 실제 커뮤니티 내용은 장식보다 위 */
+.community-container {
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------------------------------------------------------
+   ✈️ 비행기
+--------------------------------------------------------- */
+
+.community-container::before {
+    content: "✈";
+    position: fixed;
+    right: 9%;
+    top: 42%;
+    color: rgba(53, 169, 232, 0.20);
+    font-size: 42px;
+    transform: rotate(-10deg);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ---------------------------------------------------------
+   ✨ 작은 별 / 반짝임
+--------------------------------------------------------- */
+
+.community-container::after {
+    content: "✦";
+    position: fixed;
+    left: 10%;
+    top: 33%;
+    color: rgba(53, 169, 232, 0.28);
+    font-size: 25px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ---------------------------------------------------------
+   ☁️ 추가 작은 구름 느낌
+--------------------------------------------------------- */
+
+@media (min-width: 601px) {
+
+    body {
+        background:
+            radial-gradient(
+                circle at 8% 35%,
+                rgba(255,255,255,0.95) 0,
+                rgba(255,255,255,0.65) 5%,
+                transparent 12%
+            ),
+            radial-gradient(
+                circle at 93% 65%,
+                rgba(255,255,255,0.90) 0,
+                rgba(255,255,255,0.60) 5%,
+                transparent 12%
+            ),
+            radial-gradient(
+                circle at 10% 0%,
+                #dff6ff 0,
+                transparent 27%
+            ),
+            linear-gradient(
+                180deg,
+                #eefaff 0,
+                #f8fcff 330px,
+                #f4f8fa 100%
+            );
+    }
+
 }

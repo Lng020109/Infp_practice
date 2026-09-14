@@ -3,6 +3,10 @@ const OPENWEATHER_API_KEY = "4add407be1d02427baf6b7d9a111284a";
 let currentWeatherRecommendFood = "전집";
 let currentSearchRegion = "대전";
 
+// [추가] 지역별 추천 메뉴 유지용 변수
+let lastRecommendedRegion = "";
+let currentRecommendedFood = null;
+
 // SVG 커스텀 핀 (파란색 / 노란색)
 const BLUE_PIN = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
@@ -220,7 +224,47 @@ async function fetchRestaurants(query) {
         });
         const data = await res.json();
         currentPlaces = data.documents || [];
-        renderList(currentPlaces);
+
+        const filterBar = document.getElementById('rest-filter-bar');
+        const totalCountEl = document.getElementById('rest-total-count');
+        if (filterBar) filterBar.style.display = "flex";
+        if (totalCountEl) totalCountEl.innerText = `총 ${currentPlaces.length}개 맛집`;
+
+        // [추가] 각 맛집의 좋아요, 리뷰 수, 찜 여부/수를 서버에서 병렬로 수집
+        const statsPromises = currentPlaces.map(async place => {
+            place.likeCount = 0;
+            place.reviewCount = 0;
+            place.favCount = 0;
+
+            try {
+                // 1. 좋아요 수 조회
+                const reactionRes = await fetch(`/api/reactions/${encodeURIComponent(place.id)}`);
+                if (reactionRes.ok) {
+                    const reactionData = await reactionRes.json();
+                    place.likeCount = reactionData.likeCount || 0;
+                }
+            } catch (e) {}
+
+            try {
+                // 2. 리뷰 개수 조회
+                const reviewRes = await fetch(`/api/reviews/place/${encodeURIComponent(place.id)}`);
+                if (reviewRes.ok) {
+                    const reviewData = await reviewRes.json();
+                    place.reviewCount = Array.isArray(reviewData) ? reviewData.length : 0;
+                }
+            } catch (e) {}
+
+            try {
+                // 3. 내가 찜했는지 여부(기존 favoriteList 활용)
+                const isFav = favoriteList.some(f => String(f.id) === String(place.id));
+                place.favCount = isFav ? 1 : 0;
+            } catch (e) {}
+        });
+
+        await Promise.all(statsPromises);
+
+        // 정렬 및 렌더링 호출
+        sortAndRenderRestaurants();
 
         if (currentPlaces.length > 0) {
             const addr = currentPlaces[0].address_name || currentPlaces[0].road_address_name || "";
@@ -231,6 +275,30 @@ async function fetchRestaurants(query) {
         console.error(err);
         listEl.innerHTML = "<p style='text-align:center; color:red; padding:30px;'>맛집 정보를 불러오지 못했습니다.</p>";
     }
+}
+
+// =========================================================
+// 맛집 다중 정렬 처리 (기본순 / 좋아요순 / 리뷰순 / 찜순)
+// =========================================================
+function sortAndRenderRestaurants() {
+    const sortType = document.getElementById("rest-sort-select")?.value || "default";
+
+    if (!currentPlaces || currentPlaces.length === 0) return;
+
+    let sorted = [...currentPlaces];
+
+    if (sortType === "likes") {
+        // 1. 좋아요 많은 순
+        sorted.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
+    } else if (sortType === "reviews") {
+        // 2. 리뷰 많은 순
+        sorted.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+    } else if (sortType === "favorites") {
+        // 3. 찜 많은 순 (찜 등록된 항목 우선)
+        sorted.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
+    }
+
+    renderList(sorted);
 }
 
 function renderList(places) {
@@ -248,31 +316,39 @@ function renderList(places) {
         const isFavorite = favoriteList.some(item => item.id === place.id);
         const heartIcon = isFavorite ? "❤️" : "🤍";
 
+        const reviewBadge = place.reviewCount > 0
+            ? `<span style="font-size: 11px; color: #2ba6cf; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">리뷰 ${place.reviewCount}</span>`
+            : '';
+
         const card = document.createElement('div');
         card.className = 'rest-card';
         card.id = `rest-${place.id}`;
         card.innerHTML = `
-            <div class="rest-card-info" onclick='selectPlace(${JSON.stringify(place)})'>
-                <span class="rest-card-badge">${category}</span>
-                <h4>${index + 1}. ${place.place_name}</h4>
-                <p>📍 ${place.road_address_name || place.address_name}</p>
-                <p>📞 ${place.phone || '전화번호 정보 없음'}</p>
-            </div>
+		            <div class="rest-card-info" onclick='selectPlace(${JSON.stringify(place)})'>
+		                <div>
+		                    <span class="rest-card-badge">${category}</span>
+		                    ${reviewBadge}
+		                </div>
+		                <h4>${index + 1}. ${place.place_name}</h4>
+		                <p>📍 ${place.road_address_name || place.address_name}</p>
+		                <p>📞 ${place.phone || '전화번호 정보 없음'}</p>
+		            </div>
 
-            <div style="display: flex; align-items: center;">
-                <div class="reaction-wrap">
-                    <button class="reaction-btn like-btn" id="like-btn-${place.id}" onclick='toggleReaction(event, "${place.id}", "LIKE")'>
-                        👍 <span id="like-count-${place.id}" class="reaction-count">0</span>
-                    </button>
-                    <button class="reaction-btn dislike-btn" id="dislike-btn-${place.id}" onclick='toggleReaction(event, "${place.id}", "DISLIKE")'>
-                        👎 <span id="dislike-count-${place.id}" class="reaction-count">0</span>
-                    </button>
-                </div>
-                <button class="heart-btn" id="fav-btn-${place.id}" title="찜하기" onclick='toggleFavorite(event, ${JSON.stringify(place)})'>
-                    ${heartIcon}
-                </button>
-            </div>
-        `;
+		            <div style="display: flex; align-items: center;">
+		                <div class="reaction-wrap">
+		                    <button class="reaction-btn like-btn" id="like-btn-${place.id}" onclick='toggleReaction(event, "${place.id}", "LIKE")'>
+		                        👍 <span id="like-count-${place.id}" class="reaction-count">${place.likeCount || 0}</span>
+		                    </button>
+		                    <button class="reaction-btn dislike-btn" id="dislike-btn-${place.id}" onclick='toggleReaction(event, "${place.id}", "DISLIKE")'>
+		                        👎 <span id="dislike-count-${place.id}" class="reaction-count">0</span>
+		                    </button>
+		                </div>
+		                <button class="heart-btn" id="fav-btn-${place.id}" title="찜하기" onclick='toggleFavorite(event, ${JSON.stringify(place)})'>
+		                    ${heartIcon}
+		                </button>
+		            </div>
+		        `;
+
         listEl.appendChild(card);
 
         loadReactions(place.id);
@@ -328,8 +404,12 @@ function selectPlace(place) {
 
     const addr = place.address_name || place.road_address_name || "";
     if (addr) {
-        currentSearchRegion = extractAccurateRegion(addr);
-        fetchWeatherForHero(place.y, place.x, currentSearchRegion);
+        const newRegion = extractAccurateRegion(addr);
+        // 지역명이 실제로 바뀌었을 때만 날씨/추천 다시 갱신 (같은 지역 내 식당 클릭 시에는 유지)
+        if (newRegion !== currentSearchRegion) {
+            currentSearchRegion = newRegion;
+            fetchWeatherForHero(place.y, place.x, currentSearchRegion);
+        }
     }
 
     document.getElementById('open-modal-btn').style.display = "inline-block";
@@ -1028,7 +1108,13 @@ async function fetchWeatherForHero(lat, lng, regionName) {
             foodCandidates = ["삼겹살", "돈까스", "초밥", "돼지갈비", "보쌈", "베트남쌀국수"];
         }
 
-        currentWeatherRecommendFood = foodCandidates[Math.floor(Math.random() * foodCandidates.length)];
+        // [수정]: 지역이 바뀌었거나 최초 1회 실행일 때만 랜덤 추출, 같은 지역이면 이전 메뉴 유지
+        if (lastRecommendedRegion !== regionName || !currentRecommendedFood) {
+            currentRecommendedFood = foodCandidates[Math.floor(Math.random() * foodCandidates.length)];
+            lastRecommendedRegion = regionName;
+        }
+
+        currentWeatherRecommendFood = currentRecommendedFood;
         document.getElementById("weather-recommend-text").innerHTML = descText;
         document.getElementById("weather-recommend-btn").innerText = `추천 ${currentWeatherRecommendFood} 보기`;
 
@@ -2067,4 +2153,5 @@ document.addEventListener(
         }
 
     }
+	
 );

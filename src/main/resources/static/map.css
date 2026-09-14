@@ -1,1084 +1,1831 @@
 .review-reaction-wrap {
+
 	display: inline-flex;
+
 	align-items: center;
+
 	gap: 3px;
+
 	margin-right: 8px;
+
 }
 
 .review-reaction-btn {
+
 	border: none;
+
 	background: transparent;
+
 	cursor: pointer;
+
 	font-size: 12px;
+
 	padding: 4px 5px;
+
 	border-radius: 5px;
+
 	white-space: nowrap;
+
 }
 
 .review-reaction-btn:hover {
+
 	background: #f1f5f9;
+
 }
 
 .review-reaction-btn.active {
+
 	font-weight: 700;
+
 }
 
 #review-like-btn.active {
+
 	color: #2563eb;
+
 }
 
 #review-dislike-btn.active {
+
 	color: #ef4444;
+
 }
 
 :root {
+
 	--primary: #2ba6cf;
+
 	--primary-dark: #1f8ab0;
+
 	--bg-light: #eaf4fd;
+
 	--text-main: #202b36;
+
 	--text-sub: #707e8c;
+
 	--border-color: #dbe5ee;
+
 }
 
 * {
+
 	box-sizing: border-box;
+
 	margin: 0;
+
 	padding: 0;
+
 	font-family: 'Noto Sans KR', sans-serif;
+
 }
 
 body {
+
 	background-color: #ffffff;
+
 	color: var(--text-main);
+
 }
 
 /* 1. 상단 네비게이션 헤더 */
+
 header {
+
 	height: 70px;
+
 	background: #ffffff;
+
 	border-bottom: 1px solid #eef2f6;
+
 	display: flex;
+
 	align-items: center;
+
 }
 
 .header-inner {
+
 	width: 100%;
+
 	max-width: 1240px;
+
 	margin: 0 auto;
+
 	padding: 0 24px;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 }
 
 .brand-logo {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 12px;
+
 	text-decoration: none;
+
 	cursor: pointer;
+
 }
 
 .brand-icon {
+
 	width: 40px;
+
 	height: 40px;
+
 	border-radius: 50%;
+
 	background: linear-gradient(135deg, #4ecdc4, #2ba6cf);
+
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
+
 	color: white;
+
 	font-size: 1.2rem;
+
 	box-shadow: 0 2px 6px rgba(43, 166, 207, 0.3);
+
 }
 
 .brand-text h1 {
+
 	font-size: 1.2rem;
+
 	font-weight: 800;
+
 	color: #2ba6cf;
+
 	line-height: 1.1;
+
 }
 
 .brand-text span {
+
 	font-size: 0.72rem;
+
 	color: #8ea0b0;
+
 	font-weight: 500;
+
 }
 
 .header-menu {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 24px;
+
 }
 
 .menu-item {
+
 	display: flex;
+
 	flex-direction: column;
+
 	align-items: center;
+
 	font-size: 0.75rem;
+
 	color: #5c6b78;
+
 	cursor: pointer;
+
 	gap: 4px;
+
 	text-decoration: none;
+
 	transition: 0.2s;
+
 }
 
 .menu-item i {
+
 	font-size: 1.15rem;
+
 	color: #6a7987;
+
 }
 
 .menu-item:hover,
+
 .menu-item:hover i {
+
 	color: var(--primary);
+
 }
 
 .login-btn {
+
 	background-color: var(--primary);
+
 	color: #fff;
+
 	border: none;
+
 	padding: 7px 18px;
+
 	border-radius: 20px;
+
 	font-size: 13px;
+
 	font-weight: 600;
+
 	cursor: pointer;
+
 	transition: background-color 0.2s;
+
 }
 
 .login-btn:hover {
+
 	background-color: var(--primary-dark);
+
 }
 
 /* 2. 히어로 배너 섹션 */
+
 .hero-section {
+
 	background-color: var(--bg-light);
+
 	padding: 50px 0 60px 0;
+
 }
 
 .hero-inner {
+
 	max-width: 1240px;
+
 	margin: 0 auto;
+
 	padding: 0 24px;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 	gap: 40px;
+
 }
 
 .hero-left {
+
 	flex: 1.2;
+
 }
 
 .sub-tag {
+
 	font-size: 0.85rem;
+
 	font-weight: 700;
+
 	color: var(--primary);
+
 	letter-spacing: 1px;
+
 	margin-bottom: 12px;
+
 	display: inline-block;
+
 }
 
 .hero-title {
+
 	font-size: 2.3rem;
+
 	font-weight: 800;
+
 	line-height: 1.35;
+
 	color: #1a7f9e;
+
 	margin-bottom: 16px;
+
 }
 
 .hero-desc {
+
 	font-size: 0.95rem;
+
 	color: #55697a;
+
 	line-height: 1.6;
+
 	margin-bottom: 28px;
+
 }
 
 .search-box-wrap {
+
 	background: white;
+
 	border-radius: 50px;
+
 	display: flex;
+
 	align-items: center;
+
 	padding: 6px 8px 6px 20px;
+
 	box-shadow: 0 4px 18px rgba(32, 114, 140, 0.12);
+
 	max-width: 520px;
+
 	margin-bottom: 18px;
+
 }
 
 .search-box-wrap i {
+
 	font-size: 1.15rem;
+
 	color: #8a9ba8;
+
 	margin-right: 12px;
+
 }
 
 .search-box-wrap input {
+
 	flex: 1;
+
 	border: none;
+
 	outline: none;
+
 	font-size: 0.95rem;
+
 	color: #333;
+
 }
 
 .search-box-wrap input::placeholder {
+
 	color: #a0b0be;
+
 }
 
 .search-box-wrap button {
+
 	background-color: var(--primary);
+
 	color: white;
+
 	border: none;
+
 	padding: 10px 24px;
+
 	border-radius: 40px;
+
 	font-size: 0.95rem;
+
 	font-weight: 700;
+
 	cursor: pointer;
+
 	transition: 0.2s;
+
 }
 
 .search-box-wrap button:hover {
+
 	background-color: var(--primary-dark);
+
 }
 
 .popular-tags {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 8px;
+
 	font-size: 0.88rem;
+
 }
 
 .popular-label {
+
 	color: #495d6f;
+
 	font-weight: 700;
+
 	margin-right: 4px;
+
 }
 
 .tag-badge {
+
 	background: white;
+
 	border: 1px solid #d4e4f1;
+
 	padding: 6px 14px;
+
 	border-radius: 20px;
+
 	color: #3f5567;
+
 	font-weight: 500;
+
 	font-size: 0.82rem;
+
 	cursor: pointer;
+
 	transition: 0.2s;
+
 }
 
 .tag-badge:hover {
+
 	border-color: var(--primary);
+
 	color: var(--primary);
+
 }
 
 .hero-right {
+
 	flex: 0.8;
+
 	display: flex;
+
 	justify-content: flex-end;
+
 }
 
 .twin-card {
+
 	background: white;
+
 	border-radius: 16px;
+
 	box-shadow: 0 4px 20px rgba(43, 166, 207, 0.1);
+
 	display: flex;
+
 	width: 100%;
+
 	max-width: 580px;
+
 	padding: 24px 16px;
+
 	border: 1px solid #e1effa;
+
 }
 
 .twin-col {
+
 	flex: 1;
+
 	display: flex;
+
 	flex-direction: column;
+
 	align-items: center;
+
 	text-align: center;
+
 	padding: 0 12px;
+
 }
 
 .twin-col:not(:last-child) {
+
 	border-right: 1px solid #eef3f8;
+
 }
 
 .twin-icon {
+
 	height: 40px;
+
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
+
 	font-size: 1.4rem;
+
 	color: #6e8499;
+
 	margin-bottom: 12px;
+
 }
 
 .twin-col h4 {
+
 	font-size: 1rem;
+
 	font-weight: 700;
+
 	margin-bottom: 8px;
+
 	color: #202b36;
+
 }
 
 .twin-col p {
+
 	font-size: 0.78rem;
+
 	color: #7f91a1;
+
 	line-height: 1.4;
+
 	margin-bottom: 20px;
+
 	min-height: 32px;
+
 }
 
 .twin-btn {
+
 	margin-top: auto;
+
 	width: 100%;
+
 	padding: 8px 0;
+
 	border-radius: 20px;
+
 	border: 1px solid #abd4e8;
+
 	background: white;
+
 	color: #2ba6cf;
+
 	font-size: 0.8rem;
+
 	font-weight: 700;
+
 	cursor: pointer;
+
 	transition: 0.2s;
+
 }
 
 .twin-btn:hover {
+
 	background: #f2f9fd;
+
 	border-color: var(--primary);
+
 }
 
 /* 3. 메인 콘텐츠 */
+
 .main-content {
+
 	max-width: 1240px;
+
 	margin: 36px auto;
+
 	padding: 0 24px;
+
 	display: flex;
+
 	gap: 24px;
+
 	min-height: 600px;
+
 }
 
 .content-left {
+
 	flex: 1;
+
 	border: 1.5px solid var(--border-color);
+
 	border-radius: 20px;
+
 	padding: 24px;
+
 	display: flex;
+
 	flex-direction: column;
+
 	background: white;
+
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+
 	overflow: hidden;
+
 }
 
 .empty-placeholder {
+
 	margin: auto;
+
 	text-align: center;
+
 	display: flex;
+
 	flex-direction: column;
+
 	align-items: center;
+
 	gap: 12px;
+
 }
 
 .empty-icon {
+
 	font-size: 3rem;
+
 	color: #9ab4c7;
+
 }
 
 .empty-placeholder h3 {
+
 	font-size: 1.3rem;
+
 	font-weight: 700;
+
 	color: #223444;
+
 }
 
 .empty-placeholder p {
+
 	font-size: 0.9rem;
+
 	color: #8799a8;
+
 	line-height: 1.5;
+
 }
 
 .restaurant-list {
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 12px;
+
 	overflow-y: auto;
+
 	max-height: 580px;
+
 }
 
 .rest-card {
+
 	padding: 16px;
+
 	border-radius: 12px;
+
 	border: 1px solid #e9ecef;
+
 	cursor: pointer;
+
 	transition: all 0.2s;
+
 	background: white;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 }
 
 .rest-card:hover {
+
 	border-color: var(--primary);
+
 	transform: translateY(-2px);
+
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
 }
 
 .rest-card.active {
+
 	border: 2px solid var(--primary);
+
 	background: #f6fbff;
+
 }
 
 .rest-card-info {
+
 	flex: 1;
+
 }
 
 .rest-card-badge {
+
 	display: inline-block;
+
 	padding: 3px 8px;
+
 	border-radius: 6px;
+
 	font-size: 0.72rem;
+
 	font-weight: 700;
+
 	background: #e1f4fc;
+
 	color: var(--primary);
+
 	margin-bottom: 6px;
+
 }
 
 .rest-card h4 {
+
 	font-size: 1.05rem;
+
 	margin-bottom: 4px;
+
 	color: #202b36;
+
 }
 
 .rest-card p {
+
 	font-size: 0.82rem;
+
 	color: #6f8090;
+
 	margin-bottom: 2px;
+
 }
 
 .heart-btn {
+
 	background: none;
+
 	border: none;
+
 	font-size: 24px;
+
 	cursor: pointer;
+
 	padding: 8px;
+
 	transition: transform 0.15s ease;
+
 }
 
 .reaction-wrap {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 6px;
+
 	margin-left: 10px;
+
 }
 
 .reaction-btn {
+
 	border: none;
+
 	background: none;
+
 	cursor: pointer;
+
 	font-size: 13px;
+
 	padding: 5px 3px;
+
 	border-radius: 6px;
+
 	transition: 0.15s;
+
 	white-space: nowrap;
+
 }
 
 .reaction-btn:hover {
+
 	background: #f1f5f9;
+
 }
 
 .reaction-btn.active {
+
 	font-weight: 700;
+
 }
 
 .like-btn.active {
+
 	color: #2563eb;
+
 }
 
 .dislike-btn.active {
+
 	color: #ef4444;
+
 }
 
 .reaction-count {
+
 	font-size: 12px;
+
 	color: #64748b;
+
 	margin-left: -3px;
+
 }
 
 .heart-btn:hover {
+
 	transform: scale(1.2);
+
 }
 
 .content-right {
+
 	flex: 1.1;
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 20px;
+
 }
 
 #map {
+
 	width: 100%;
+
 	height: 420px;
+
 	border-radius: 20px;
+
 	border: 1.5px solid var(--border-color);
+
 	background: #f1f3f5;
+
 }
 
 .selected-place-box {
+
 	border: 1.5px solid var(--border-color);
+
 	border-radius: 20px;
+
 	padding: 22px;
+
 	background: white;
+
 	text-align: center;
+
 	display: flex;
+
 	flex-direction: column;
+
 	align-items: center;
+
 	justify-content: center;
+
 	min-height: 140px;
+
 }
 
 .pin-icon {
+
 	font-size: 1.4rem;
+
 	color: #e74c3c;
+
 	margin-bottom: 6px;
+
 }
 
 .selected-place-box h3 {
+
 	font-size: 1.1rem;
+
 	color: #2ba6cf;
+
 	margin-bottom: 6px;
+
 	font-weight: 700;
+
 }
 
 .selected-place-box p {
+
 	font-size: 0.82rem;
+
 	color: #7f91a1;
+
 	line-height: 1.4;
+
 	margin-bottom: 12px;
+
 }
 
 .tour-modal-open-btn {
+
 	background: linear-gradient(135deg, #2ba6cf, #1f8ab0);
+
 	color: white;
+
 	border: none;
+
 	padding: 10px 22px;
+
 	border-radius: 25px;
+
 	font-size: 0.9rem;
+
 	font-weight: 700;
+
 	cursor: pointer;
+
 	box-shadow: 0 4px 12px rgba(43, 166, 207, 0.3);
+
 	transition: all 0.2s;
+
 	display: none;
+
 }
 
 .tour-modal-open-btn:hover {
+
 	transform: translateY(-2px);
+
 	box-shadow: 0 6px 16px rgba(43, 166, 207, 0.4);
+
 }
 
 /* 4. 푸터 */
+
 footer {
+
 	margin-top: 40px;
+
 	background: linear-gradient(180deg, #3db8df 0%, #209bb5 100%);
+
 	color: white;
+
 	padding: 30px 40px;
+
 	font-family: 'Noto Sans KR', sans-serif;
+
 }
 
 .footer-inner {
+
 	max-width: 1150px;
+
 	margin: 0 auto;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 	flex-wrap: wrap;
+
 	gap: 20px;
+
 }
 
 /* 5. 공통 모달 팝업 오버레이 */
+
 .modal-overlay {
+
 	position: fixed;
+
 	top: 0;
+
 	left: 0;
+
 	width: 100vw;
+
 	height: 100vh;
+
 	background: rgba(0, 0, 0, 0.6);
+
 	backdrop-filter: blur(3px);
+
 	display: none;
+
 	justify-content: center;
+
 	align-items: center;
+
 	z-index: 9999;
+
 }
 
 .modal-window {
+
 	background: white;
+
 	width: 90%;
+
 	max-width: 980px;
+
 	height: 82vh;
+
 	border-radius: 20px;
+
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
 	display: flex;
+
 	flex-direction: column;
+
 	overflow: hidden;
+
 	animation: modalFadeIn 0.25s ease-out;
+
 }
 
 @keyframes modalFadeIn {
+
 	from {
+
 		transform: translateY(20px);
+
 		opacity: 0;
+
 	}
 
 	to {
+
 		transform: translateY(0);
+
 		opacity: 1;
+
 	}
+
 }
 
 .modal-header {
+
 	padding: 16px 24px;
+
 	border-bottom: 1px solid #eef2f6;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 	background: #fafcfe;
+
 }
 
 .modal-header h3 {
+
 	font-size: 1.15rem;
+
 	color: #1a7f9e;
+
 	font-weight: 800;
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 8px;
+
 }
 
 .modal-close-btn {
+
 	background: none;
+
 	border: none;
+
 	font-size: 1.5rem;
+
 	color: #8fa0af;
+
 	cursor: pointer;
+
 	transition: 0.2s;
+
 }
 
 .modal-close-btn:hover {
+
 	color: #333;
+
 }
 
 .modal-body {
+
 	flex: 1;
+
 	display: flex;
+
 	padding: 20px;
+
 	gap: 20px;
+
 	overflow: hidden;
+
 }
 
 .modal-map-wrap {
+
 	flex: 1.4;
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 8px;
+
 }
 
 #modal-map {
+
 	width: 100%;
+
 	height: 100%;
+
 	border-radius: 14px;
+
 	border: 1px solid var(--border-color);
+
 }
 
 .marker-guide {
+
 	display: flex;
+
 	gap: 16px;
+
 	font-size: 0.8rem;
+
 	background: #f8fbfd;
+
 	padding: 8px 14px;
+
 	border-radius: 8px;
+
 	border: 1px solid #e3edf5;
+
 }
 
 .marker-guide-item {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 6px;
+
 	font-weight: bold;
+
 }
 
 .dot-blue {
+
 	width: 12px;
+
 	height: 12px;
+
 	background: #2f80ed;
+
 	border-radius: 50%;
+
 }
 
 .dot-yellow {
+
 	width: 12px;
+
 	height: 12px;
+
 	background: #f2c94c;
+
 	border-radius: 50%;
+
 }
 
 .modal-tour-list {
+
 	flex: 1;
+
 	overflow-y: auto;
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 10px;
+
 	padding-right: 4px;
+
 }
 
 .tour-card {
+
 	padding: 14px;
+
 	border-radius: 12px;
+
 	border: 1px solid #e9ecef;
+
 	background: white;
+
 	cursor: pointer;
+
 	transition: 0.2s;
+
 }
 
 .tour-card:hover {
+
 	border-color: #f2c94c;
+
 	background: #fffdf5;
+
 	transform: translateY(-1px);
+
 }
 
 .tour-card-badge {
+
 	display: inline-block;
+
 	padding: 2px 8px;
+
 	border-radius: 6px;
+
 	font-size: 0.72rem;
+
 	font-weight: 700;
+
 	background: #fff9db;
+
 	color: #f59f00;
+
 	margin-bottom: 6px;
+
 }
 
 .tour-card h5 {
+
 	font-size: 0.95rem;
+
 	margin-bottom: 4px;
+
 	color: #202b36;
+
 }
 
 .tour-card p {
+
 	font-size: 0.8rem;
+
 	color: #6f8090;
+
 	line-height: 1.4;
+
 }
 
 /* 6. 찜 목록 모달 전용 스타일 */
+
 .favorite-modal-window {
+
 	background: white;
+
 	width: 480px;
+
 	max-height: 80vh;
+
 	border-radius: 20px;
+
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
 	display: flex;
+
 	flex-direction: column;
+
 	overflow: hidden;
+
 	animation: modalFadeIn 0.25s ease-out;
+
 }
 
 .favorite-modal-body {
+
 	padding: 15px 20px;
+
 	overflow-y: auto;
+
 	flex: 1;
+
 }
 
 .fav-item {
+
 	padding: 14px;
+
 	border-bottom: 1px solid #edf2f7;
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
+
 }
 
 .fav-item-info {
+
 	cursor: pointer;
+
 	flex: 1;
+
 }
 
 .fav-item-info h5 {
+
 	font-size: 1rem;
+
 	color: var(--primary-dark);
+
 	margin-bottom: 4px;
+
 	font-weight: 700;
+
 }
 
 .fav-item-info p {
+
 	font-size: 0.82rem;
+
 	color: #64748b;
+
 	margin-bottom: 2px;
+
 }
 
 .fav-del-btn {
+
 	background: none;
+
 	border: none;
+
 	font-size: 16px;
+
 	color: #94a3b8;
+
 	cursor: pointer;
+
 	padding: 6px 10px;
+
 	transition: color 0.2s;
+
 }
 
 .fav-del-btn:hover {
+
 	color: #ef4444;
+
 }
 
 /* 7. 로그인/회원가입 모달 전용 스타일 */
+
 .auth-modal-window {
+
 	background: #ffffff;
+
 	width: 420px;
+
 	border-radius: 20px;
+
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
 	display: flex;
+
 	flex-direction: column;
+
 	overflow: hidden;
+
 	animation: modalFadeIn 0.25s ease-out;
+
 }
 
 .auth-tabs {
+
 	display: flex;
+
 	background: #f1f5f9;
+
 	border-bottom: 1px solid var(--border-color);
+
 }
 
 .auth-tab-btn {
+
 	flex: 1;
+
 	padding: 14px 0;
+
 	text-align: center;
+
 	background: none;
+
 	border: none;
+
 	font-size: 0.95rem;
+
 	font-weight: 700;
+
 	color: #64748b;
+
 	cursor: pointer;
+
 	transition: all 0.2s;
+
 }
 
 .auth-tab-btn.active {
+
 	background: #ffffff;
+
 	color: var(--primary);
+
 	border-bottom: 2px solid var(--primary);
+
 }
 
 .auth-form-wrap {
+
 	padding: 24px;
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 16px;
+
 }
 
 .auth-input-group {
+
 	display: flex;
+
 	flex-direction: column;
+
 	gap: 6px;
+
 }
 
 .auth-input-group label {
+
 	font-size: 0.82rem;
+
 	font-weight: 700;
+
 	color: #475569;
+
 }
 
 .auth-input-group input {
+
 	width: 100%;
+
 	padding: 11px 14px;
+
 	border: 1.5px solid #cbd5e1;
+
 	border-radius: 10px;
+
 	font-size: 0.9rem;
+
 	outline: none;
+
 	transition: border-color 0.2s;
+
 }
 
 .auth-input-group input:focus {
+
 	border-color: var(--primary);
+
 }
 
 .auth-submit-btn {
+
 	background: linear-gradient(135deg, #2ba6cf, #1f8ab0);
+
 	color: #ffffff;
+
 	border: none;
+
 	padding: 12px;
+
 	border-radius: 10px;
+
 	font-size: 0.95rem;
+
 	font-weight: 700;
+
 	cursor: pointer;
+
 	margin-top: 8px;
+
 	transition: opacity 0.2s;
+
 }
 
 .auth-submit-btn:hover {
+
 	opacity: 0.92;
+
 }
 
 /* =========================================================
+
    🎵 여행 플레이리스트
+
    ========================================================= */
 
 #travel-playlist-widget {
+
 	position: fixed;
+
 	right: 25px;
+
 	bottom: 25px;
+
 	z-index: 9998;
+
 	font-family: 'Noto Sans KR', sans-serif;
+
 }
 
 /* 플레이리스트 원형 버튼 */
+
 #playlist-toggle-btn {
+
 	position: relative;
+
 	width: 62px;
+
 	height: 62px;
+
 	border: none;
+
 	border-radius: 50%;
+
 	cursor: pointer;
 
 	background: linear-gradient(135deg, #69d5f2, #3aaee0);
+
 	color: white;
 
 	font-size: 23px;
 
 	box-shadow:
+
 		0 8px 25px rgba(48, 169, 218, 0.35),
+
 		0 3px 8px rgba(0, 0, 0, 0.12);
 
 	transition: all 0.25s ease;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
+
 }
 
 #playlist-toggle-btn:hover {
+
 	transform: translateY(-4px) scale(1.05);
 
 	box-shadow:
+
 		0 12px 30px rgba(48, 169, 218, 0.45),
+
 		0 5px 10px rgba(0, 0, 0, 0.12);
+
 }
 
 #playlist-toggle-btn:active {
+
 	transform: scale(0.95);
+
 }
 
 /* 버튼 안 음악 표시 */
+
 .playlist-music-dot {
+
 	position: absolute;
+
 	right: 10px;
+
 	top: 9px;
 
 	width: 8px;
+
 	height: 8px;
 
 	background: #ffffff;
+
 	border-radius: 50%;
 
 	box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+
 }
 
 /* =========================================================
+
    플레이리스트 패널
+
    ========================================================= */
 
 #travel-playlist-panel {
+
 	position: absolute;
 
 	right: 0;
+
 	bottom: 75px;
 
 	width: 370px;
+
 	max-height: 680px;
 
 	background: rgba(255, 255, 255, 0.97);
 
 	border: 1px solid #dceff7;
+
 	border-radius: 24px;
 
 	box-shadow:
+
 		0 18px 55px rgba(33, 130, 170, 0.22),
+
 		0 5px 15px rgba(0, 0, 0, 0.08);
 
 	overflow: hidden;
 
 	opacity: 0;
+
 	visibility: hidden;
 
 	transform: translateY(15px) scale(0.96);
+
 	transform-origin: bottom right;
 
 	transition:
+
 		opacity 0.25s ease,
+
 		transform 0.25s ease,
+
 		visibility 0.25s ease;
 
 	display: flex;
+
 	flex-direction: column;
+
 }
 
 #travel-playlist-panel.active {
+
 	opacity: 1;
+
 	visibility: visible;
 
 	transform: translateY(0) scale(1);
+
 }
 
 /* =========================================================
+
    헤더
+
    ========================================================= */
 
 .playlist-header {
+
 	padding: 17px 18px;
 
 	background:
+
 		linear-gradient(135deg,
+
 			#dff8ff,
+
 			#effcff);
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: space-between;
 
 	border-bottom: 1px solid #e2f1f6;
+
 }
 
 .playlist-title-area {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 11px;
+
 }
 
 .playlist-title-icon {
+
 	width: 42px;
+
 	height: 42px;
 
 	border-radius: 14px;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
 
 	background: linear-gradient(135deg, #55c9ee, #39a9dc);
 
 	color: white;
+
 	font-size: 18px;
 
 	box-shadow: 0 5px 12px rgba(48, 169, 218, 0.2);
+
 }
 
 .playlist-title-area h3 {
+
 	margin: 0;
 
 	color: #203746;
 
 	font-size: 15px;
+
 	font-weight: 800;
+
 }
 
 .playlist-title-area p {
+
 	margin: 3px 0 0;
 
 	color: #71909e;
 
 	font-size: 11px;
+
 }
 
 .playlist-close-btn {
+
 	width: 32px;
+
 	height: 32px;
 
 	border: none;
+
 	border-radius: 50%;
 
 	background: rgba(255, 255, 255, 0.8);
@@ -1088,24 +1835,35 @@ footer {
 	cursor: pointer;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
 
 	transition: 0.2s;
+
 }
 
 .playlist-close-btn:hover {
+
 	background: white;
+
 	color: #2ba6cf;
+
 	transform: rotate(90deg);
+
 }
 
 /* =========================================================
+
    유튜브 플레이어
+
    ========================================================= */
 
 .playlist-player-wrap {
+
 	width: 100%;
+
 	aspect-ratio: 16 / 9;
 
 	background: #eaf8fc;
@@ -1113,18 +1871,23 @@ footer {
 	position: relative;
 
 	overflow: hidden;
+
 }
 
 #youtube-playlist-player {
+
 	width: 100%;
+
 	height: 100%;
 
 	border: 0;
 
 	display: block;
+
 }
 
 #playlist-loading {
+
 	position: absolute;
 
 	inset: 0;
@@ -1132,9 +1895,11 @@ footer {
 	z-index: 2;
 
 	display: flex;
+
 	flex-direction: column;
 
 	align-items: center;
+
 	justify-content: center;
 
 	gap: 10px;
@@ -1144,37 +1909,53 @@ footer {
 	color: #5491a7;
 
 	font-size: 12px;
+
 }
 
 #playlist-loading i {
+
 	font-size: 22px;
+
 	color: #3db5df;
+
 }
 
 /* =========================================================
+
    플레이리스트 정보
+
    ========================================================= */
 
 .playlist-info {
+
 	padding: 12px 14px;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: space-between;
 
 	border-bottom: 1px solid #edf4f7;
+
 }
 
 .playlist-info-main {
+
 	display: flex;
+
 	align-items: center;
+
 	gap: 9px;
 
 	min-width: 0;
+
 }
 
 .playlist-small-icon {
+
 	width: 31px;
+
 	height: 31px;
 
 	flex-shrink: 0;
@@ -1182,20 +1963,27 @@ footer {
 	border-radius: 10px;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
 
 	background: #e6f8fd;
+
 	color: #36a8d4;
 
 	font-size: 13px;
+
 }
 
 .playlist-info-main div {
+
 	min-width: 0;
+
 }
 
 .playlist-info-main strong {
+
 	display: block;
 
 	color: #293f4c;
@@ -1203,13 +1991,17 @@ footer {
 	font-size: 12px;
 
 	white-space: nowrap;
+
 	overflow: hidden;
+
 	text-overflow: ellipsis;
 
 	max-width: 270px;
+
 }
 
 .playlist-info-main span {
+
 	display: block;
 
 	margin-top: 2px;
@@ -1219,19 +2011,25 @@ footer {
 	font-size: 10px;
 
 	white-space: nowrap;
+
 	overflow: hidden;
+
 	text-overflow: ellipsis;
 
 	max-width: 270px;
+
 }
 
 .playlist-youtube-btn {
+
 	width: 32px;
+
 	height: 32px;
 
 	flex-shrink: 0;
 
 	border: none;
+
 	border-radius: 50%;
 
 	background: #fff0f0;
@@ -1241,41 +2039,59 @@ footer {
 	cursor: pointer;
 
 	display: flex;
+
 	align-items: center;
+
 	justify-content: center;
 
 	transition: 0.2s;
+
 }
 
 .playlist-youtube-btn:hover {
+
 	background: #ffdddd;
+
 	transform: scale(1.08);
+
 }
 
 /* =========================================================
+
    곡 목록
+
    ========================================================= */
 
 .playlist-track-area {
+
 	padding: 12px 14px 14px;
 
 	max-height: 190px;
 
 	overflow-y: auto;
+
 }
 
 .playlist-track-area::-webkit-scrollbar {
+
 	width: 5px;
+
 }
 
 .playlist-track-area::-webkit-scrollbar-thumb {
+
 	background: #ccebf4;
+
 	border-radius: 10px;
+
 }
 
 .playlist-track-title {
+
 	display: flex;
+
 	justify-content: space-between;
+
 	align-items: center;
 
 	margin-bottom: 8px;
@@ -1283,17 +2099,25 @@ footer {
 	color: #45606d;
 
 	font-size: 11px;
+
 	font-weight: 800;
+
 }
 
 .playlist-track-title span:last-child {
+
 	color: #9ab1bb;
+
 	font-weight: 500;
+
 }
 
 /* 곡 하나 */
+
 .playlist-track-item {
+
 	display: flex;
+
 	align-items: center;
 
 	gap: 9px;
@@ -1305,13 +2129,17 @@ footer {
 	cursor: pointer;
 
 	transition: background 0.2s ease;
+
 }
 
 .playlist-track-item:hover {
+
 	background: #f0fbfe;
+
 }
 
 .playlist-track-number {
+
 	width: 22px;
 
 	color: #9bb4be;
@@ -1321,10 +2149,13 @@ footer {
 	text-align: center;
 
 	flex-shrink: 0;
+
 }
 
 .playlist-track-thumb {
+
 	width: 40px;
+
 	height: 27px;
 
 	object-fit: cover;
@@ -1332,22 +2163,29 @@ footer {
 	border-radius: 6px;
 
 	flex-shrink: 0;
+
 }
 
 .playlist-track-name {
+
 	min-width: 0;
 
 	color: #435965;
 
 	font-size: 11px;
+
 	font-weight: 600;
 
 	white-space: nowrap;
+
 	overflow: hidden;
+
 	text-overflow: ellipsis;
+
 }
 
 .playlist-empty {
+
 	padding: 20px 10px;
 
 	text-align: center;
@@ -1355,34 +2193,968 @@ footer {
 	color: #9aadb5;
 
 	font-size: 11px;
+
 }
 
 /* =========================================================
+
    모바일
+
    ========================================================= */
 
 @media (max-width: 600px) {
 
 	#travel-playlist-widget {
+
 		right: 15px;
+
 		bottom: 15px;
+
 	}
 
 	#travel-playlist-panel {
+
 		width: calc(100vw - 30px);
 
 		right: 0;
+
 		bottom: 72px;
 
 		max-height: 75vh;
+
 	}
 
 	#playlist-toggle-btn {
+
 		width: 56px;
+
 		height: 56px;
+
 	}
 
 	.playlist-track-area {
+
 		max-height: 150px;
+
+	}
+
+}
+
+/* =========================================================
+
+   🍽️ 맛따라 여행따라 - FOOD × TRAVEL 디자인
+
+   기존 HTML / JS 기능 유지
+
+   ========================================================= */
+
+/* ---------------------------------------------------------
+
+   전체 색상
+
+--------------------------------------------------------- */
+
+:root {
+
+    --food-orange: #ff9f43;
+
+    --food-yellow: #ffd166;
+
+    --travel-blue: #2ba6cf;
+
+    --travel-sky: #eaf7ff;
+
+    --travel-deep: #167da3;
+
+    --soft-green: #82c99b;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🌤️ 히어로 영역
+
+--------------------------------------------------------- */
+
+.hero-section {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+
+            circle at 12% 30%,
+
+            rgba(255,255,255,.95) 0 42px,
+
+            transparent 43px
+
+        ),
+
+        radial-gradient(
+
+            circle at 16% 27%,
+
+            rgba(255,255,255,.85) 0 28px,
+
+            transparent 29px
+
+        ),
+
+        radial-gradient(
+
+            circle at 84% 24%,
+
+            rgba(255,255,255,.75) 0 32px,
+
+            transparent 33px
+
+        ),
+
+        radial-gradient(
+
+            circle at 88% 20%,
+
+            rgba(255,255,255,.7) 0 20px,
+
+            transparent 21px
+
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            #edf8ff 0%,
+
+            #e0f2ff 60%,
+
+            #d5edfc 100%
+
+        );
+
+    border-bottom: 1px solid #dceff8;
+
+}
+
+
+/* 하늘에 은은한 햇빛 */
+
+.hero-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+
+    height: 300px;
+
+    right: -90px;
+
+    top: -140px;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(255,255,255,.7) 0%,
+
+            rgba(255,255,255,.25) 40%,
+
+            transparent 70%
+
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* 작은 여행 아이콘 장식 */
+
+.hero-section::after {
+
+    content: "✦     ✈     ♡";
+
+    position: absolute;
+
+    right: 7%;
+
+    top: 35px;
+
+    color: rgba(43,166,207,.28);
+
+    font-size: 26px;
+
+    letter-spacing: 10px;
+
+    transform: rotate(-5deg);
+
+    pointer-events: none;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   ✈️ 히어로 내부 여행 장식
+
+--------------------------------------------------------- */
+
+.hero-inner {
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+/* ---------------------------------------------------------
+
+   🍴 FOOD × TRAVEL 타이틀
+
+--------------------------------------------------------- */
+
+.sub-tag {
+
+    position: relative;
+
+}
+
+.sub-tag::before {
+
+    content: "🍴";
+
+    margin-right: 7px;
+
+    font-size: 14px;
+
+}
+
+
+/* 제목 조금 더 입체적으로 */
+
+.hero-title {
+
+    text-shadow:
+
+        0 2px 0 rgba(255,255,255,.8),
+
+        0 5px 18px rgba(43,166,207,.08);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🔎 검색창
+
+--------------------------------------------------------- */
+
+.search-box-wrap {
+
+    position: relative;
+
+    border: 2px solid rgba(255,255,255,.9);
+
+    box-shadow:
+
+        0 10px 30px rgba(38,130,164,.12),
+
+        0 2px 5px rgba(0,0,0,.03);
+
+    transition:
+
+        transform .2s ease,
+
+        box-shadow .2s ease;
+
+}
+
+.search-box-wrap:focus-within {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+
+        0 14px 35px rgba(43,166,207,.18),
+
+        0 3px 8px rgba(0,0,0,.04);
+
+}
+
+.search-box-wrap button {
+
+    box-shadow:
+
+        0 5px 14px rgba(43,166,207,.28);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🏷️ 인기 검색 태그
+
+--------------------------------------------------------- */
+
+.tag-badge {
+
+    box-shadow: 0 2px 8px rgba(43,166,207,.05);
+
+}
+
+.tag-badge:hover {
+
+    background: #f2fbff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+
+        0 5px 12px rgba(43,166,207,.12);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🍽️ 오른쪽 추천 카드
+
+--------------------------------------------------------- */
+
+.twin-card {
+
+    position: relative;
+
+    border: 1px solid rgba(255,255,255,.9);
+
+    box-shadow:
+
+        0 15px 40px rgba(39,129,161,.13),
+
+        0 3px 10px rgba(0,0,0,.03);
+
+    backdrop-filter: blur(5px);
+
+    transition:
+
+        transform .25s ease,
+
+        box-shadow .25s ease;
+
+}
+
+.twin-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+
+        0 20px 45px rgba(39,129,161,.17);
+
+}
+
+
+/* 카드 위 작은 TRAVEL 뱃지 */
+
+.twin-card::before {
+
+    content: "TRAVEL";
+
+    position: absolute;
+
+    right: 16px;
+
+    top: -11px;
+
+    padding: 4px 11px;
+
+    border-radius: 20px;
+
+    background: white;
+
+    border: 1px solid #cdebf6;
+
+    color: var(--travel-blue);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    box-shadow: 0 3px 8px rgba(43,166,207,.08);
+
+}
+
+
+/* 추천 카드 아이콘 */
+
+.twin-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    margin-bottom: 9px;
+
+    border-radius: 15px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #eefaff,
+
+            #ffffff
+
+        );
+
+    box-shadow:
+
+        inset 0 0 0 1px #e1f3f9,
+
+        0 4px 10px rgba(43,166,207,.06);
+
+}
+
+
+/* 음식 추천 컬럼 */
+
+.twin-col:nth-child(2) .twin-icon {
+
+    color: var(--food-orange);
+
+}
+
+
+/* 여행 컬럼 */
+
+.twin-col:nth-child(3) .twin-icon {
+
+    color: var(--travel-blue);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🗺️ 메인 영역
+
+--------------------------------------------------------- */
+
+.main-content {
+
+    position: relative;
+
+    padding-top: 12px;
+
+    padding-bottom: 70px;
+
+}
+
+
+/* 배경 장식 원 */
+
+.main-content::before {
+    display: none;
+}
+
+
+/* 오른쪽 장식 */
+
+.main-content::after {
+
+    content: "✦";
+
+    position: absolute;
+
+    right: 8%;
+
+    top: 35px;
+
+    color: rgba(43,166,207,.18);
+
+    font-size: 55px;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🍜 맛집 목록 영역
+
+--------------------------------------------------------- */
+
+.content-left {
+
+    position: relative;
+
+    border-color: #d9eaf2;
+
+    box-shadow:
+
+        0 12px 35px rgba(39,129,161,.08);
+
+}
+
+
+/* 목록 상단 장식 */
+
+.content-left::before {
+
+    content: "🍽️  주변 맛집";
+
+    display: inline-block;
+
+    align-self: flex-start;
+
+    margin-bottom: 14px;
+
+    padding: 7px 13px;
+
+    border-radius: 20px;
+
+    background: #fff7eb;
+
+    color: #e88b2d;
+
+    border: 1px solid #ffe2bd;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+/* 맛집 카드 */
+
+.rest-card {
+
+    position: relative;
+
+    border-color: #e3ebf0;
+
+    box-shadow:
+
+        0 3px 10px rgba(30,90,110,.025);
+
+    transition:
+
+        transform .2s ease,
+
+        box-shadow .2s ease,
+
+        border-color .2s ease;
+
+}
+
+
+/* 맛집 카드 왼쪽 포인트 */
+
+.rest-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 14px;
+
+    bottom: 14px;
+
+    width: 4px;
+
+    border-radius: 0 5px 5px 0;
+
+    background: #d9edf5;
+
+    transition: .2s;
+
+}
+
+
+.rest-card:hover::before,
+
+.rest-card.active::before {
+
+    background: var(--food-orange);
+
+}
+
+
+/* 선택된 맛집 */
+
+.rest-card.active {
+
+    box-shadow:
+
+        0 8px 22px rgba(43,166,207,.12);
+
+}
+
+
+/* 맛집 카테고리 */
+
+.rest-card-badge {
+
+    border-radius: 20px;
+
+    padding: 4px 10px;
+
+    background: #eaf8fd;
+
+    border: 1px solid #d4eef7;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   ❤️ 찜 버튼
+
+--------------------------------------------------------- */
+
+.heart-btn {
+
+    border-radius: 50%;
+
+    transition:
+
+        transform .18s ease,
+
+        background .18s ease;
+
+}
+
+.heart-btn:hover {
+
+    background: #fff2f2;
+
+    transform: scale(1.15);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🗺️ 지도
+
+--------------------------------------------------------- */
+
+#map {
+
+    position: relative;
+
+    border-color: #d9eaf2;
+
+    box-shadow:
+
+        0 12px 35px rgba(39,129,161,.10);
+
+    overflow: hidden;
+
+}
+
+
+/* 지도 위쪽 테두리 느낌 */
+
+#map::after {
+
+    content: "📍 맛집 지도";
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 15px;
+
+    padding: 7px 12px;
+
+    background: rgba(255,255,255,.92);
+
+    border: 1px solid #d8eaf2;
+
+    border-radius: 18px;
+
+    color: #377f97;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    box-shadow:
+
+        0 4px 12px rgba(0,0,0,.08);
+
+    pointer-events: none;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   📍 선택 장소 박스
+
+--------------------------------------------------------- */
+
+.selected-place-box {
+
+    box-shadow:
+
+        0 8px 25px rgba(39,129,161,.07);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🧭 여행 버튼
+
+--------------------------------------------------------- */
+
+.tour-modal-open-btn {
+
+    box-shadow:
+
+        0 7px 18px rgba(43,166,207,.25);
+
+}
+
+.tour-modal-open-btn:hover {
+
+    transform: translateY(-3px) scale(1.02);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🎵 플레이리스트 버튼
+
+--------------------------------------------------------- */
+
+#travel-playlist-widget {
+
+    filter:
+
+        drop-shadow(0 8px 18px rgba(43,166,207,.15));
+
+}
+
+#playlist-toggle-btn {
+
+    box-shadow:
+
+        0 10px 28px rgba(48,169,218,.35),
+
+        0 0 0 6px rgba(105,213,242,.10);
+
+}
+
+#playlist-toggle-btn:hover {
+
+    box-shadow:
+
+        0 14px 35px rgba(48,169,218,.42),
+
+        0 0 0 8px rgba(105,213,242,.12);
+
+}
+
+
+/* ---------------------------------------------------------
+
+   🌊 메인과 푸터 사이 분위기
+
+--------------------------------------------------------- */
+
+footer {
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-top-left-radius: 35px;
+
+    border-top-right-radius: 35px;
+
+}
+
+
+/* 푸터에 물결 같은 빛 */
+
+footer::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 450px;
+
+    height: 120px;
+
+    left: 10%;
+
+    top: -80px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.10);
+
+    transform: rotate(-5deg);
+
+    pointer-events: none;
+
+}
+
+
+/* ---------------------------------------------------------
+
+   📱 모바일
+
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .hero-section::after {
+
+        right: 3%;
+
+        top: 18px;
+
+        font-size: 18px;
+
+        letter-spacing: 5px;
+
+    }
+
+    .hero-inner::before {
+
+        left: 24px;
+
+        bottom: -30px;
+
+        font-size: 10px;
+
+    }
+
+    .hero-inner::after {
+
+        display: none;
+
+    }
+
+    .twin-card::before {
+
+        display: none;
+
+    }
+
+    .main-content::before,
+
+    .main-content::after {
+
+        display: none;
+
+    }
+
+    #map::after {
+
+        font-size: 10px;
+
+        padding: 5px 9px;
+
+    }
+
+    footer {
+
+        border-radius: 25px 25px 0 0;
+
+    }
+
+}
+
+/* =========================================================
+   🌊 맛따라 여행따라 - 이미지 배경 적용
+   기존 CSS / HTML / JS 유지
+   ========================================================= */
+
+/* 상단 여행 배경 */
+.hero-section {
+    background-image: url('/images/hero-bg.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* 기존 장식용 CSS 이미지/문구는 유지하되
+   실제 배경 이미지 위에서 자연스럽게 보이도록 */
+.hero-section::before,
+.hero-section::after {
+    pointer-events: none;
+}
+
+/* 아래 메인 영역 배경 */
+.main-content {
+    background-image: url('/images/content-bg.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+
+/* 기존 main-content의 장식은 유지 */
+.main-content::before,
+.main-content::after {
+    pointer-events: none;
+}
+
+/* 배경 위 카드가 조금 더 또렷하게 보이도록 */
+.content-left,
+.content-right,
+.selected-place-box {
+    position: relative;
+    z-index: 1;
+}
+
+/* 화면이 넓어졌을 때도 배경이 자연스럽게 이어지도록 */
+@media (min-width: 1400px) {
+    .hero-section {
+        background-position: center center;
+    }
+
+    .main-content {
+        background-position: center top;
+    }
+}
+
+/* 모바일에서도 배경 이미지 유지 */
+@media (max-width: 700px) {
+    .hero-section {
+        background-position: center center;
+        background-size: cover;
+    }
+
+	.main-content {
+	    background-position: center top;
+	    background-size: 100% auto;
 	}
 }
