@@ -28,6 +28,7 @@ public class MapController {
     public String mobileMypage() {
         return "mobile-mypage";
     }
+
     @GetMapping("/api/search")
     @ResponseBody
     public String search(

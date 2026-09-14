@@ -10,4 +10,8 @@ public class CommunityPageController {
     public String communityPage() {
         return "community";
     }
+    @GetMapping("/mobile-community")
+    public String mobileCommunityPage() {
+        return "mobile-community";
+    }
 }

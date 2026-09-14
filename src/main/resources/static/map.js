@@ -255,10 +255,17 @@ async function fetchRestaurants(query) {
             } catch (e) {}
 
             try {
-                // 3. 내가 찜했는지 여부(기존 favoriteList 활용)
-                const isFav = favoriteList.some(f => String(f.id) === String(place.id));
-                place.favCount = isFav ? 1 : 0;
-            } catch (e) {}
+                // 3. MySQL DB favorite 테이블에서 실제 찜 누적 개수 가져오기
+                const favRes = await fetch(`/api/favorites/count/${encodeURIComponent(place.id)}`);
+                if (favRes.ok) {
+                    const count = await favRes.json();
+                    place.favCount = Number(count) || 0;
+                } else {
+                    place.favCount = 0;
+                }
+            } catch (e) {
+                place.favCount = 0;
+            }
         });
 
         await Promise.all(statsPromises);
@@ -280,22 +287,79 @@ async function fetchRestaurants(query) {
 // =========================================================
 // 맛집 다중 정렬 처리 (기본순 / 좋아요순 / 리뷰순 / 찜순)
 // =========================================================
-function sortAndRenderRestaurants() {
-    const sortType = document.getElementById("rest-sort-select")?.value || "default";
+async function sortAndRenderRestaurants() {
+    const sortSelect = document.getElementById("rest-sort-select");
+    const sortType = sortSelect ? sortSelect.value : "default";
 
+    // 1. '❤️ 찜 많은 순' 선택 시: MySQL DB 전체에서 찜된 모든 식당을 직접 불러와서 표시
+    if (sortType === "favorites") {
+        try {
+            const res = await fetch('/api/favorites/ranking');
+            if (res.ok) {
+                const dbList = await res.json();
+
+                // DB 데이터를 화면 표시 규격으로 변환
+                currentPlaces = dbList.map(item => ({
+                    id: item.placeId,
+                    place_name: item.placeName,
+                    road_address_name: item.address,
+                    address_name: item.address,
+                    phone: item.phone,
+                    x: item.x,
+                    y: item.y,
+                    place_url: item.placeUrl,
+                    category_name: item.categoryName || '음식점',
+                    likeCount: 0,
+                    reviewCount: 0,
+                    favCount: 0
+                }));
+
+                // 각 식당의 좋아요수/리뷰수/찜개수 조회
+                const statsPromises = currentPlaces.map(async place => {
+                    try {
+                        const favRes = await fetch(`/api/favorites/count/${encodeURIComponent(place.id)}`);
+                        if (favRes.ok) place.favCount = Number(await favRes.json()) || 0;
+                    } catch (e) {}
+                    try {
+                        const revRes = await fetch(`/api/reviews/place/${encodeURIComponent(place.id)}`);
+                        if (revRes.ok) {
+                            const data = await revRes.json();
+                            place.reviewCount = Array.isArray(data) ? data.length : 0;
+                        }
+                    } catch (e) {}
+                    try {
+                        const reacRes = await fetch(`/api/reactions/${encodeURIComponent(place.id)}`);
+                        if (reacRes.ok) {
+                            const data = await reacRes.json();
+                            place.likeCount = data.likeCount || 0;
+                        }
+                    } catch (e) {}
+                });
+                await Promise.all(statsPromises);
+
+                // DB 찜 많은 순으로 정렬
+                currentPlaces.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
+
+                const totalCountEl = document.getElementById('rest-total-count');
+                if (totalCountEl) totalCountEl.innerText = `총 ${currentPlaces.length}개 맛집`;
+
+                renderList(currentPlaces);
+                return;
+            }
+        } catch (err) {
+            console.error("DB 랭킹 로드 실패:", err);
+        }
+    }
+
+    // 2. 기본순 / 좋아요순 / 리뷰순 선택 시 기존 리스트 정렬
     if (!currentPlaces || currentPlaces.length === 0) return;
 
     let sorted = [...currentPlaces];
 
     if (sortType === "likes") {
-        // 1. 좋아요 많은 순
-        sorted.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
+        sorted.sort((a, b) => (Number(b.likeCount) || 0) - (Number(a.likeCount) || 0));
     } else if (sortType === "reviews") {
-        // 2. 리뷰 많은 순
-        sorted.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
-    } else if (sortType === "favorites") {
-        // 3. 찜 많은 순 (찜 등록된 항목 우선)
-        sorted.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
+        sorted.sort((a, b) => (Number(b.reviewCount) || 0) - (Number(a.reviewCount) || 0));
     }
 
     renderList(sorted);
@@ -2153,5 +2217,4 @@ document.addEventListener(
         }
 
     }
-	
 );

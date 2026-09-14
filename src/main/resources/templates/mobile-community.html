@@ -1,0 +1,727 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>커뮤니티 - 맛따라, 여행따라</title>
+
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="stylesheet" href="/mobile-community.css">
+
+
+<!-- =====================================================
+     모바일용 최소 추가 CSS
+     기존 community.css 기능은 그대로 사용
+===================================================== -->
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     메인
+===================================================== -->
+
+<div class="community-container">
+
+
+    <!-- 헤더 -->
+
+    <div class="community-header">
+
+        <div class="header-title">
+
+            <div class="logo-mark">
+                <i class="fa-solid fa-plane-departure"></i>
+            </div>
+
+            <div>
+
+                <h1>커뮤니티</h1>
+
+                <div class="header-sub">
+                    여행자들의 맛있는 이야기
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!--
+            모바일에서는 기존 goBack()을 사용하지 않고
+            모바일 메인으로 바로 이동
+        -->
+
+        <button
+            type="button"
+            class="home-btn"
+            onclick="location.href='/mobile'"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         여행 배너
+    ===================================================== -->
+
+    <div class="community-intro">
+
+        <div class="hero-copy">
+
+            <div class="hero-kicker">
+                ✈️ 맛집과 여행을 한곳에서
+            </div>
+
+            <h2>
+                맛따라, 여행따라
+            </h2>
+
+            <p>
+                내가 찾은 맛집부터 여행 코스까지.<br>
+                여행자들과 자유롭게 이야기를 나눠보세요.
+            </p>
+
+        </div>
+
+
+        <div class="hero-icons">
+
+            <i class="fa-solid fa-sun"></i>
+
+            <i class="fa-solid fa-map-location-dot"></i>
+
+            <i class="fa-solid fa-umbrella-beach"></i>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         검색
+    ===================================================== -->
+
+    <div class="toolbar">
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                id="search-input"
+                type="text"
+                placeholder="맛집, 여행지, 질문을 검색해보세요"
+                oninput="renderPosts()"
+            >
+
+        </div>
+
+
+        <select
+            id="sort-select"
+            class="sort-select"
+            onchange="renderPosts()"
+        >
+
+            <option value="latest">
+                최신순
+            </option>
+
+            <option value="popular">
+                인기순
+            </option>
+
+            <option value="views">
+                조회순
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         카테고리
+    ===================================================== -->
+
+    <div class="category-area">
+
+        <button
+            class="category-btn active"
+            onclick="selectCategory(this,'all')"
+        >
+            전체
+        </button>
+
+
+        <button
+            class="category-btn"
+            onclick="selectCategory(this,'food')"
+        >
+            🍽️ 맛집
+        </button>
+
+
+        <button
+            class="category-btn"
+            onclick="selectCategory(this,'travel')"
+        >
+            ✈️ 여행
+        </button>
+
+
+        <button
+            class="category-btn"
+            onclick="selectCategory(this,'question')"
+        >
+            ❓ 질문
+        </button>
+
+
+        <button
+            class="category-btn"
+            onclick="selectCategory(this,'recommend')"
+        >
+            📍 추천
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         인기 게시글
+    ===================================================== -->
+
+    <div class="section-label">
+
+        <strong>
+            🔥 인기 게시글
+        </strong>
+
+        <span>
+            이번 주 인기
+        </span>
+
+    </div>
+
+
+    <div
+        id="popular-row"
+        class="popular-row"
+    ></div>
+
+
+
+    <!-- =====================================================
+         게시글
+    ===================================================== -->
+
+    <div class="write-area">
+
+        <span class="list-title">
+            여행 이야기
+        </span>
+
+
+        <button
+            type="button"
+            class="write-btn"
+            onclick="openWriteModal()"
+        >
+
+            <i class="fa-solid fa-pen"></i>
+
+            글쓰기
+
+        </button>
+
+    </div>
+
+
+    <div
+        id="post-list"
+        class="post-list"
+    >
+
+        <div class="empty">
+
+            <i class="fa-solid fa-compass"></i>
+
+            <p>
+                게시글을 불러오는 중...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     실시간 채팅 버튼
+===================================================== -->
+
+<button
+    class="chat-fab"
+    onclick="toggleChat()"
+    aria-label="실시간 채팅"
+>
+
+    <i class="fa-solid fa-comments"></i>
+
+
+    <span
+        id="chat-badge"
+        class="chat-badge"
+        style="display: none;"
+    ></span>
+
+</button>
+
+
+
+<!-- =====================================================
+     실시간 채팅
+===================================================== -->
+
+<div
+    id="chat-panel"
+    class="chat-panel"
+>
+
+    <div class="chat-head">
+
+        <div>
+
+            <b>
+
+                <span class="chat-status"></span>
+
+                여행자 라운지
+
+            </b>
+
+
+            <small id="chat-status-text">
+
+                이전 대화 불러오는 중...
+
+            </small>
+
+        </div>
+
+
+        <button
+            class="chat-close"
+            onclick="toggleChat()"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+
+    <!-- 이전 채팅 + 실시간 채팅 -->
+
+    <div
+        id="chat-messages"
+        class="chat-messages"
+    ></div>
+
+
+
+    <div class="chat-input">
+
+        <input
+            id="chat-input"
+            type="text"
+            placeholder="메시지를 입력하세요"
+            onkeydown="handleChatKey(event)"
+        >
+
+
+        <button
+            onclick="sendChat()"
+        >
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     글쓰기 모달
+===================================================== -->
+
+<div
+    id="write-modal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                ✈️ 여행 이야기 작성
+            </h2>
+
+
+            <button
+                class="close-btn"
+                onclick="closeWriteModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <div class="input-group">
+
+            <label>
+                카테고리
+            </label>
+
+
+            <select id="post-category">
+
+                <option value="food">
+                    🍽️ 맛집
+                </option>
+
+                <option value="travel">
+                    ✈️ 여행
+                </option>
+
+                <option value="question">
+                    ❓ 질문
+                </option>
+
+                <option value="recommend">
+                    📍 추천
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div class="input-group">
+
+            <label>
+                제목
+            </label>
+
+
+            <input
+                id="post-title"
+                type="text"
+                placeholder="여행 이야기를 제목으로 적어주세요"
+            >
+
+        </div>
+
+
+
+        <div class="input-group">
+
+            <label>
+                내용
+            </label>
+
+
+            <textarea
+                id="post-content"
+                placeholder="맛집, 여행 코스, 추천 장소 등을 자유롭게 작성해주세요."
+            ></textarea>
+
+        </div>
+
+
+
+        <button
+            class="submit-btn"
+            onclick="createPost()"
+        >
+            게시글 등록
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     게시글 상세 / 댓글
+===================================================== -->
+
+<div
+    id="detail-modal"
+    class="modal"
+>
+
+    <div class="modal-box detail-box">
+
+
+        <div class="modal-header">
+
+            <h2 id="detail-title">
+                게시글
+            </h2>
+
+
+            <button
+                class="close-btn"
+                onclick="closeDetailModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- 작성자 -->
+
+        <div class="detail-header-user">
+
+            <div
+                class="user-icon"
+                id="detail-user-icon"
+            >
+
+                <img
+                    id="detail-profile-img"
+                    src=""
+                    alt="프로필"
+                    onerror="this.style.display='none'; document.getElementById('detail-default-icon').style.display='block';"
+                >
+
+
+                <i
+                    id="detail-default-icon"
+                    class="fa-solid fa-user"
+                ></i>
+
+            </div>
+
+
+            <div>
+
+                <strong id="detail-author-name">
+                    작성자
+                </strong>
+
+
+                <div
+                    id="detail-meta"
+                    class="detail-meta"
+                    style="margin-bottom:0;"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- 본문 -->
+
+        <div
+            id="detail-content"
+            class="detail-content"
+        ></div>
+
+
+
+        <!-- 좋아요 / 링크 / 수정 / 삭제 -->
+
+        <div class="detail-actions">
+
+
+            <button
+                id="detail-like-btn"
+                onclick="likeCurrentPost()"
+            >
+
+                <i class="fa-regular fa-thumbs-up"></i>
+
+                좋아요
+
+                <span id="detail-like-count">
+                    0
+                </span>
+
+            </button>
+
+
+
+            <button
+                onclick="copyCurrentPost()"
+            >
+
+                <i class="fa-solid fa-link"></i>
+
+                링크 복사
+
+            </button>
+
+
+
+            <button
+                id="detail-edit-btn"
+                onclick="editCurrentPost()"
+                style="display: none;"
+            >
+
+                <i class="fa-solid fa-pen"></i>
+
+                수정
+
+            </button>
+
+
+
+            <button
+                id="detail-delete-btn"
+                onclick="deleteCurrentPost()"
+                style="display: none;"
+            >
+
+                <i class="fa-solid fa-trash"></i>
+
+                삭제
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- 댓글 -->
+
+        <div class="reply-list">
+
+
+            <div class="reply-title">
+                💬 댓글 / 답글
+            </div>
+
+
+            <div id="reply-list"></div>
+
+
+            <div class="reply-form">
+
+                <input
+                    id="reply-input"
+                    type="text"
+                    placeholder="댓글을 남겨보세요"
+                    onkeydown="handleReplyKey(event)"
+                >
+
+
+                <button
+                    onclick="addReply()"
+                >
+                    등록
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     모바일 하단 메뉴
+===================================================== -->
+
+<nav class="mobile-bottom-nav">
+
+    <a href="/mobile">
+        <i class="fa-solid fa-house"></i>
+        <span>홈</span>
+    </a>
+
+
+    <a href="/mobile#map">
+        <i class="fa-solid fa-map"></i>
+        <span>지도</span>
+    </a>
+
+
+    <a href="/trip">
+        <i class="fa-solid fa-route"></i>
+        <span>여행코스</span>
+    </a>
+
+
+    <a href="/mobile-community" class="active">
+        <i class="fa-solid fa-comments"></i>
+        <span>커뮤니티</span>
+    </a>
+
+
+    <a href="/mobile-mypage">
+        <i class="fa-solid fa-user"></i>
+        <span>마이페이지</span>
+    </a>
+
+</nav>
+
+
+
+<!-- 기존 community.js 그대로 사용 -->
+
+<script src="community.js"></script>
+
+
+</body>
+</html>

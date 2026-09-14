@@ -15,37 +15,39 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FavoriteService {
 
-    private final FavoriteRepository favoriteRepository;
+	private final FavoriteRepository favoriteRepository;
 
-    // 로그인 사용자의 찜 목록 조회
-    public List<Favorite> getMyFavorites(String username) {
-        return favoriteRepository.findByUsername(username);
-    }
+	// 로그인 사용자의 찜 목록 조회
+	public List<Favorite> getMyFavorites(String username) {
+		return favoriteRepository.findByUsername(username);
+	}
 
-    // 찜 추가
-    public void addFavorite(Favorite favorite) {
+	// 찜 추가
+	public void addFavorite(Favorite favorite) {
 
-        if (favoriteRepository
-                .findByUsernameAndPlaceId(
-                        favorite.getUsername(),
-                        favorite.getPlaceId())
-                .isEmpty()) {
+		if (favoriteRepository.findByUsernameAndPlaceId(favorite.getUsername(), favorite.getPlaceId()).isEmpty()) {
 
-            favoriteRepository.save(favorite);
-        }
-    }
+			favoriteRepository.save(favorite);
+		}
+	}
 
-    // 찜 삭제
-    @Transactional
-    public void removeFavorite(String username, String placeId) {
+	// 찜 삭제
+	@Transactional
+	public void removeFavorite(String username, String placeId) {
 
-        Optional<Favorite> favorite =
-                favoriteRepository.findByUsernameAndPlaceId(
-                        username,
-                        placeId);
+		Optional<Favorite> favorite = favoriteRepository.findByUsernameAndPlaceId(username, placeId);
 
-        if (favorite.isPresent()) {
-            favoriteRepository.delete(favorite.get());
-        }
-    }
+		if (favorite.isPresent()) {
+			favoriteRepository.delete(favorite.get());
+		}
+	}
+
+	// 특정 식당 찜 개수 반환
+	public int getFavoriteCount(String placeId) {
+		return favoriteRepository.countByPlaceId(placeId);
+	}
+
+	public List<Favorite> getTopFavoritedRestaurants() {
+		return favoriteRepository.findTopFavoritedRestaurants();
+	}
 }

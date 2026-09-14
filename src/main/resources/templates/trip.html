@@ -1,484 +1,719 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="ko">
 
 <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>맛따라 여행따라 - 추천 코스</title>
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <title>추천 코스 보기</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
 
-    <style>
+		body {
+			background: #f4f9fd;
+			font-family: 'Noto Sans KR', sans-serif;
+			margin: 0;
+			padding: 30px 20px;
+			color: #1e293b;
+		}
 
-        body {
-            background: #f5f8fc;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
+		.trip-container {
+			max-width: 1100px;
+			margin: 0 auto;
+		}
 
-        .container {
-            width: 650px;
-            margin: 50px auto;
-        }
+		/* 1. 상단 안내 배너 */
+		.hero-banner {
+			background: linear-gradient(135deg, #bae6fd 0%, #e0f2fe 100%);
+			border-radius: 24px;
+			padding: 26px 24px;
+			text-align: center;
+			box-shadow: 0 10px 25px rgba(43, 166, 207, 0.1);
+			margin-bottom: 22px;
+		}
 
-        h1 {
-            margin-bottom: 10px;
-        }
+		.hero-badge {
+			display: inline-block;
+			background: #ffffff;
+			color: #0284c7;
+			font-size: 11px;
+			font-weight: 800;
+			padding: 4px 12px;
+			border-radius: 20px;
+			margin-bottom: 8px;
+		}
 
-        .box {
-            background: white;
-            padding: 25px;
-            margin: 20px 0;
-            border-radius: 15px;
-        }
+		.hero-banner h1 {
+			margin: 0 0 6px 0;
+			font-size: 22px;
+			font-weight: 800;
+			color: #0f172a;
+		}
 
-        /* 선택한 맛집 */
+		.hero-banner p {
+			margin: 0;
+			font-size: 13px;
+			color: #475569;
+		}
 
-        .restaurant-box {
-            border: 2px solid #315b9c;
-        }
+		/* 2단 그리드 본문 레이아웃 */
+		.trip-grid {
+			display: grid;
+			grid-template-columns: 1.15fr 0.85fr;
+			gap: 24px;
+			align-items: start;
+		}
 
-        .restaurant-name {
-            font-size: 23px;
-            margin: 15px 0 10px;
-        }
+		@media (max-width: 900px) {
+			.trip-grid {
+				grid-template-columns: 1fr;
+			}
+		}
 
-        .restaurant-address {
-            color: #666;
-        }
+		/* 선택한 맛집 요약 카드 */
+		.restaurant-summary-card {
+			background: #ffffff;
+			border-radius: 18px;
+			padding: 16px 20px;
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+			border: 1px solid #e2e8f0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+		}
 
+		.rest-summary-left {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			text-align: left;
+		}
 
-        /* 추천 코스 */
+		.rest-summary-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 12px;
+			background: #e0f2fe;
+			color: #0284c7;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+		}
 
-        .course-box {
-            background: white;
-            padding: 25px;
-            margin: 25px 0;
-            border-radius: 15px;
-            text-align: left;
-        }
+		/* 추천 코스 카드 기본 박스 (클릭 가능하도록 커서 및 transition 추가) */
+		.course-box {
+			background: #ffffff;
+			border-radius: 22px;
+			padding: 22px 24px;
+			margin-bottom: 20px;
+			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03);
+			border: 2px solid transparent;
+			text-align: left;
+			cursor: pointer;
+			transition: all 0.25s ease;
+		}
 
-        /* 1번 추천 코스 */
+		.course-box:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 28px rgba(43, 166, 207, 0.12);
+		}
 
-        .best-course {
-            border: 4px solid #315b9c;
-            box-shadow: 0 5px 20px rgba(49, 91, 156, 0.25);
-        }
+		/* 선택된 활성 코스 강조 (파란 테두리 + 그림자) */
+		.course-box.active-course {
+			border: 2px solid #38bdf8 !important;
+			box-shadow: 0 12px 30px rgba(56, 189, 248, 0.22) !important;
+			background: #ffffff;
+		}
 
-        .best-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+		.course-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding-bottom: 12px;
+			margin-bottom: 16px;
+			border-bottom: 1px solid #f1f5f9;
+		}
 
-        /* 일반 코스 */
+		.course-title {
+			font-size: 16px;
+			font-weight: 800;
+			color: #0f172a;
+		}
 
-        .normal-course {
-            border: 1px solid #ddd;
-        }
+		.course-tag {
+			font-size: 11px;
+			font-weight: 700;
+			background: #f0f9ff;
+			color: #0284c7;
+			padding: 3px 10px;
+			border-radius: 10px;
+		}
 
-        .course-title {
-            text-align: center;
-            font-size: 21px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+		/* 타임라인 스타일 */
+		.timeline-step {
+			display: flex;
+			gap: 14px;
+			align-items: flex-start;
+		}
 
-        .course-item {
-            background: #f5f8fc;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 10px;
-            font-size: 17px;
-        }
+		.step-icon-wrap {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-        .arrow {
-            text-align: center;
-            font-size: 20px;
-            margin: 5px 0;
-        }
+		.step-circle {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 800;
+			font-size: 12.5px;
+			color: white;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+		}
 
-        .distance {
-            font-size: 13px;
-            color: #777;
-            margin-top: 5px;
-        }
+		.step-circle.blue {
+			background: #2ba6cf;
+		}
 
-        .address {
-            font-size: 13px;
-            color: #777;
-            margin-top: 5px;
-        }
+		.step-circle.sky {
+			background: #38bdf8;
+		}
 
+		.step-circle.orange {
+			background: #f59e0b;
+		}
 
-        /* 버튼 */
+		.step-line {
+			width: 2px;
+			height: 38px;
+			background: repeating-linear-gradient(to bottom, #cbd5e1 0px, #cbd5e1 4px, transparent 4px, transparent 8px);
+			margin: 4px 0;
+		}
 
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            background: #315b9c;
-            color: white;
-            cursor: pointer;
-            font-size: 15px;
-        }
+		.step-card {
+			flex: 1;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 14px;
+			padding: 12px 16px;
+			margin-bottom: 4px;
+		}
 
-        button:hover {
-            opacity: 0.85;
-        }
+		.step-badge {
+			font-size: 10.5px;
+			font-weight: 800;
+			padding: 2px 7px;
+			border-radius: 6px;
+			margin-right: 6px;
+			display: inline-block;
+		}
 
-    </style>
+		.badge-red {
+			background: #fee2e2;
+			color: #ef4444;
+		}
 
+		.badge-blue {
+			background: #e0f2fe;
+			color: #0284c7;
+		}
+
+		.badge-amber {
+			background: #fef3c7;
+			color: #d97706;
+		}
+
+		.step-name {
+			font-size: 15px;
+			font-weight: 700;
+			color: #0f172a;
+		}
+
+		.step-address {
+			font-size: 12px;
+			color: #64748b;
+			margin: 4px 0 0 0;
+		}
+
+		.step-move-info {
+			margin-left: 46px;
+			margin-top: 2px;
+			margin-bottom: 8px;
+		}
+
+		.step-move-info span {
+			font-size: 11px;
+			font-weight: 700;
+			color: #0284c7;
+			background: #e0f2fe;
+			padding: 3px 10px;
+			border-radius: 12px;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		/* 우측 가이드 카드 & 미니 지도 패널 */
+		.guide-side-panel {
+			position: sticky;
+			top: 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+		}
+
+		.guide-card {
+			background: #ffffff;
+			border-radius: 22px;
+			padding: 22px;
+			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+			border: 1px solid #f1f5f9;
+		}
+
+		.guide-title {
+			font-size: 15px;
+			font-weight: 800;
+			color: #0f172a;
+			margin: 0 0 14px 0;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		/* 카카오 미니 지도 영역 */
+		#route-map {
+			width: 100%;
+			height: 190px;
+			border-radius: 14px;
+			border: 1px solid #e2e8f0;
+			margin-bottom: 14px;
+		}
+
+		.guide-tip-box {
+			font-size: 12px;
+			color: #475569;
+			line-height: 1.55;
+			background: #f8fafc;
+			border-radius: 12px;
+			padding: 12px 14px;
+			border: 1px dashed #cbd5e1;
+		}
+
+		/* 사이드 액션 버튼들 */
+		.btn-action-primary {
+			width: 100%;
+			background: linear-gradient(135deg, #2ba6cf, #1b8cb3);
+			color: white;
+			border: none;
+			padding: 13px 0;
+			border-radius: 14px;
+			font-weight: 800;
+			font-size: 14px;
+			cursor: pointer;
+			box-shadow: 0 4px 14px rgba(43, 166, 207, 0.25);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			text-decoration: none;
+		}
+
+		.btn-action-primary:hover {
+			opacity: 0.93;
+		}
+
+		.btn-action-sub {
+			width: 100%;
+			background: #ffffff;
+			color: #475569;
+			border: 1.5px solid #cbd5e1;
+			padding: 11px 0;
+			border-radius: 14px;
+			font-weight: 700;
+			font-size: 13px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+		}
+
+		.btn-action-sub:hover {
+			background: #f8fafc;
+		}
+	</style>
 </head>
-
 
 <body>
 
-
-    <div class="container">
-
-
-        <h1>나만의 여행 코스</h1>
-
-        <p>
-            선택한 맛집을 기준으로 주변 관광지를 추천합니다.
-        </p>
-
-
-        <!-- 선택한 맛집 -->
-
-        <div class="box restaurant-box">
-
-            <h2>📍 선택한 맛집</h2>
-
-            <div
-                id="restaurantName"
-                class="restaurant-name">
-            </div>
-
-            <div
-                id="restaurantAddress"
-                class="restaurant-address">
-            </div>
-
-        </div>
-
-
-        <!-- 추천 여행 코스 -->
-
-        <h2>🗺️ 추천 여행 코스</h2>
-
-
-        <!-- 코스 1 -->
-
-        <div
-            id="course1"
-            class="course-box best-course">
-
-            <div class="best-title">
-                ⭐ BEST 추천 코스
-            </div>
-
-            <div id="course1Content"></div>
-
-        </div>
-
-
-        <!-- 코스 2 -->
-
-        <div
-            id="course2"
-            class="course-box normal-course">
-
-            <div class="course-title">
-                🌿 추천 코스 2
-            </div>
-
-            <div id="course2Content"></div>
-
-        </div>
-
-
-        <!-- 코스 3 -->
-
-        <div
-            id="course3"
-            class="course-box normal-course">
-
-            <div class="course-title">
-                🌸 추천 코스 3
-            </div>
-
-            <div id="course3Content"></div>
-
-        </div>
-
-
-        <button onclick="location.href='/map'">
-            🗺 지도에서 다시 검색
-        </button>
-
-
-    </div>
-
-
-    <script>
-
-
-        // localStorage에서 선택한 맛집 정보 가져오기
-
-        let restaurantName =
-            localStorage.getItem("restaurantName");
-
-        let restaurantAddress =
-            localStorage.getItem("restaurantAddress");
-
-        let restaurantLat =
-            localStorage.getItem("restaurantLat");
-
-        let restaurantLng =
-            localStorage.getItem("restaurantLng");
-
-
-        // 선택한 맛집이 없는 경우
-
-        if (!restaurantName ||
-            !restaurantLat ||
-            !restaurantLng) {
-
-            document.getElementById("restaurantName").innerText =
-                "선택한 맛집이 없습니다.";
-
-            document.getElementById("restaurantAddress").innerText =
-                "지도에서 맛집을 먼저 선택해주세요.";
-
-        }
-
-        else {
-
-            // 맛집 정보 표시
-
-            document.getElementById("restaurantName").innerText =
-                "🍴 " + restaurantName;
-
-            document.getElementById("restaurantAddress").innerText =
-                restaurantAddress;
-
-
-            // 주변 관광지 검색
-
-            getTourList();
-
-        }
-
-
-        // 주변 관광지 가져오기
-
-        async function getTourList() {
-
-            try {
-
-                const response = await fetch(
-                    `/api/nearby-tour?lat=${restaurantLat}&lng=${restaurantLng}`
-                );
-
-
-                const data = await response.json();
-
-
-                const tours = data.documents;
-
-
-                if (tours.length === 0) {
-
-                    document.getElementById("course1Content").innerHTML =
-                        "<p>주변 관광지가 없습니다.</p>";
-
-                    document.getElementById("course2Content").innerHTML =
-                        "<p>주변 관광지가 없습니다.</p>";
-
-                    document.getElementById("course3Content").innerHTML =
-                        "<p>주변 관광지가 없습니다.</p>";
-
-                    return;
-
-                }
-
-
-                // 최대 6개의 관광지 사용
-
-                const tour1 = tours[0];
-
-                const tour2 = tours[1];
-
-                const tour3 = tours[2];
-
-                const tour4 = tours[3];
-
-                const tour5 = tours[4];
-
-                const tour6 = tours[5];
-
-
-                // 코스 1
-                // 가장 가까운 관광지 2개
-
-                let course1HTML = "";
-
-                course1HTML += createRestaurant();
-
-                course1HTML += createArrow();
-
-                course1HTML += createTour(tour1);
-
-                if (tour2) {
-
-                    course1HTML += createArrow();
-
-                    course1HTML += createTour(tour2);
-
-                }
-
-
-                document.getElementById("course1Content").innerHTML =
-                    course1HTML;
-
-
-                // 코스 2
-
-                let course2HTML = "";
-
-                course2HTML += createRestaurant();
-
-                if (tour3) {
-
-                    course2HTML += createArrow();
-
-                    course2HTML += createTour(tour3);
-
-                }
-
-                if (tour4) {
-
-                    course2HTML += createArrow();
-
-                    course2HTML += createTour(tour4);
-
-                }
-
-
-                document.getElementById("course2Content").innerHTML =
-                    course2HTML;
-
-
-                // 코스 3
-
-                let course3HTML = "";
-
-                course3HTML += createRestaurant();
-
-                if (tour5) {
-
-                    course3HTML += createArrow();
-
-                    course3HTML += createTour(tour5);
-
-                }
-
-                if (tour6) {
-
-                    course3HTML += createArrow();
-
-                    course3HTML += createTour(tour6);
-
-                }
-
-
-                document.getElementById("course3Content").innerHTML =
-                    course3HTML;
-
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                document.getElementById("course1Content").innerHTML =
-                    "<p>관광지를 불러오지 못했습니다.</p>";
-
-            }
-
-        }
-
-
-        // 맛집 HTML
-
-        function createRestaurant() {
-
-            return `
-
-                <div class="course-item">
-
-                    🍴 <strong>${restaurantName}</strong>
-
-                    <div class="address">
-                        ${restaurantAddress}
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-
-        // 화살표
-
-        function createArrow() {
-
-            return `
-
-                <div class="arrow">
-                    ↓
-                </div>
-
-            `;
-
-        }
-
-
-        // 관광지 HTML
-		
-        function createTour(tour) {
-
-            return `
-
-                <div class="course-item">
-
-                    🏛️ <strong>
-                        ${tour.place_name}
-                    </strong>
-
-                    <div class="distance">
-                        📍 ${tour.distance}m
-                    </div>
-
-                    <div class="address">
-                        ${tour.road_address_name ||
-                          tour.address_name}
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-
-    </script>
-
-
+	<div class="trip-container">
+
+		<!-- 1. 상단 배너 -->
+		<div class="hero-banner">
+			<span class="hero-badge">🐾 TRIP ROAD</span>
+			<h1>나만의 반나절 여행 코스 🎒</h1>
+			<p>선택하신 맛집을 시작으로 발길 닿기 좋은 주변 명소를 이어드렸어요!</p>
+		</div>
+
+		<div class="trip-grid">
+
+			<!-- 좌측: 타임라인 코스 목록 -->
+			<div class="trip-left">
+
+				<!-- 선택한 맛집 요약 카드 -->
+				<div class="restaurant-summary-card">
+					<div class="rest-summary-left">
+						<div class="rest-summary-icon">📍</div>
+						<div>
+							<div id="restaurantName" style="font-size: 16px; font-weight: 800; color: #0f172a;">-</div>
+							<div id="restaurantAddress" style="font-size: 12px; color: #64748b; margin-top: 2px;">-
+							</div>
+						</div>
+					</div>
+					<span
+						style="font-size: 11px; background: #fee2e2; color: #ef4444; font-weight: 800; padding: 4px 10px; border-radius: 8px;">출발
+						지점</span>
+				</div>
+
+				<!-- 코스 1 -->
+				<div id="course1" class="course-box">
+					<div class="course-header">
+						<span class="course-title">⭐ BEST 추천 코스</span>
+						<span class="course-tag">가장 알찬 동선</span>
+					</div>
+					<div id="course1Content"></div>
+				</div>
+
+				<!-- 코스 2 -->
+				<div id="course2" class="course-box">
+					<div class="course-header">
+						<span class="course-title">🌿 여유로운 산책 코스 2</span>
+						<span class="course-tag">힐링 & 휴식</span>
+					</div>
+					<div id="course2Content"></div>
+				</div>
+
+				<!-- 코스 3 -->
+				<div id="course3" class="course-box">
+					<div class="course-header">
+						<span class="course-title">🌸 도심 탐방 코스 3</span>
+						<span class="course-tag">주변 명소 탐방</span>
+					</div>
+					<div id="course3Content"></div>
+				</div>
+
+			</div>
+
+			<!-- 우측: 여행 가이드 동선 & 미니 지도 & 버튼들 -->
+			<div class="guide-side-panel">
+
+				<div class="guide-card">
+					<h4 class="guide-title">
+						<span>🐶</span> 여행 가이드 동선 미리보기
+					</h4>
+
+					<!-- 실제 카카오 미니 지도 -->
+					<div id="route-map"></div>
+
+					<div class="guide-tip-box" id="guide-tip-text">
+						💡 코스 정보를 불러오는 중입니다...
+					</div>
+				</div>
+
+				<!-- 액션 버튼 영역 -->
+				<div style="display: flex; flex-direction: column; gap: 10px;">
+					<a id="kakao-route-link" href="https://map.kakao.com" target="_blank" class="btn-action-primary">
+						🗺️ 카카오맵 실시간 길찾기
+					</a>
+					<button class="btn-action-sub" onclick="location.href='/map'">
+						🔄 홈으로 돌아가기
+					</button>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- 카카오 지도 SDK -->
+	<script type="text/javascript"
+		src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1adedc9e3c5d08a47849648c7f6a8864&libraries=services"></script>
+
+	<script>
+		let restaurantName = localStorage.getItem("restaurantName");
+		let restaurantAddress = localStorage.getItem("restaurantAddress");
+		let restaurantLat = localStorage.getItem("restaurantLat");
+		let restaurantLng = localStorage.getItem("restaurantLng");
+
+		let routeMap = null;
+		let mapOverlays = []; // 지도 위의 핀(오버레이) 보관
+		let routePolyline = null; // 지도 위의 점선 경로 보관
+
+		// 코스별 관광지 목록 저장소 (1, 2, 3번 코스)
+		let courseData = {
+			1: [],
+			2: [],
+			3: []
+		};
+
+		if (!restaurantName || !restaurantLat || !restaurantLng) {
+			document.getElementById("restaurantName").innerText = "선택한 맛집이 없습니다.";
+			document.getElementById("restaurantAddress").innerText = "지도에서 맛집을 먼저 선택해주세요.";
+		} else {
+			document.getElementById("restaurantName").innerText = restaurantName;
+			document.getElementById("restaurantAddress").innerText = restaurantAddress;
+			getTourList();
+		}
+
+		async function getTourList() {
+			try {
+				const response = await fetch(`/api/nearby-tour?lat=${restaurantLat}&lng=${restaurantLng}`);
+				const data = await response.json();
+				const tours = data.documents || [];
+
+				if (tours.length === 0) {
+					const emptyMsg = "<p style='text-align:center; color:#94a3b8; padding:20px 0;'>반경 내 추천 관광지가 없습니다.</p>";
+					document.getElementById("course1Content").innerHTML = emptyMsg;
+					document.getElementById("course2Content").innerHTML = emptyMsg;
+					document.getElementById("course3Content").innerHTML = emptyMsg;
+					return;
+				}
+
+				// 코스별 데이터 분배
+				courseData[1] = [tours[0], tours[1]].filter(Boolean);
+				courseData[2] = [tours[2], tours[3]].filter(Boolean);
+				courseData[3] = [tours[4], tours[5]].filter(Boolean);
+
+				// 코스 1 렌더링
+				let c1 = "";
+				c1 += createStepItem(1, "START · 맛집", restaurantName, restaurantAddress, "blue", "badge-red", true);
+				if (tours[0]) {
+					c1 += createMoveBadge(tours[0].distance, restaurantName, tours[0].place_name, tours[0].y, tours[0].x);
+					c1 += createStepItem(2, "문화/명소", tours[0].place_name, tours[0].road_address_name || tours[0].address_name, "sky", "badge-blue", !!tours[1]);
+				}
+				if (tours[1]) {
+					c1 += createMoveBadge(Math.abs(tours[1].distance - (tours[0]?.distance || 0)) || tours[1].distance, tours[0].place_name, tours[1].place_name, tours[1].y, tours[1].x);
+					c1 += createStepItem(3, "쇼핑/나들이", tours[1].place_name, tours[1].road_address_name || tours[1].address_name, "orange", "badge-amber", false);
+				}
+				document.getElementById("course1Content").innerHTML = c1;
+
+				// 코스 2 렌더링
+				let c2 = "";
+				c2 += createStepItem(1, "START · 맛집", restaurantName, restaurantAddress, "blue", "badge-red", !!tours[2]);
+				if (tours[2]) {
+					c2 += createMoveBadge(tours[2].distance, restaurantName, tours[2].place_name, tours[2].y, tours[2].x);
+					c2 += createStepItem(2, "힐링 명소", tours[2].place_name, tours[2].road_address_name || tours[2].address_name, "sky", "badge-blue", !!tours[3]);
+				}
+				if (tours[3]) {
+					c2 += createMoveBadge(Math.abs(tours[3].distance - (tours[2]?.distance || 0)) || tours[3].distance, tours[2].place_name, tours[3].place_name, tours[3].y, tours[3].x);
+					c2 += createStepItem(3, "자연/산책", tours[3].place_name, tours[3].road_address_name || tours[3].address_name, "orange", "badge-amber", false);
+				}
+				document.getElementById("course2Content").innerHTML = c2;
+
+				// 코스 3 렌더링
+				let c3 = "";
+				c3 += createStepItem(1, "START · 맛집", restaurantName, restaurantAddress, "blue", "badge-red", !!tours[4]);
+				if (tours[4]) {
+					c3 += createMoveBadge(tours[4].distance, restaurantName, tours[4].place_name, tours[4].y, tours[4].x);
+					c3 += createStepItem(2, "도심 산책", tours[4].place_name, tours[4].road_address_name || tours[4].address_name, "sky", "badge-blue", !!tours[5]);
+				}
+				if (tours[5]) {
+					c3 += createMoveBadge(Math.abs(tours[5].distance - (tours[4]?.distance || 0)) || tours[5].distance, tours[4].place_name, tours[5].place_name, tours[5].y, tours[5].x);
+					c3 += createStepItem(3, "주변 탐방", tours[5].place_name, tours[5].road_address_name || tours[5].address_name, "orange", "badge-amber", false);
+				}
+				document.getElementById("course3Content").innerHTML = c3;
+
+				// 클릭 이벤트 등록
+				document.getElementById("course1").onclick = () => selectCourse(1);
+				document.getElementById("course2").onclick = () => selectCourse(2);
+				document.getElementById("course3").onclick = () => selectCourse(3);
+
+				// 최초 1회: 1번 코스를 기본 활성화
+				selectCourse(1);
+
+			} catch (error) {
+				console.error(error);
+				document.getElementById("course1Content").innerHTML = "<p style='text-align:center; color:#ef4444;'>관광지를 불러오지 못했습니다.</p>";
+			}
+		}
+
+		// 특정 코스 선택 시 지도 갱신 & 활성화 처리 함수
+		function selectCourse(courseNum) {
+			// 1. 카드 활성화 스타일 전환
+			[1, 2, 3].forEach(num => {
+				const el = document.getElementById(`course${num}`);
+				if (el) el.classList.remove("active-course");
+			});
+			const selectedBox = document.getElementById(`course${courseNum}`);
+			if (selectedBox) selectedBox.classList.add("active-course");
+
+			// 2. 해당 코스의 관광지 데이터 추출
+			const tours = courseData[courseNum] || [];
+			const tour1 = tours[0] || null;
+			const tour2 = tours[1] || null;
+
+			// 3. 지도 및 길찾기 URL 갱신
+			renderRouteMap(tour1, tour2, courseNum);
+		}
+
+		// 우측 카카오 미니 지도 및 동선 갱신
+		function renderRouteMap(tour1, tour2, courseNum) {
+			const mapContainer = document.getElementById('route-map');
+			const startLat = parseFloat(restaurantLat);
+			const startLng = parseFloat(restaurantLng);
+			const startPos = new kakao.maps.LatLng(startLat, startLng);
+
+			if (!routeMap) {
+				const mapOption = {
+					center: startPos,
+					level: 5
+				};
+				routeMap = new kakao.maps.Map(mapContainer, mapOption);
+			}
+
+			// 기존 마커 및 선 제거
+			mapOverlays.forEach(overlay => overlay.setMap(null));
+			mapOverlays = [];
+			if (routePolyline) {
+				routePolyline.setMap(null);
+				routePolyline = null;
+			}
+
+			const bounds = new kakao.maps.LatLngBounds();
+			const linePath = [];
+
+			// 1) 출발 맛집 마커
+			linePath.push(startPos);
+			bounds.extend(startPos);
+			createCustomOverlay(startPos, "1", "#2ba6cf", restaurantName);
+
+			// 2) 관광지 1 마커
+			if (tour1) {
+				const tour1Pos = new kakao.maps.LatLng(parseFloat(tour1.y), parseFloat(tour1.x));
+				linePath.push(tour1Pos);
+				bounds.extend(tour1Pos);
+				createCustomOverlay(tour1Pos, "2", "#38bdf8", tour1.place_name);
+
+				// 가이드 팁 문구 갱신
+				document.getElementById("guide-tip-text").innerHTML =
+					`💡 <strong>[추천 코스 ${courseNum}]</strong> 맛집 <strong>'${restaurantName}'</strong>에서 식사 후 약 ${tour1.distance}m 거리의 <strong>'${tour1.place_name}'</strong>까지 둘러보는 최적 동선입니다!`;
+			}
+
+			// 3) 관광지 2 마커
+			if (tour2) {
+				const tour2Pos = new kakao.maps.LatLng(parseFloat(tour2.y), parseFloat(tour2.x));
+				linePath.push(tour2Pos);
+				bounds.extend(tour2Pos);
+				createCustomOverlay(tour2Pos, "3", "#f59e0b", tour2.place_name);
+			}
+
+			// [수정] WGS84 위경도를 카카오맵 웹 전용 좌표(WCONGNAMUL)로 변환 후 다중 경유지 URL 생성
+			const startCoord = new kakao.maps.LatLng(startLat, startLng).toCoords();
+
+			if (tour1 && tour2) {
+				const t1Coord = new kakao.maps.LatLng(parseFloat(tour1.y), parseFloat(tour1.x)).toCoords();
+				const t2Coord = new kakao.maps.LatLng(parseFloat(tour2.y), parseFloat(tour2.x)).toCoords();
+
+				// 카카오 전용 좌표 (출발X, 출발Y, 경유X, 경유Y, 도착X, 도착Y)
+				const rtCoords = `${Math.round(startCoord.getX())},${Math.round(startCoord.getY())},${Math.round(t1Coord.getX())},${Math.round(t1Coord.getY())},${Math.round(t2Coord.getX())},${Math.round(t2Coord.getY())}`;
+
+				const routeUrl = `https://map.kakao.com/?map_type=TYPE_MAP&target=walk&rt=${encodeURIComponent(rtCoords)}&rt1=${encodeURIComponent(restaurantName)}&rt2=${encodeURIComponent(tour1.place_name)}&rt3=${encodeURIComponent(tour2.place_name)}`;
+				document.getElementById("kakao-route-link").href = routeUrl;
+			} else if (tour1) {
+				const t1Coord = new kakao.maps.LatLng(parseFloat(tour1.y), parseFloat(tour1.x)).toCoords();
+				const rtCoords = `${Math.round(startCoord.getX())},${Math.round(startCoord.getY())},${Math.round(t1Coord.getX())},${Math.round(t1Coord.getY())}`;
+
+				const routeUrl = `https://map.kakao.com/?map_type=TYPE_MAP&target=walk&rt=${encodeURIComponent(rtCoords)}&rt1=${encodeURIComponent(restaurantName)}&rt2=${encodeURIComponent(tour1.place_name)}`;
+				document.getElementById("kakao-route-link").href = routeUrl;
+			}
+
+			// 동선 점선 Polyline 표시
+			routePolyline = new kakao.maps.Polyline({
+				path: linePath,
+				strokeWeight: 4,
+				strokeColor: '#2ba6cf',
+				strokeOpacity: 0.85,
+				strokeStyle: 'shortdash'
+			});
+			routePolyline.setMap(routeMap);
+
+			// 마커들이 한눈에 들어오도록 화면 좌표 조정
+			routeMap.setBounds(bounds);
+		}
+
+		function createCustomOverlay(position, number, color, name) {
+			// [수정] yAnchor: 0.5(중심 정렬) 및 transform 제거로 실제 좌표 정위치에 핀 고정
+			const content = `
+				                <div style="text-align: center; cursor: pointer;">
+				                    <div style="background: ${color}; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); margin: 0 auto;">
+				                        ${number}
+				                    </div>
+				                    <div style="background: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #1e293b; border: 1px solid #cbd5e1; white-space: nowrap; margin-top: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+				                        ${name}
+				                    </div>
+				                </div>
+				            `;
+
+			const overlay = new kakao.maps.CustomOverlay({
+				map: routeMap,
+				position: position,
+				content: content,
+				xAnchor: 0.5,
+				yAnchor: 0.35 // 번호 원형 아이콘의 중심이 좌표에 정확히 일치하도록 설정
+			});
+			mapOverlays.push(overlay);
+		}
+
+		function createStepItem(stepNumber, badgeText, title, address, circleColor, badgeClass, hasNextLine) {
+			return `
+		                <div class="timeline-step">
+		                    <div class="step-icon-wrap">
+		                        <div class="step-circle ${circleColor}">${stepNumber}</div>
+		                        ${hasNextLine ? '<div class="step-line"></div>' : ''}
+		                    </div>
+		                    <div class="step-card">
+		                        <div>
+		                            <span class="step-badge ${badgeClass}">${badgeText}</span>
+		                            <span class="step-name">${title}</span>
+		                        </div>
+		                        <p class="step-address">📍 ${address}</p>
+		                    </div>
+		                </div>
+		            `;
+		}
+
+		function createMoveBadge(distMeter, fromName, toName, toLat, toLng) {
+			const distance = parseInt(distMeter) || 500;
+			const walkMin = Math.max(1, Math.round(distance / 70));
+			const moveText = distance >= 1000
+				? `🚗 차로 약 ${Math.round(walkMin / 4)}분 (${(distance / 1000).toFixed(1)}km)`
+				: `🚶 도보 약 ${walkMin}분 (${distance}m)`;
+
+			const segmentRouteUrl = `https://map.kakao.com/?target=walk&sName=${encodeURIComponent(fromName)}&eName=${encodeURIComponent(toName)}`;
+
+			return `
+		                <div class="step-move-info" style="display: flex; align-items: center; gap: 8px;">
+		                    <span>${moveText}</span>
+		                    <a href="${segmentRouteUrl}" target="_blank" onclick="event.stopPropagation()"
+		                       style="font-size: 11px; color: #0284c7; background: #ffffff; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+		                        이동 길찾기 ↗
+		                    </a>
+		                </div>
+		            `;
+		}
+	</script>
 </body>
 
 </html>

@@ -85,230 +85,14 @@ html{scroll-behavior:smooth} body{font-family:'Noto Sans KR',sans-serif;backgrou
 <div id="favorite-modal" class="modal" onclick="closeFavoriteModal(event)"><div class="modal-box"><div class="modal-head"><h3><i class="fa-solid fa-heart" style="color:#e95c5c"></i> 내 찜 목록</h3><button class="modal-close-btn" onclick="closeFavoriteModal()"><i class="fa-solid fa-xmark"></i></button></div><div id="favorite-list-content" class="favorite-list"></div></div></div>
 
 <!-- 로그인/회원가입 -->
-
-<div id="auth-modal" class="modal" onclick="closeAuthModal(event)">
-    <div class="modal-box">
-
-        <div class="modal-head">
-            <h3 id="auth-modal-title">
-                <i class="fa-solid fa-user-lock"></i> 로그인
-            </h3>
-            <button class="modal-close-btn" onclick="closeAuthModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <!-- 로그인 / 회원가입 탭 -->
-        <div id="auth-main-tabs" class="auth-tabs">
-            <button id="tab-login" class="active" onclick="switchAuthTab('login')">
-                로그인
-            </button>
-            <button id="tab-register" onclick="switchAuthTab('register')">
-                회원가입
-            </button>
-        </div>
-
-        <!-- 로그인 -->
-        <div id="login-form-area" class="auth-form">
-            <input id="login-id" type="text" placeholder="아이디">
-
-            <input id="login-pw"
-                   type="password"
-                   placeholder="비밀번호">
-
-            <button class="auth-main-btn" onclick="requestLogin()">
-                로그인
-            </button>
-
-            <div class="auth-sub-buttons">
-                <button onclick="switchAuthTab('find-id')">
-                    아이디 찾기
-                </button>
-
-                <button onclick="switchAuthTab('find-pw')">
-                    비밀번호 찾기
-                </button>
-            </div>
-        </div>
-
-        <!-- 회원가입 -->
-        <div id="register-form-area" class="auth-form">
-
-            <input id="reg-nickname"
-                   type="text"
-                   placeholder="닉네임">
-
-            <input id="reg-id"
-                   type="text"
-                   placeholder="아이디 (영문/숫자 4~12자리)">
-
-            <input id="reg-pw"
-                   type="password"
-                   placeholder="비밀번호 (영문/숫자 4~16자리)">
-
-            <!-- 보안질문 -->
-            <select id="reg-question">
-                <option value="가장 기억에 남는 장소는?">
-                    가장 기억에 남는 장소는?
-                </option>
-
-                <option value="가장 좋아하는 음식은?">
-                    가장 좋아하는 음식은?
-                </option>
-
-                <option value="나의 어릴 적 별명은?">
-                    나의 어릴 적 별명은?
-                </option>
-
-                <option value="나의 보물 1호는?">
-                    나의 보물 1호는?
-                </option>
-            </select>
-
-            <input id="reg-answer"
-                   type="text"
-                   placeholder="보안 질문 답변">
-
-            <button class="auth-main-btn" onclick="requestRegister()">
-                회원가입
-            </button>
-
-        </div>
-
-        <!-- 아이디 찾기 -->
-        <div id="find-id-form-area" class="auth-form">
-
-            <p class="auth-description">
-                가입할 때 입력한 닉네임과 보안 질문 답변을 입력해주세요.
-            </p>
-
-            <input id="find-id-nickname"
-                   type="text"
-                   placeholder="닉네임">
-
-            <!-- 보안질문 -->
-            <select id="find-id-question">
-                <option value="가장 기억에 남는 장소는?">
-                    가장 기억에 남는 장소는?
-                </option>
-
-                <option value="가장 좋아하는 음식은?">
-                    가장 좋아하는 음식은?
-                </option>
-
-                <option value="나의 어릴 적 별명은?">
-                    나의 어릴 적 별명은?
-                </option>
-
-                <option value="나의 보물 1호는?">
-                    나의 보물 1호는?
-                </option>
-            </select>
-
-            <input id="find-id-answer"
-                   type="text"
-                   placeholder="보안 질문 답변">
-
-            <button class="auth-main-btn" onclick="requestFindId()">
-                아이디 찾기
-            </button>
-
-            <button class="auth-sub-buttons"
-                    onclick="switchAuthTab('login')"
-                    style="border:0;
-                           background:#f3f7f9;
-                           color:#607482;
-                           border-radius:9px;
-                           padding:8px;
-                           font-size:10px">
-                로그인으로 돌아가기
-            </button>
-
-        </div>
-
-        <!-- 비밀번호 찾기 -->
-        <div id="find-pw-form-area" class="auth-form">
-
-            <p class="auth-description">
-                아이디와 보안 질문 답변을 입력해주세요.
-            </p>
-
-            <input id="find-pw-id"
-                   type="text"
-                   placeholder="아이디">
-
-            <!-- 보안질문 -->
-            <select id="find-pw-question">
-                <option value="가장 기억에 남는 장소는?">
-                    가장 기억에 남는 장소는?
-                </option>
-
-                <option value="가장 좋아하는 음식은?">
-                    가장 좋아하는 음식은?
-                </option>
-
-                <option value="나의 어릴 적 별명은?">
-                    나의 어릴 적 별명은?
-                </option>
-
-                <option value="나의 보물 1호는?">
-                    나의 보물 1호는?
-                </option>
-            </select>
-
-            <input id="find-pw-answer"
-                   type="text"
-                   placeholder="보안 질문 답변">
-
-            <button class="auth-main-btn" onclick="requestFindPw()">
-                비밀번호 찾기
-            </button>
-
-            <button class="auth-sub-buttons"
-                    onclick="switchAuthTab('login')"
-                    style="border:0;
-                           background:#f3f7f9;
-                           color:#607482;
-                           border-radius:9px;
-                           padding:8px;
-                           font-size:10px">
-                로그인으로 돌아가기
-            </button>
-
-        </div>
-
-        <!-- 비밀번호 재설정 -->
-        <div id="reset-pw-form-area" class="auth-form">
-
-            <p class="auth-description">
-                현재 비밀번호를 확인한 후 새 비밀번호를 설정합니다.
-            </p>
-
-            <input id="reset-pw-id"
-                   type="text"
-                   placeholder="아이디"
-                   readonly>
-
-            <input id="reset-pw-current"
-                   type="password"
-                   placeholder="현재 비밀번호">
-
-            <input id="reset-pw-new"
-                   type="password"
-                   placeholder="새 비밀번호">
-
-            <input id="reset-pw-confirm"
-                   type="password"
-                   placeholder="새 비밀번호 확인">
-
-            <button class="auth-main-btn" onclick="requestDirectResetPw()">
-                비밀번호 변경
-            </button>
-
-        </div>
-
-    </div>
-</div>
+<div id="auth-modal" class="modal" onclick="closeAuthModal(event)"><div class="modal-box"><div class="modal-head"><h3 id="auth-modal-title"><i class="fa-solid fa-user-lock"></i> 로그인</h3><button class="modal-close-btn" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button></div>
+<div id="auth-main-tabs" class="auth-tabs"><button id="tab-login" class="active" onclick="switchAuthTab('login')">로그인</button><button id="tab-register" onclick="switchAuthTab('register')">회원가입</button></div>
+<div id="login-form-area" class="auth-form"><input id="login-id" type="text" placeholder="아이디"><input id="login-pw" type="password" placeholder="비밀번호"><button class="auth-main-btn" onclick="requestLogin()">로그인</button><div class="auth-sub-buttons"><button onclick="switchAuthTab('find-id')">아이디 찾기</button><button onclick="switchAuthTab('find-pw')">비밀번호 찾기</button></div></div>
+<div id="register-form-area" class="auth-form"><input id="reg-nickname" type="text" placeholder="닉네임"><input id="reg-id" type="text" placeholder="아이디 (영문/숫자 4~12자리)"><input id="reg-pw" type="password" placeholder="비밀번호 (영문/숫자 4~16자리)"><select id="reg-question"><option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option><option value="가장 좋아하는 여행지는?">가장 좋아하는 여행지는?</option><option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option></select><input id="reg-answer" type="text" placeholder="보안 질문 답변"><button class="auth-main-btn" onclick="requestRegister()">회원가입</button></div>
+<div id="find-id-form-area" class="auth-form"><p class="auth-description">가입할 때 입력한 닉네임과 보안 질문 답변을 입력해주세요.</p><input id="find-id-nickname" type="text" placeholder="닉네임"><select id="find-id-question"><option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option><option value="가장 좋아하는 여행지는?">가장 좋아하는 여행지는?</option><option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option></select><input id="find-id-answer" type="text" placeholder="보안 질문 답변"><button class="auth-main-btn" onclick="requestFindId()">아이디 찾기</button><button class="auth-sub-buttons" onclick="switchAuthTab('login')" style="border:0;background:#f3f7f9;color:#607482;border-radius:9px;padding:8px;font-size:10px">로그인으로 돌아가기</button></div>
+<div id="find-pw-form-area" class="auth-form"><p class="auth-description">아이디와 보안 질문 답변을 입력해주세요.</p><input id="find-pw-id" type="text" placeholder="아이디"><select id="find-pw-question"><option value="가장 좋아하는 음식은?">가장 좋아하는 음식은?</option><option value="가장 좋아하는 여행지는?">가장 좋아하는 여행지는?</option><option value="가장 기억에 남는 장소는?">가장 기억에 남는 장소는?</option></select><input id="find-pw-answer" type="text" placeholder="보안 질문 답변"><button class="auth-main-btn" onclick="requestFindPw()">비밀번호 찾기</button><button class="auth-sub-buttons" onclick="switchAuthTab('login')" style="border:0;background:#f3f7f9;color:#607482;border-radius:9px;padding:8px;font-size:10px">로그인으로 돌아가기</button></div>
+<div id="reset-pw-form-area" class="auth-form"><p class="auth-description">현재 비밀번호를 확인한 후 새 비밀번호를 설정합니다.</p><input id="reset-pw-id" type="text" placeholder="아이디" readonly><input id="reset-pw-current" type="password" placeholder="현재 비밀번호"><input id="reset-pw-new" type="password" placeholder="새 비밀번호"><input id="reset-pw-confirm" type="password" placeholder="새 비밀번호 확인"><button class="auth-main-btn" onclick="requestDirectResetPw()">비밀번호 변경</button></div>
+</div></div>
 
 <!-- 모바일 메뉴 -->
 <div id="mobile-menu-modal" class="mobile-menu-modal"><div class="mobile-sheet"><div class="sheet-top"><h3>메뉴</h3><button class="sheet-close" onclick="closeMobileMenu()"><i class="fa-solid fa-xmark"></i></button></div><div class="menu-list">
@@ -321,7 +105,23 @@ html{scroll-behavior:smooth} body{font-family:'Noto Sans KR',sans-serif;backgrou
 <button class="menu-item" onclick="closeMobileMenu();toggleTravelPlaylist()"><i class="fa-solid fa-music"></i>여행 플레이리스트</button>
 </div></div></div>
 
-<nav class="bottom-nav"><a href="/mobile" class="active"><i class="fa-solid fa-house"></i><span>홈</span></a><a href="#map" onclick="scrollToMap();return false"><i class="fa-solid fa-map"></i><span>지도</span></a><a href="/trip"><i class="fa-solid fa-route"></i><span>여행코스</span></a><a href="/community"><i class="fa-solid fa-comments"></i><span>커뮤니티</span></a></nav>
+<nav class="bottom-nav">
+    <a href="/mobile" class="active">
+        <i class="fa-solid fa-house"></i><span>홈</span>
+    </a>
+
+    <a href="#map" onclick="scrollToMap();return false">
+        <i class="fa-solid fa-map"></i><span>지도</span>
+    </a>
+
+    <a href="/trip">
+        <i class="fa-solid fa-route"></i><span>여행코스</span>
+    </a>
+
+    <a href="/mobile-community">
+        <i class="fa-solid fa-comments"></i><span>커뮤니티</span>
+    </a>
+</nav>
 
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1adedc9e3c5d08a47849648c7f6a8864&libraries=services"></script>
 <script src="/map.js"></script>
