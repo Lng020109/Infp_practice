@@ -914,33 +914,62 @@
 			}
 		}
 
-		// 좋아요 / 싫어요한 맛집 조회
-		function loadMyReactions() {
+		// 좋아요 / 싫어요한 맛집 + 관광지 병렬 조회 및 통합
+		async function loadMyReactions() {
 			const username = currentUser.username || currentUser.id;
 
-			fetch(`/api/reactions/my/${encodeURIComponent(username)}`)
-				.then(res => {
-					if (!res.ok) throw new Error();
-					return res.json();
-				})
-				.then(reactions => {
-					const likes = reactions.filter(reaction => reaction.reactionType === "LIKE");
-					const dislikes = reactions.filter(reaction => reaction.reactionType === "DISLIKE");
+			try {
+				// 1. 맛집 반응과 관광지 반응을 동시에 조회
+				const [restRes, tourRes] = await Promise.all([
+					fetch(`/api/reactions/my/${encodeURIComponent(username)}`),
+					fetch(`/api/tour-reactions/my/${encodeURIComponent(username)}`)
+				]);
 
-					document.getElementById("my-like-count").innerText = `(${likes.length})`;
-					document.getElementById("my-dislike-count").innerText = `(${dislikes.length})`;
+				const restReactions = restRes.ok ? await restRes.json() : [];
+				const tourReactions = tourRes.ok ? await tourRes.json() : [];
 
-					renderReactionRestaurants(likes, document.getElementById("my-like-list"), "LIKE");
-					renderReactionRestaurants(dislikes, document.getElementById("my-dislike-list"), "DISLIKE");
-				})
-				.catch(error => {
-					console.error("좋아요 / 싫어요 조회 오류:", error);
-					document.getElementById("my-like-list").innerHTML = `<p style="color:#888;">좋아요 정보를 불러오지 못했습니다.</p>`;
-					document.getElementById("my-dislike-list").innerHTML = `<p style="color:#888;">싫어요 정보를 불러오지 못했습니다.</p>`;
-				});
+				// 2. 맛집 반응 데이터 정규화
+				const normalizedRest = restReactions.map(r => ({
+					id: r.id,
+					type: 'RESTAURANT',
+					placeName: r.restaurantName || r.placeName || "맛집 정보 없음",
+					address: r.restaurantAddress || r.address || "주소 정보 없음",
+					url: r.restaurantUrl || r.placeUrl || "",
+					reactionType: r.reactionType,
+					latestReview: r.latestReview || "등록된 리뷰가 없습니다."
+				}));
+
+				// 3. 관광지 반응 데이터 정규화
+				const normalizedTour = tourReactions.map(r => ({
+					id: r.id,
+					type: 'TOUR',
+					placeName: r.spotName || "관광지 정보 없음",
+					address: "관광명소",
+					url: `https://map.kakao.com/link/search/${encodeURIComponent(r.spotName || '')}`,
+					reactionType: r.reactionType,
+					latestReview: "관광명소입니다."
+				}));
+
+				// 4. 합치기
+				const allReactions = [...normalizedRest, ...normalizedTour];
+
+				const likes = allReactions.filter(reaction => reaction.reactionType === "LIKE");
+				const dislikes = allReactions.filter(reaction => reaction.reactionType === "DISLIKE");
+
+				document.getElementById("my-like-count").innerText = `(${likes.length})`;
+				document.getElementById("my-dislike-count").innerText = `(${dislikes.length})`;
+
+				renderReactionRestaurants(likes, document.getElementById("my-like-list"), "LIKE");
+				renderReactionRestaurants(dislikes, document.getElementById("my-dislike-list"), "DISLIKE");
+
+			} catch (error) {
+				console.error("좋아요 / 싫어요 조회 오류:", error);
+				document.getElementById("my-like-list").innerHTML = `<p style="color:#888;">좋아요 정보를 불러오지 못했습니다.</p>`;
+				document.getElementById("my-dislike-list").innerHTML = `<p style="color:#888;">싫어요 정보를 불러오지 못했습니다.</p>`;
+			}
 		}
 
-		// 좋아요 / 싫어요 장소 + 장소별 리뷰 연동 영역 표시
+		// 좋아요 / 싫어요 장소 렌더링 (맛집/관광지 뱃지 적용)
 		function renderReactionRestaurants(reactions, listElement, type) {
 			if (!reactions || reactions.length === 0) {
 				const message = type === "LIKE" ? "좋아요한 장소가 없습니다." : "싫어요한 장소가 없습니다.";
@@ -954,28 +983,32 @@
 				const item = document.createElement("div");
 				item.className = "reaction-restaurant";
 
-				const restaurantName = reaction.restaurantName || reaction.placeName || "장소 정보 없음";
-				const restaurantAddress = reaction.restaurantAddress || reaction.address || "주소 정보 없음";
-				const restaurantUrl = reaction.restaurantUrl || reaction.placeUrl || "";
+				const isTour = reaction.type === 'TOUR';
+				const badgeColor = isTour ? "#f59f00" : "#2ba6cf";
+				const badgeBg = isTour ? "#fff9db" : "#e1f4fc";
+				const badgeText = isTour ? "🏞️ 관광지" : "🍴 맛집";
 
 				item.innerHTML = `
-		                <div class="restaurant-name">
-		                    📍 ${escapeHtml(restaurantName)}
-		                </div>
-		                <div class="restaurant-address">
-		                    주소: ${escapeHtml(restaurantAddress)}
-		                </div>
-		                ${restaurantUrl ? `
-		                    <div class="restaurant-link" onclick='openRestaurant(${JSON.stringify(restaurantUrl)})'>
-		                        🔗 카카오맵 바로가기
-		                    </div>
-		                ` : ""}
-		                <!-- 장소별 리뷰 영역 -->
-		                <div class="restaurant-reviews">
-		                    <strong>💬 장소 리뷰 요약</strong>
-		                    <p>${escapeHtml(reaction.latestReview || "등록된 리뷰가 없습니다.")}</p>
-		                </div>
-		            `;
+							<div class="restaurant-name" style="display:flex; align-items:center; gap:8px;">
+								<span style="background:${badgeBg}; color:${badgeColor}; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:bold; white-space:nowrap;">
+									${badgeText}
+								</span>
+								<span>📍 ${escapeHtml(reaction.placeName)}</span>
+							</div>
+							<div class="restaurant-address">
+								주소: ${escapeHtml(reaction.address)}
+							</div>
+							${reaction.url ? `
+								<div class="restaurant-link" onclick='openRestaurant(${JSON.stringify(reaction.url)})'>
+									🔗 카카오맵 바로가기
+								</div>
+							` : ""}
+							<!-- 장소별 리뷰 영역 -->
+							<div class="restaurant-reviews">
+								<strong>💬 장소 안내/리뷰</strong>
+								<p>${escapeHtml(reaction.latestReview)}</p>
+							</div>
+						`;
 				listElement.appendChild(item);
 			});
 		}
@@ -1019,51 +1052,51 @@
 						`;
 
 						editButton.onclick = function (event) {
-						    event.stopPropagation();
+							event.stopPropagation();
 
-						    const title = prompt(
-						        "게시글 제목을 입력하세요.",
-						        post.title || ""
-						    );
+							const title = prompt(
+								"게시글 제목을 입력하세요.",
+								post.title || ""
+							);
 
-						    if (title === null) {
-						        return;
-						    }
+							if (title === null) {
+								return;
+							}
 
-						    const content = prompt(
-						        "게시글 내용을 입력하세요.",
-						        post.content || ""
-						    );
+							const content = prompt(
+								"게시글 내용을 입력하세요.",
+								post.content || ""
+							);
 
-						    if (content === null) {
-						        return;
-						    }
+							if (content === null) {
+								return;
+							}
 
-						    fetch(`/api/community/${post.id}`, {
-						        method: "PUT",
-						        headers: {
-						            "Content-Type": "application/json"
-						        },
-						        body: JSON.stringify({
-						            title: title.trim(),
-						            content: content.trim()
-						        })
-						    })
-						        .then(res => {
-						            if (!res.ok) {
-						                throw new Error("게시글 수정 실패");
-						            }
+							fetch(`/api/community/${post.id}`, {
+								method: "PUT",
+								headers: {
+									"Content-Type": "application/json"
+								},
+								body: JSON.stringify({
+									title: title.trim(),
+									content: content.trim()
+								})
+							})
+								.then(res => {
+									if (!res.ok) {
+										throw new Error("게시글 수정 실패");
+									}
 
-						            return res.json();
-						        })
-						        .then(() => {
-						            alert("게시글이 수정되었습니다.");
-						            loadMyCommunityPosts();
-						        })
-						        .catch(error => {
-						            console.error(error);
-						            alert("게시글 수정 중 오류가 발생했습니다.");
-						        });
+									return res.json();
+								})
+								.then(() => {
+									alert("게시글이 수정되었습니다.");
+									loadMyCommunityPosts();
+								})
+								.catch(error => {
+									console.error(error);
+									alert("게시글 수정 중 오류가 발생했습니다.");
+								});
 						};
 
 
@@ -1081,34 +1114,34 @@
 						`;
 
 						deleteButton.onclick = function (event) {
-						    event.stopPropagation();
+							event.stopPropagation();
 
-						    const ok = confirm(
-						        "이 게시글을 삭제하시겠습니까?\n답글도 모두 삭제됩니다."
-						    );
+							const ok = confirm(
+								"이 게시글을 삭제하시겠습니까?\n답글도 모두 삭제됩니다."
+							);
 
-						    if (!ok) {
-						        return;
-						    }
+							if (!ok) {
+								return;
+							}
 
-						    fetch(`/api/community/${post.id}`, {
-						        method: "DELETE"
-						    })
-						        .then(res => {
-						            if (!res.ok) {
-						                throw new Error("게시글 삭제 실패");
-						            }
+							fetch(`/api/community/${post.id}`, {
+								method: "DELETE"
+							})
+								.then(res => {
+									if (!res.ok) {
+										throw new Error("게시글 삭제 실패");
+									}
 
-						            return res.json();
-						        })
-						        .then(() => {
-						            alert("게시글이 삭제되었습니다.");
-						            loadMyCommunityPosts();
-						        })
-						        .catch(error => {
-						            console.error(error);
-						            alert("게시글 삭제 중 오류가 발생했습니다.");
-						        });
+									return res.json();
+								})
+								.then(() => {
+									alert("게시글이 삭제되었습니다.");
+									loadMyCommunityPosts();
+								})
+								.catch(error => {
+									console.error(error);
+									alert("게시글 삭제 중 오류가 발생했습니다.");
+								});
 						};
 
 						const authorUsername = post.username || username;
@@ -1151,76 +1184,76 @@
 		}
 		function editReview(review) {
 
-		    const content = prompt("리뷰 내용을 수정해주세요.", review.content || "");
+			const content = prompt("리뷰 내용을 수정해주세요.", review.content || "");
 
-		    if (content === null) return;
+			if (content === null) return;
 
-		    if (!content.trim()) {
-		        return alert("리뷰 내용을 입력해주세요.");
-		    }
+			if (!content.trim()) {
+				return alert("리뷰 내용을 입력해주세요.");
+			}
 
-		    const username = currentUser.username || currentUser.id;
-		    const nickname = currentUser.nickname || username;
+			const username = currentUser.username || currentUser.id;
+			const nickname = currentUser.nickname || username;
 
-		    // 관광지 리뷰 수정
-		    if (review.type === 'TOUR') {
+			// 관광지 리뷰 수정
+			if (review.type === 'TOUR') {
 
-		        fetch(`/api/tour-reviews/${review.id}`, {
-		            method: "PUT",
-		            headers: {
-		                "Content-Type": "application/json"
-		            },
-		            body: JSON.stringify({
-		                writer: nickname,
-		                content: content.trim()
-		            })
-		        })
-		        .then(async res => {
+				fetch(`/api/tour-reviews/${review.id}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						writer: nickname,
+						content: content.trim()
+					})
+				})
+					.then(async res => {
 
-		            const data = await res.json().catch(() => ({}));
+						const data = await res.json().catch(() => ({}));
 
-		            if (!res.ok) {
-		                throw new Error(data.error || "관광지 리뷰 수정에 실패했습니다.");
-		            }
+						if (!res.ok) {
+							throw new Error(data.error || "관광지 리뷰 수정에 실패했습니다.");
+						}
 
-		            alert("관광지 리뷰가 수정되었습니다.");
+						alert("관광지 리뷰가 수정되었습니다.");
 
-		            loadMyReviews();
-		        })
-		        .catch(err => {
-		            alert(err.message);
-		        });
+						loadMyReviews();
+					})
+					.catch(err => {
+						alert(err.message);
+					});
 
-		    } else {
+			} else {
 
-		        // 기존 맛집 리뷰 수정
-		        fetch(`/api/reviews/${review.id}`, {
-		            method: "PUT",
-		            headers: {
-		                "Content-Type": "application/json"
-		            },
-		            body: JSON.stringify({
-		                username: username,
-		                content: content.trim()
-		            })
-		        })
-		        .then(async res => {
+				// 기존 맛집 리뷰 수정
+				fetch(`/api/reviews/${review.id}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						username: username,
+						content: content.trim()
+					})
+				})
+					.then(async res => {
 
-		            const message = await res.text();
+						const message = await res.text();
 
-		            if (!res.ok) {
-		                throw new Error(message || "리뷰 수정에 실패했습니다.");
-		            }
+						if (!res.ok) {
+							throw new Error(message || "리뷰 수정에 실패했습니다.");
+						}
 
-		            alert(message);
+						alert(message);
 
-		            loadMyReviews();
-		            loadMyReactions();
-		        })
-		        .catch(error => {
-		            alert(error.message || "리뷰 수정에 실패했습니다.");
-		        });
-		    }
+						loadMyReviews();
+						loadMyReactions();
+					})
+					.catch(error => {
+						alert(error.message || "리뷰 수정에 실패했습니다.");
+					});
+			}
 		}
 
 		// 리뷰 삭제 (맛집 / 관광지 분기)

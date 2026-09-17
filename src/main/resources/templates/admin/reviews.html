@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<title>리뷰 관리</title>
+
+<style>
+
+    body {
+        margin: 0;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        margin-top: 35px;
+        margin-bottom: 12px;
+    }
+
+    .top-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #555;
+        color: white;
+        cursor: pointer;
+    }
+
+    .review-count {
+        font-size: 16px;
+        color: #555;
+    }
+
+    .section-count {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    /* ================================
+       테이블 기본
+       ================================ */
+
+	   table {
+	       width: 100%;
+	       min-width: 1000px;
+	       table-layout: fixed;
+	       border-collapse: collapse;
+	       background-color: white;
+	   }
+
+    th,
+    td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    th {
+        background-color: #eee;
+    }
+
+    .tour-table th {
+        background-color: #fff3cd;
+    }
+
+    /* ================================
+       맛집 리뷰 열 너비
+       ================================ */
+
+    table:not(.tour-table) th:nth-child(1),
+    table:not(.tour-table) td:nth-child(1) {
+        width: 60px;
+    }
+
+    table:not(.tour-table) th:nth-child(2),
+    table:not(.tour-table) td:nth-child(2) {
+        width: 100px;
+    }
+
+    table:not(.tour-table) th:nth-child(3),
+    table:not(.tour-table) td:nth-child(3) {
+        width: 150px;
+    }
+
+    table:not(.tour-table) th:nth-child(4),
+    table:not(.tour-table) td:nth-child(4) {
+        width: 140px;
+    }
+
+    table:not(.tour-table) th:nth-child(5),
+    table:not(.tour-table) td:nth-child(5) {
+        width: 250px;
+    }
+
+    table:not(.tour-table) th:nth-child(6),
+    table:not(.tour-table) td:nth-child(6) {
+        width: 120px;
+    }
+
+    table:not(.tour-table) th:nth-child(7),
+    table:not(.tour-table) td:nth-child(7) {
+        width: 80px;
+    }
+
+    /* ================================
+       관광지 리뷰 열 너비
+       ================================ */
+
+    .tour-table th:nth-child(1),
+    .tour-table td:nth-child(1) {
+        width: 60px;
+    }
+
+    .tour-table th:nth-child(2),
+    .tour-table td:nth-child(2) {
+        width: 100px;
+    }
+
+    .tour-table th:nth-child(3),
+    .tour-table td:nth-child(3) {
+        width: 180px;
+    }
+
+    .tour-table th:nth-child(4),
+    .tour-table td:nth-child(4) {
+        width: 140px;
+    }
+
+    .tour-table th:nth-child(5),
+    .tour-table td:nth-child(5) {
+        width: 250px;
+    }
+
+    .tour-table th:nth-child(6),
+    .tour-table td:nth-child(6) {
+        width: 120px;
+    }
+
+    .tour-table th:nth-child(7),
+    .tour-table td:nth-child(7) {
+        width: 80px;
+    }
+
+    /* ================================
+       리뷰 내용
+       ================================ */
+
+    .content {
+        text-align: left;
+    }
+
+    .review-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* ================================
+       작성일
+       ================================ */
+
+    .created-at {
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    /* ================================
+       상태
+       ================================ */
+
+    .review-status {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+        cursor: pointer;
+    }
+
+    /* ================================
+       자세히 보기
+       ================================ */
+
+    .detail-btn {
+        margin-top: 6px;
+        padding: 5px 8px;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        background-color: white;
+        color: #555;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .detail-btn:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* ================================
+       삭제 버튼
+       ================================ */
+
+    .delete-btn {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 5px;
+        background-color: #d9534f;
+        color: white;
+        cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        background-color: #c9302c;
+    }
+
+    /* ================================
+       빈 화면
+       ================================ */
+
+    .empty {
+        padding: 40px;
+        text-align: center;
+        color: #777;
+        background-color: white;
+        border: 1px solid #ddd;
+    }
+
+    /* ================================
+       페이지네이션
+       ================================ */
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        margin-top: 18px;
+        margin-bottom: 30px;
+    }
+
+    .pagination button {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+        color: #555;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .pagination button:hover {
+        background-color: #f0f0f0;
+    }
+
+    .pagination button.active {
+        background-color: #555;
+        color: white;
+        border-color: #555;
+    }
+
+    .pagination button:disabled {
+        color: #aaa;
+        background-color: #f5f5f5;
+        cursor: default;
+    }
+
+    /* ================================
+       리뷰 상세 모달
+       ================================ */
+
+    .review-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    .review-modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        max-width: 90%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .review-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .review-modal-header h3 {
+        margin: 0;
+    }
+
+    .modal-close {
+        border: none;
+        background: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+    }
+
+    .modal-close:hover {
+        color: #222;
+    }
+
+    .review-modal-body {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.6;
+    }
+
+	.table-scroll {
+	    width: 100%;
+	    overflow-x: auto;
+	    overflow-y: hidden;
+	}
+	
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+<!-- ================================
+     상단
+     ================================ -->
+
+<div class="top-area">
+
+    <div>
+
+        <h1>리뷰 관리</h1>
+
+        <div class="review-count">
+
+            전체 리뷰 수:
+
+            <span th:text="${#lists.size(reviews) + #lists.size(tourReviews)}">
+                0
+            </span>개
+
+        </div>
+
+    </div>
+
+    <button class="back-btn"
+            onclick="goToDashboard()">
+        관리자 대시보드
+    </button>
+
+</div>
+
+
+<!-- ================================
+     맛집 리뷰
+     ================================ -->
+
+<h2>🍽️ 맛집 리뷰</h2>
+
+<div class="section-count">
+
+    맛집 리뷰 수:
+
+    <strong th:text="${#lists.size(reviews)}">
+        0
+    </strong>개
+
+</div>
+
+<div class="table-scroll">
+<table th:if="${!#lists.isEmpty(reviews)}">
+
+    <thead>
+
+    <tr>
+        <th>번호</th>
+        <th>작성자</th>
+        <th>식당명</th>
+        <th>작성일</th>
+        <th>리뷰 내용</th>
+        <th>상태</th>
+        <th>관리</th>
+    </tr>
+
+    </thead>
+
+
+    <tbody id="restaurant-review-body">
+
+    <tr th:each="review : ${reviews}">
+
+        <td class="review-number">
+            1
+        </td>
+
+        <td th:text="${review.username}">
+            user
+        </td>
+
+        <td th:text="${review.restaurantName}">
+            식당 이름
+        </td>
+
+        <td class="created-at"
+            th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">
+            2026-09-15 14:00
+        </td>
+
+        <td class="content">
+
+            <div class="review-text"
+                 th:text="${review.content}">
+                리뷰 내용
+            </div>
+
+            <button class="detail-btn"
+                    type="button"
+                    th:onclick="'showReviewDetail(' + ${review.id} + ')'">
+                자세히 보기
+            </button>
+
+            <span class="review-full-content"
+                  th:id="'restaurant-review-content-' + ${review.id}"
+                  th:text="${review.content}"
+                  style="display:none;">
+            </span>
+
+        </td>
+
+        <td>
+
+            <select class="review-status"
+                    th:data-id="${review.id}"
+                    onchange="updateReviewStatus(this)">
+
+                <option value="NORMAL"
+                        th:selected="${review.status == 'NORMAL'}">
+                    정상
+                </option>
+
+                <option value="PENDING"
+                        th:selected="${review.status == 'PENDING'}">
+                    검토 필요
+                </option>
+
+                <option value="HIDDEN"
+                        th:selected="${review.status == 'HIDDEN'}">
+                    숨김
+                </option>
+
+            </select>
+
+        </td>
+
+        <td>
+
+            <button class="delete-btn"
+                    th:onclick="'deleteReview(' + ${review.id} + ')'">
+                삭제
+            </button>
+
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+</div>
+
+
+
+<div class="empty"
+     th:if="${#lists.isEmpty(reviews)}">
+    등록된 맛집 리뷰가 없습니다.
+</div>
+
+
+<div id="restaurant-pagination"
+     class="pagination">
+</div>
+
+
+<!-- ================================
+     관광지 리뷰
+     ================================ -->
+
+<h2>🏞️ 관광지 리뷰</h2>
+
+<div class="section-count">
+
+    관광지 리뷰 수:
+
+    <strong th:text="${#lists.size(tourReviews)}">
+        0
+    </strong>개
+
+</div>
+
+<div class="table-scroll">
+<table class="tour-table"
+       th:if="${!#lists.isEmpty(tourReviews)}">
+
+    <thead>
+
+    <tr>
+        <th>번호</th>
+        <th>작성자</th>
+        <th>관광지명</th>
+        <th>작성일</th>
+        <th>리뷰 내용</th>
+        <th>상태</th>
+        <th>관리</th>
+    </tr>
+
+    </thead>
+
+
+    <tbody id="tour-review-body">
+
+    <tr th:each="review : ${tourReviews}">
+
+        <td class="review-number">
+            1
+        </td>
+
+        <td th:text="${review.writer}">
+            user
+        </td>
+
+        <td th:text="${review.spotName}">
+            관광지 이름
+        </td>
+
+        <td class="created-at"
+            th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">
+            2026-09-15 10:00
+        </td>
+
+        <td class="content">
+
+            <div class="review-text"
+                 th:text="${review.content}">
+                리뷰 내용
+            </div>
+
+            <button class="detail-btn"
+                    type="button"
+                    th:onclick="'showTourReviewDetail(' + ${review.id} + ')'">
+                자세히 보기
+            </button>
+
+            <span class="review-full-content"
+                  th:id="'tour-review-content-' + ${review.id}"
+                  th:text="${review.content}"
+                  style="display:none;">
+            </span>
+
+        </td>
+
+        <td>
+
+            <select class="review-status"
+                    th:data-id="${review.id}"
+                    onchange="updateTourReviewStatus(this)">
+
+                <option value="NORMAL"
+                        th:selected="${review.status == 'NORMAL'}">
+                    정상
+                </option>
+
+                <option value="PENDING"
+                        th:selected="${review.status == 'PENDING'}">
+                    검토 필요
+                </option>
+
+                <option value="HIDDEN"
+                        th:selected="${review.status == 'HIDDEN'}">
+                    숨김
+                </option>
+
+            </select>
+
+        </td>
+
+        <td>
+
+            <button class="delete-btn"
+                    th:onclick="'deleteTourReview(' + ${review.id} + ')'">
+                삭제
+            </button>
+
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+</div>
+
+
+<div class="empty"
+     th:if="${#lists.isEmpty(tourReviews)}">
+    등록된 관광지 리뷰가 없습니다.
+</div>
+
+
+<div id="tour-pagination"
+     class="pagination">
+</div>
+
+</div>
+
+<!-- ================================
+     리뷰 상세 모달
+     ================================ -->
+
+<div id="reviewModal"
+     class="review-modal">
+
+<div class="review-modal-content">
+
+    <div class="review-modal-header">
+
+        <h3 id="reviewModalTitle">
+            리뷰 상세
+        </h3>
+
+        <button class="modal-close"
+                type="button"
+                onclick="closeReviewModal()">
+            ×
+        </button>
+
+    </div>
+
+    <div id="reviewModalBody"
+         class="review-modal-body">
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+    // ================================
+    // 한 페이지에 표시할 리뷰 수
+    // ================================
+
+    const REVIEWS_PER_PAGE = 10;
+
+
+    // ================================
+    // 현재 페이지
+    // ================================
+
+    let restaurantCurrentPage = 1;
+    let tourCurrentPage = 1;
+
+
+    // ================================
+    // 대시보드 이동
+    // ================================
+
+    function goToDashboard() {
+
+        location.href = "/api/admin/dashboard";
+
+    }
+
+
+    // ================================
+    // 맛집 리뷰 페이지네이션
+    // ================================
+
+    function setupRestaurantPagination() {
+
+        const tbody =
+            document.getElementById("restaurant-review-body");
+
+        const pagination =
+            document.getElementById("restaurant-pagination");
+
+        if (!tbody || !pagination) {
+            return;
+        }
+
+        const rows =
+            Array.from(tbody.querySelectorAll("tr"));
+
+        const totalPages =
+            Math.ceil(rows.length / REVIEWS_PER_PAGE);
+
+        if (totalPages <= 1) {
+
+            pagination.innerHTML = "";
+
+            rows.forEach(row => {
+                row.style.display = "";
+            });
+
+            rows.forEach((row, index) => {
+
+                const numberCell =
+                    row.querySelector(".review-number");
+
+                if (numberCell) {
+                    numberCell.textContent = index + 1;
+                }
+
+            });
+
+            return;
+        }
+
+        renderRestaurantPage(1);
+    }
+
+
+    function renderRestaurantPage(page) {
+
+        const tbody =
+            document.getElementById("restaurant-review-body");
+
+        const pagination =
+            document.getElementById("restaurant-pagination");
+
+        if (!tbody || !pagination) {
+            return;
+        }
+
+        const rows =
+            Array.from(tbody.querySelectorAll("tr"));
+
+        const totalPages =
+            Math.ceil(rows.length / REVIEWS_PER_PAGE);
+
+        restaurantCurrentPage = page;
+
+
+        rows.forEach(row => {
+            row.style.display = "none";
+        });
+
+
+        const start =
+            (page - 1) * REVIEWS_PER_PAGE;
+
+        const end =
+            start + REVIEWS_PER_PAGE;
+
+
+        rows.slice(start, end).forEach((row, index) => {
+
+            row.style.display = "";
+
+            const numberCell =
+                row.querySelector(".review-number");
+
+            if (numberCell) {
+
+                numberCell.textContent =
+                    start + index + 1;
+
+            }
+
+        });
+
+
+        pagination.innerHTML = "";
+
+
+        const prevButton =
+            document.createElement("button");
+
+        prevButton.textContent = "‹";
+
+        prevButton.disabled =
+            page === 1;
+
+        prevButton.onclick = function() {
+
+            if (restaurantCurrentPage > 1) {
+
+                renderRestaurantPage(
+                    restaurantCurrentPage - 1
+                );
+
+            }
+
+        };
+
+        pagination.appendChild(prevButton);
+
+
+        for (let i = 1; i <= totalPages; i++) {
+
+            const button =
+                document.createElement("button");
+
+            button.textContent = i;
+
+            if (i === page) {
+                button.classList.add("active");
+            }
+
+            button.onclick = function() {
+
+                renderRestaurantPage(i);
+
+            };
+
+            pagination.appendChild(button);
+
+        }
+
+
+        const nextButton =
+            document.createElement("button");
+
+        nextButton.textContent = "›";
+
+        nextButton.disabled =
+            page === totalPages;
+
+        nextButton.onclick = function() {
+
+            if (restaurantCurrentPage < totalPages) {
+
+                renderRestaurantPage(
+                    restaurantCurrentPage + 1
+                );
+
+            }
+
+        };
+
+        pagination.appendChild(nextButton);
+
+    }
+
+
+    // ================================
+    // 관광지 리뷰 페이지네이션
+    // ================================
+
+    function setupTourPagination() {
+
+        const tbody =
+            document.getElementById("tour-review-body");
+
+        const pagination =
+            document.getElementById("tour-pagination");
+
+        if (!tbody || !pagination) {
+            return;
+        }
+
+        const rows =
+            Array.from(tbody.querySelectorAll("tr"));
+
+        const totalPages =
+            Math.ceil(rows.length / REVIEWS_PER_PAGE);
+
+        if (totalPages <= 1) {
+
+            pagination.innerHTML = "";
+
+            rows.forEach(row => {
+                row.style.display = "";
+            });
+
+            rows.forEach((row, index) => {
+
+                const numberCell =
+                    row.querySelector(".review-number");
+
+                if (numberCell) {
+                    numberCell.textContent = index + 1;
+                }
+
+            });
+
+            return;
+        }
+
+        renderTourPage(1);
+    }
+
+
+    function renderTourPage(page) {
+
+        const tbody =
+            document.getElementById("tour-review-body");
+
+        const pagination =
+            document.getElementById("tour-pagination");
+
+        if (!tbody || !pagination) {
+            return;
+        }
+
+        const rows =
+            Array.from(tbody.querySelectorAll("tr"));
+
+        const totalPages =
+            Math.ceil(rows.length / REVIEWS_PER_PAGE);
+
+        tourCurrentPage = page;
+
+
+        rows.forEach(row => {
+            row.style.display = "none";
+        });
+
+
+        const start =
+            (page - 1) * REVIEWS_PER_PAGE;
+
+        const end =
+            start + REVIEWS_PER_PAGE;
+
+
+        rows.slice(start, end).forEach((row, index) => {
+
+            row.style.display = "";
+
+            const numberCell =
+                row.querySelector(".review-number");
+
+            if (numberCell) {
+
+                numberCell.textContent =
+                    start + index + 1;
+
+            }
+
+        });
+
+
+        pagination.innerHTML = "";
+
+
+        const prevButton =
+            document.createElement("button");
+
+        prevButton.textContent = "‹";
+
+        prevButton.disabled =
+            page === 1;
+
+        prevButton.onclick = function() {
+
+            if (tourCurrentPage > 1) {
+
+                renderTourPage(
+                    tourCurrentPage - 1
+                );
+
+            }
+
+        };
+
+        pagination.appendChild(prevButton);
+
+
+        for (let i = 1; i <= totalPages; i++) {
+
+            const button =
+                document.createElement("button");
+
+            button.textContent = i;
+
+            if (i === page) {
+                button.classList.add("active");
+            }
+
+            button.onclick = function() {
+
+                renderTourPage(i);
+
+            };
+
+            pagination.appendChild(button);
+
+        }
+
+
+        const nextButton =
+            document.createElement("button");
+
+        nextButton.textContent = "›";
+
+        nextButton.disabled =
+            page === totalPages;
+
+        nextButton.onclick = function() {
+
+            if (tourCurrentPage < totalPages) {
+
+                renderTourPage(
+                    tourCurrentPage + 1
+                );
+
+            }
+
+        };
+
+        pagination.appendChild(nextButton);
+
+    }
+
+
+    // ================================
+    // 맛집 리뷰 상태 변경
+    // ================================
+
+    async function updateReviewStatus(select) {
+
+        const reviewId =
+            select.dataset.id;
+
+        const status =
+            select.value;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/reviews/${reviewId}/status`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            status: status
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const message =
+                    await response.text();
+
+                throw new Error(message);
+
+            }
+
+
+            alert("맛집 리뷰 상태가 변경되었습니다.");
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("맛집 리뷰 상태 변경에 실패했습니다.");
+
+        }
+
+    }
+
+
+    // ================================
+    // 관광지 리뷰 상태 변경
+    // ================================
+
+    async function updateTourReviewStatus(select) {
+
+        const reviewId =
+            select.dataset.id;
+
+        const status =
+            select.value;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/tour-reviews/${reviewId}/status`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            status: status
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const message =
+                    await response.text();
+
+                throw new Error(message);
+
+            }
+
+
+            alert("관광지 리뷰 상태가 변경되었습니다.");
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("관광지 리뷰 상태 변경에 실패했습니다.");
+
+        }
+
+    }
+
+
+    // ================================
+    // 리뷰 상세 보기
+    // ================================
+
+    function openReviewModal(title, content) {
+
+        const modal =
+            document.getElementById("reviewModal");
+
+        const modalTitle =
+            document.getElementById("reviewModalTitle");
+
+        const modalBody =
+            document.getElementById("reviewModalBody");
+
+
+        modalTitle.textContent =
+            title;
+
+        modalBody.textContent =
+            content;
+
+        modal.style.display =
+            "block";
+
+    }
+
+
+    function showReviewDetail(id) {
+
+        const contentElement =
+            document.getElementById(
+                "restaurant-review-content-" + id
+            );
+
+
+        if (!contentElement) {
+            return;
+        }
+
+
+        openReviewModal(
+            "🍽️ 맛집 리뷰 상세",
+            contentElement.textContent.trim()
+        );
+
+    }
+
+
+    function showTourReviewDetail(id) {
+
+        const contentElement =
+            document.getElementById(
+                "tour-review-content-" + id
+            );
+
+
+        if (!contentElement) {
+            return;
+        }
+
+
+        openReviewModal(
+            "🏞️ 관광지 리뷰 상세",
+            contentElement.textContent.trim()
+        );
+
+    }
+
+
+    function closeReviewModal() {
+
+        const modal =
+            document.getElementById("reviewModal");
+
+        modal.style.display =
+            "none";
+
+    }
+
+
+    // 모달 바깥 영역 클릭 시 닫기
+
+    window.addEventListener(
+        "click",
+        function(event) {
+
+            const modal =
+                document.getElementById("reviewModal");
+
+            if (event.target === modal) {
+
+                closeReviewModal();
+
+            }
+
+        }
+    );
+
+
+    // ================================
+    // 맛집 리뷰 삭제
+    // ================================
+
+    function deleteReview(id) {
+
+        const confirmed =
+            confirm(
+                "정말 이 맛집 리뷰를 삭제하시겠습니까?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        fetch(
+            "/api/admin/reviews/" + id,
+            {
+                method: "DELETE"
+            }
+        )
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "맛집 리뷰 삭제에 실패했습니다."
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+        .then(message => {
+
+            alert(message);
+
+            location.reload();
+
+        })
+
+        .catch(error => {
+
+            alert(error.message);
+
+        });
+
+    }
+
+
+    // ================================
+    // 관광지 리뷰 삭제
+    // ================================
+
+    function deleteTourReview(id) {
+
+        const confirmed =
+            confirm(
+                "정말 이 관광지 리뷰를 삭제하시겠습니까?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        fetch(
+            "/api/admin/tour-reviews/" + id,
+            {
+                method: "DELETE"
+            }
+        )
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "관광지 리뷰 삭제에 실패했습니다."
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+        .then(message => {
+
+            alert(message);
+
+            location.reload();
+
+        })
+
+        .catch(error => {
+
+            alert(error.message);
+
+        });
+
+    }
+
+
+    // ================================
+    // 페이지 로딩 시 실행
+    // ================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            setupRestaurantPagination();
+            setupTourPagination();
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

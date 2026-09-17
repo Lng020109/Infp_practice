@@ -19,7 +19,14 @@ public class TourReviewService {
 
 	// 특정 관광지 리뷰 목록 조회
 	public List<TourReview> getReviewsBySpot(String spotId) {
-		return reviewRepository.findBySpotIdOrderByIdDesc(spotId);
+
+	    List<TourReview> reviews =
+	            reviewRepository.findBySpotIdOrderByIdDesc(spotId);
+
+	    // 관리자에게 숨김 처리된 리뷰는 일반 사용자 화면에서 제외
+	    reviews.removeIf(review -> "HIDDEN".equals(review.getStatus()));
+
+	    return reviews;
 	}
 
 	// 리뷰 등록 (AI 비속어 검증 포함)

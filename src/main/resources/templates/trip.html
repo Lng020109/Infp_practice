@@ -352,7 +352,124 @@
 		.btn-action-sub:hover {
 			background: #f8fafc;
 		}
+		.travel-slot {
+		    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+		    border: 1px solid #bae6fd;
+		    border-radius: 22px;
+		    padding: 18px;
+		    box-shadow: 0 8px 25px rgba(43, 166, 207, 0.10);
+		    text-align: center;
+		}
+
+		.slot-title {
+		    margin: 0;
+		    font-size: 16px;
+		    font-weight: 800;
+		    color: #0f172a;
+		}
+
+		.slot-subtitle {
+		    margin: 5px 0 14px;
+		    font-size: 11px;
+		    color: #64748b;
+		}
+
+		.slot-machine {
+		    display: grid;
+		    grid-template-columns: repeat(3, 1fr);
+		    gap: 6px;
+		    margin-bottom: 14px;
+		}
+
+		.slot-reel {
+		    background: #0f172a;
+		    border-radius: 12px;
+		    padding: 5px;
+		}
+
+		.slot-label {
+		    color: #bae6fd;
+		    font-size: 9px;
+		    font-weight: 800;
+		    margin-bottom: 4px;
+		}
+
+		.slot-window {
+		    height: 48px;
+		    background: #ffffff;
+		    border-radius: 7px;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    padding: 5px;
+		    overflow: hidden;
+		}
+
+		.slot-item {
+		    font-size: 10px;
+		    font-weight: 800;
+		    color: #0f172a;
+		    white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		}
+
+		.slot-spin-btn {
+		    border: none;
+		    background: linear-gradient(135deg, #2ba6cf, #1b8cb3);
+		    color: white;
+		    padding: 10px 22px;
+		    border-radius: 11px;
+		    font-size: 12px;
+		    font-weight: 800;
+		    cursor: pointer;
+		}
+
+		.slot-result {
+		    display: none;
+		    margin-top: 12px;
+		    padding: 10px;
+		    background: #ffffff;
+		    border: 1px dashed #7dd3fc;
+		    border-radius: 10px;
+		    font-size: 10px;
+		    font-weight: 700;
+		}
+
+		.slot-result.show {
+		    display: block;
+		}
+		/* 슬롯머신 안내 말풍선 */
+		.slot-speech {
+		    position: relative;
+		    display: inline-block;
+		    background: #ffffff;
+		    color: #0284c7;
+		    font-size: 12px;
+		    font-weight: 800;
+		    padding: 8px 14px;
+		    border-radius: 16px;
+		    margin-bottom: 10px;
+		    box-shadow: 0 4px 12px rgba(43, 166, 207, 0.12);
+		    border: 1px solid #bae6fd;
+		}
+
+		/* 말풍선 꼬리 */
+		.slot-speech::after {
+		    content: "";
+		    position: absolute;
+		    bottom: -7px;
+		    left: 50%;
+		    transform: translateX(-50%);
+		    width: 12px;
+		    height: 12px;
+		    background: #ffffff;
+		    border-right: 1px solid #bae6fd;
+		    border-bottom: 1px solid #bae6fd;
+		    transform: translateX(-50%) rotate(45deg);
+		}
 	</style>
+	
 </head>
 
 <body>
@@ -418,21 +535,87 @@
 			<!-- 우측: 여행 가이드 동선 & 미니 지도 & 버튼들 -->
 			<div class="guide-side-panel">
 
-				<div class="guide-card">
-					<h4 class="guide-title">
-						<span>🐶</span> 여행 가이드 동선 미리보기
-					</h4>
+			    <div class="guide-card">
 
-					<!-- 실제 카카오 미니 지도 -->
-					<div id="route-map"></div>
+			        <h4 class="guide-title">
+			            <span>🧳</span> 여행 가이드 동선 미리보기
+			        </h4>
 
-					<div class="guide-tip-box" id="guide-tip-text">
-						💡 코스 정보를 불러오는 중입니다...
-					</div>
-				</div>
+			        <div id="route-map"></div>
 
-				<!-- 액션 버튼 영역 -->
-				<div style="display: flex; flex-direction: column; gap: 10px;">
+			        <div class="guide-tip-box" id="guide-tip-text">
+			            💡 코스 정보를 불러오는 중입니다...
+			        </div>
+
+			    </div>
+
+
+			    <!-- 🎰 여행 슬롯머신 -->
+				<div class="travel-slot">
+
+				    <div class="slot-speech">
+				        💬 무작위로 뽑아보기!
+				    </div>
+
+				    <h2 class="slot-title">🎰 오늘의 여행 슬롯</h2>
+
+			        <p class="slot-subtitle">
+			            맛집에서 어디로 떠날지 슬롯을 돌려보세요!
+			        </p>
+
+			        <div class="slot-machine">
+
+			            <div class="slot-reel" id="slotReel1">
+			                <div class="slot-label">🍜 맛집</div>
+
+			                <div class="slot-window">
+			                    <div class="slot-item" id="slotRestaurant">
+			                        맛집
+			                    </div>
+			                </div>
+			            </div>
+
+
+			            <div class="slot-reel" id="slotReel2">
+			                <div class="slot-label">🗺️ 여행지</div>
+
+			                <div class="slot-window">
+			                    <div class="slot-item" id="slotTour1">
+			                        여행지
+			                    </div>
+			                </div>
+			            </div>
+
+
+			            <div class="slot-reel" id="slotReel3">
+			                <div class="slot-label">🌸 주변 명소</div>
+
+			                <div class="slot-window">
+			                    <div class="slot-item" id="slotTour2">
+			                        명소
+			                    </div>
+			                </div>
+			            </div>
+
+			        </div>
+
+
+			        <button
+			            type="button"
+			            class="slot-spin-btn"
+			            id="slotSpinBtn"
+			            onclick="spinTravelSlot()">
+			            🎰 슬롯 돌리기
+			        </button>
+
+
+			        <div class="slot-result" id="slotResult"></div>
+
+			    </div>
+
+
+			    <!-- 액션 버튼 -->
+			    <div style="display: flex; flex-direction: column; gap: 10px;">
 					<a id="kakao-route-link" href="https://map.kakao.com" target="_blank" class="btn-action-primary">
 						🗺️ 카카오맵 실시간 길찾기
 					</a>
@@ -712,6 +895,146 @@
 		                    </a>
 		                </div>
 		            `;
+		}
+		/* =========================
+		   🎰 여행 슬롯머신
+		========================= */
+
+		let slotRestaurants = [];
+		let slotTours = [];
+
+		function prepareSlotData() {
+
+		    // 현재 선택된 맛집
+		    if (restaurantName) {
+		        slotRestaurants = [restaurantName];
+		    } else {
+		        slotRestaurants = ["오늘의 맛집"];
+		    }
+
+		    // 현재 불러온 관광지
+		    slotTours = [];
+
+		    Object.values(courseData).forEach(course => {
+		        course.forEach(place => {
+		            if (place && place.place_name) {
+		                slotTours.push(place.place_name);
+		            }
+		        });
+		    });
+
+		    // 관광지가 없을 경우 기본 문구
+		    if (slotTours.length === 0) {
+		        slotTours = [
+		            "추천 여행지",
+		            "주변 관광지",
+		            "오늘의 명소"
+		        ];
+		    }
+		}
+
+
+		function randomSlotItem(array) {
+		    if (!array || array.length === 0) {
+		        return "추천 여행지";
+		    }
+
+		    return array[Math.floor(Math.random() * array.length)];
+		}
+		function randomDifferentTour(exclude) {
+		    const available = slotTours.filter(place => place !== exclude);
+
+		    if (available.length === 0) {
+		        return exclude;
+		    }
+
+		    return available[Math.floor(Math.random() * available.length)];
+		}
+		function randomDifferentTour(exclude) {
+		    if (!slotTours || slotTours.length === 0) {
+		        return "추천 여행지";
+		    }
+
+		    const available = slotTours.filter(place => place !== exclude);
+
+		    if (available.length === 0) {
+		        return exclude;
+		    }
+
+		    return available[Math.floor(Math.random() * available.length)];
+		}
+
+		function spinTravelSlot() {
+
+		    prepareSlotData();
+
+		    const button = document.getElementById("slotSpinBtn");
+
+		    const reel1 = document.getElementById("slotReel1");
+		    const reel2 = document.getElementById("slotReel2");
+		    const reel3 = document.getElementById("slotReel3");
+
+		    const restaurantEl = document.getElementById("slotRestaurant");
+		    const tour1El = document.getElementById("slotTour1");
+		    const tour2El = document.getElementById("slotTour2");
+
+		    const resultEl = document.getElementById("slotResult");
+
+		    // 이미 돌리는 중이면 중복 실행 방지
+		    if (button.disabled) {
+		        return;
+		    }
+
+		    button.disabled = true;
+		    button.innerText = "🎰 돌아가는 중...";
+
+		    resultEl.classList.remove("show");
+
+		    reel1.classList.add("slot-spinning");
+		    reel2.classList.add("slot-spinning");
+		    reel3.classList.add("slot-spinning");
+
+		    const spinInterval = setInterval(() => {
+
+		        restaurantEl.innerText =
+		            randomSlotItem(slotRestaurants);
+
+		        tour1El.innerText =
+		            randomSlotItem(slotTours);
+
+		        tour2El.innerText =
+		            randomSlotItem(slotTours);
+
+		    }, 80);
+
+
+			setTimeout(() => {
+			    reel3.classList.remove("slot-spinning");
+
+			    const finalTour1 = tour1El.innerText;
+			    const finalTour2 = randomDifferentTour(finalTour1);
+
+			    tour2El.innerText = finalTour2;
+
+			    clearInterval(spinInterval);
+
+			    const finalRestaurant = restaurantEl.innerText;
+
+			    resultEl.innerHTML = `
+			        🎉 오늘의 추천 코스<br>
+			        <strong>
+			            🍜 ${finalRestaurant}
+			            →
+			            🗺️ ${finalTour1}
+			            →
+			            🌸 ${finalTour2}
+			        </strong>
+			    `;
+
+			    resultEl.classList.add("show");
+			    button.disabled = false;
+			    button.innerText = "🎰 다시 돌리기";
+			}, 2300);
 		}
 	</script>
 </body>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탈퇴 회원 관리</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+			
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h2 {
+            margin-bottom: 10px;
+        }
+
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .member-table th,
+        .member-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .member-table th {
+            background: #f0f0f0;
+        }
+
+        .member-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <h1>맛따라 여행따라 관리자</h1>
+
+    <button class="back-btn" onclick="goBack()">
+        대시보드로 돌아가기
+    </button>
+
+</header>
+
+<div class="container">
+
+    <div class="title">
+        <h2>🚫 탈퇴 회원 관리</h2>
+        <p>탈퇴한 회원 정보를 조회합니다.</p>
+    </div>
+
+    <table class="member-table">
+
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>아이디</th>
+                <th>닉네임</th>
+                <th>상태</th>
+				<th>관리</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr th:if="${#lists.isEmpty(members)}">
+                <td colspan="5" class="empty-message">
+                    탈퇴한 회원이 없습니다.
+                </td>
+            </tr>
+
+			<tr th:each="member, stat : ${members}">
+			    <td th:text="${stat.count}"></td>
+			    <td th:text="${member.username}"></td>
+			    <td th:text="${member.nickname}"></td>
+			    <td>탈퇴</td>
+			    <td>
+			        <button type="button"
+			                th:onclick="'restoreMember(' + ${member.id} + ')'">
+			            복구
+			        </button>
+			    </td>
+			</tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+    function goBack() {
+        location.href = "/api/admin/dashboard";
+    }
+	
+	function restoreMember(id) {
+
+	    if (!confirm("이 회원을 복구하시겠습니까?")) {
+	        return;
+	    }
+
+	    fetch("/api/admin/members/" + id + "/restore", {
+	        method: "POST"
+	    })
+	    .then(response => {
+
+	        if (response.ok) {
+	            alert("회원이 복구되었습니다.");
+	            location.reload();
+	        } else {
+	            return response.text().then(message => {
+	                throw new Error(message);
+	            });
+	        }
+
+	    })
+	    .catch(error => {
+	        alert(error.message || "회원 복구에 실패했습니다.");
+	    });
+	}
+
+</script>
+
+</body>
+</html>

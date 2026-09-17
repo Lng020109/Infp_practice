@@ -42,4 +42,8 @@ public class Member {
 
     @Column
     private String profileImageType;
+
+    // 회원 탈퇴 여부
+    @Column(nullable = false)
+    private boolean withdrawn = false;
 }

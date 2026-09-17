@@ -754,10 +754,10 @@ function renderModalTourList(tours) {
 		           
 					<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
 					                <div class="reaction-wrap">
-					                    <button class="reaction-btn like-btn" id="like-btn-${tour.id}" onclick='toggleReaction(event, "${tour.id}", "LIKE")'>
+					                    <button class="reaction-btn like-btn" id="like-btn-${tour.id}" onclick='toggleTourReaction(event, "${tour.id}", "LIKE")'>
 					                        👍 <span id="like-count-${tour.id}" class="reaction-count">0</span>
 					                    </button>
-					                    <button class="reaction-btn dislike-btn" id="dislike-btn-${tour.id}" onclick='toggleReaction(event, "${tour.id}", "DISLIKE")'>
+					                    <button class="reaction-btn dislike-btn" id="dislike-btn-${tour.id}" onclick='toggleTourReaction(event, "${tour.id}", "DISLIKE")'>
 					                        👎 <span id="dislike-count-${tour.id}" class="reaction-count">0</span>
 					                    </button>
 					                </div>
@@ -770,9 +770,7 @@ function renderModalTourList(tours) {
 		        `;
 
 
-        if (typeof loadReactions === 'function') {
-            loadReactions(tour.id);
-        }
+        loadTourReactions(tour.id);
 
         card.onclick = () => {
             modalMap.panTo(tourPos);
@@ -785,6 +783,137 @@ function renderModalTourList(tours) {
         };
         listEl.appendChild(card);
     });
+}
+
+function toggleTourReaction(event, spotId, reactionType) {
+    if (event) event.stopPropagation();
+
+    if (!currentLoggedInUser) {
+        alert("좋아요/싫어요 기능은 로그인 후 이용할 수 있습니다.");
+        return;
+    }
+
+    let tour = null;
+
+    if (typeof currentTourPlaces !== 'undefined' && currentTourPlaces) {
+        tour = currentTourPlaces.find(
+            p => String(p.id) === String(spotId)
+        );
+    }
+
+    if (!tour && currentSelectedTourSpot &&
+        String(currentSelectedTourSpot.id) === String(spotId)) {
+        tour = currentSelectedTourSpot;
+    }
+
+    if (!tour) {
+        alert("관광지 정보를 찾을 수 없습니다.");
+        return;
+    }
+
+    const payload = {
+        spotId: tour.id || spotId,
+        username: currentLoggedInUser.username,
+        reactionType: reactionType,
+        spotName: tour.place_name || ""
+    };
+
+    fetch("/api/tour-reactions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(async res => {
+            if (!res.ok) {
+                const message = await res.text();
+                throw new Error(
+                    message || "관광지 반응 처리에 실패했습니다."
+                );
+            }
+
+            return res.json();
+        })
+        .then(() => {
+            loadTourReactions(spotId);
+        })
+        .catch(err => {
+            console.error("관광지 좋아요/싫어요 오류:", err);
+            alert(
+                err.message ||
+                "좋아요/싫어요 처리 중 오류가 발생했습니다."
+            );
+        });
+}
+
+function loadTourReactions(spotId) {
+    const username = currentLoggedInUser
+        ? currentLoggedInUser.username
+        : "";
+
+    let url =
+        "/api/tour-reactions/" +
+        encodeURIComponent(spotId);
+
+    if (username) {
+        url += "?username=" +
+            encodeURIComponent(username);
+    }
+
+    fetch(url)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(
+                    "관광지 반응 정보를 불러오지 못했습니다."
+                );
+            }
+
+            return res.json();
+        })
+        .then(data => {
+            const likeCount =
+                document.getElementById(`like-count-${spotId}`);
+
+            const dislikeCount =
+                document.getElementById(`dislike-count-${spotId}`);
+
+            const likeBtn =
+                document.getElementById(`like-btn-${spotId}`);
+
+            const dislikeBtn =
+                document.getElementById(`dislike-btn-${spotId}`);
+
+            if (likeCount) {
+                likeCount.innerText = data.likeCount || 0;
+            }
+
+            if (dislikeCount) {
+                dislikeCount.innerText = data.dislikeCount || 0;
+            }
+
+            if (likeBtn) {
+                likeBtn.classList.remove("active");
+            }
+
+            if (dislikeBtn) {
+                dislikeBtn.classList.remove("active");
+            }
+
+            if (data.myReaction === "LIKE" && likeBtn) {
+                likeBtn.classList.add("active");
+            }
+
+            if (data.myReaction === "DISLIKE" && dislikeBtn) {
+                dislikeBtn.classList.add("active");
+            }
+        })
+        .catch(err => {
+            console.error(
+                "관광지 좋아요/싫어요 조회 오류:",
+                err
+            );
+        });
 }
 
 function clearMarkers(markerArr) {
@@ -1291,30 +1420,78 @@ function loadRestaurantReviews() {
         })
         .then(data => {
             container.innerHTML = "";
+
             if (!data || data.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: #888; font-size: 0.85rem;">등록된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>`;
                 return;
             }
 
             data.slice().reverse().forEach(rev => {
+
+                // ★ 이 부분은 기존 삭제회원 처리 그대로 유지
                 const isDeletedUser = rev.username === "탈퇴한 회원";
-                const userDisplayName = isDeletedUser ? "(탈퇴한 회원)" : rev.username;
+
+                // 일반 회원은 닉네임 표시
+                const userDisplayName = isDeletedUser ? "(탈퇴한 회원)" : rev.nickname;
+
                 const userColor = isDeletedUser ? "#94a3b8" : "#1e293b";
 
+                // 리뷰 작성 시간
+                let dateDisplay = "";
+
+                if (rev.createdAt) {
+                    if (Array.isArray(rev.createdAt)) {
+                        dateDisplay =
+                            `${rev.createdAt[0]}.` +
+                            `${String(rev.createdAt[1]).padStart(2, '0')}.` +
+                            `${String(rev.createdAt[2]).padStart(2, '0')} ` +
+                            `${String(rev.createdAt[3] || 0).padStart(2, '0')}:` +
+                            `${String(rev.createdAt[4] || 0).padStart(2, '0')}`;
+                    } else {
+                        dateDisplay =
+                            String(rev.createdAt)
+                                .replace('T', ' ')
+                                .substring(0, 16);
+                    }
+                }
+
                 const div = document.createElement("div");
-                div.style.cssText = "background: #f1f5f9; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; color: #334155; line-height: 1.4; margin-bottom: 6px;";
+
+                div.style.cssText =
+                    "background: #f1f5f9; " +
+                    "padding: 10px 14px; " +
+                    "border-radius: 8px; " +
+                    "font-size: 0.88rem; " +
+                    "color: #334155; " +
+                    "line-height: 1.4; " +
+                    "margin-bottom: 6px;";
+
                 div.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <strong style="color: ${userColor}; font-weight: ${isDeletedUser ? 'normal' : 'bold'};">💬 ${userDisplayName}</strong>
+                        <strong style="color: ${userColor}; font-weight: ${isDeletedUser ? 'normal' : 'bold'};">
+                            💬 ${userDisplayName}
+                        </strong>
+
+                        <span style="font-size: 0.75rem; color: #94a3b8;">
+                            ${dateDisplay}
+                        </span>
                     </div>
-                    <p style="margin: 0; color: #475569;">${rev.content}</p>
+
+                    <p style="margin: 0; color: #475569;">
+                        ${rev.content}
+                    </p>
                 `;
+
                 container.appendChild(div);
             });
         })
         .catch(err => {
             console.error("맛집 리뷰 조회 오류:", err);
-            container.innerHTML = `<p style="text-align: center; color: red; font-size: 0.85rem;">리뷰를 불러오지 못했습니다.</p>`;
+
+            container.innerHTML =
+                `<p style="text-align: center; color: red; font-size: 0.85rem;">
+                    리뷰를 불러오지 못했습니다.
+                </p>`;
         });
 }
 
@@ -1343,8 +1520,8 @@ function submitRestaurantReview() {
             if (!res.ok) throw new Error(await res.text());
             return res.text();
         })
-        .then(() => {
-            alert("리뷰가 정상적으로 등록되었습니다!");
+        .then(msg => {
+            alert(msg); // 백엔드에서 보낸 상태별 메시지 출력
             input.value = "";
             loadRestaurantReviews();
         })
@@ -2218,3 +2395,28 @@ document.addEventListener(
 
     }
 );
+function updatePlaylistPosition() {
+    const playlistWidget = document.getElementById("travel-playlist-widget");
+    const footer = document.querySelector("footer");
+
+    if (!playlistWidget || !footer) return;
+
+    // 901~1100px 화면에서만 플리 버튼 위치를 조절
+    if (window.innerWidth >= 901 && window.innerWidth <= 1100) {
+        const footerRect = footer.getBoundingClientRect();
+
+        // 푸터가 화면에 보이면 위로 올림
+        if (footerRect.top < window.innerHeight) {
+            playlistWidget.style.bottom = "180px";
+        } else {
+            playlistWidget.style.bottom = "25px";
+        }
+    } else {
+        // 전체 화면 / 모바일에서는 JS가 위치를 건드리지 않음
+        playlistWidget.style.removeProperty("bottom");
+    }
+}
+
+window.addEventListener("scroll", updatePlaylistPosition);
+window.addEventListener("resize", updatePlaylistPosition);
+window.addEventListener("load", updatePlaylistPosition);

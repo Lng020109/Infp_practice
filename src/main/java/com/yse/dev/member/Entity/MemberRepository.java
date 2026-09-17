@@ -1,5 +1,6 @@
 package com.yse.dev.member.Entity;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
 	Optional<Member> findByUsernameAndSecurityQuestionAndSecurityAnswer(
 	        String username, String securityQuestion, String securityAnswer);
 
+	List<Member> findByWithdrawnTrue();
+	
+	List<Member> findByWithdrawnFalse();
 }

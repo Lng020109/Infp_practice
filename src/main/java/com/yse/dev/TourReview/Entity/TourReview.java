@@ -35,6 +35,9 @@ public class TourReview {
 
     private int likeCount = 0; // 좋아요 수
     private int dislikeCount = 0; // 싫어요 수
+    
+    @Column(nullable = false)
+    private String status = "NORMAL";
 
     private LocalDateTime createdAt = LocalDateTime.now(); // 작성일시
 }

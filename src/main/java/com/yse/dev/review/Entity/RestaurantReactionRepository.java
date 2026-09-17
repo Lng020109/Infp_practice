@@ -17,6 +17,8 @@ public interface RestaurantReactionRepository
     long countByPlaceIdAndReactionType(
             String placeId,
             String reactionType);
+    
+    long countByReactionType(String reactionType);
 
     void deleteByPlaceId(String placeId);
 

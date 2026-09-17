@@ -1,5 +1,9 @@
 package com.yse.dev.review.Entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,11 +34,14 @@ public class Review {
     @Column(nullable = false)
     private String username;
 
+    // 리뷰 작성자 닉네임
+    @Column(nullable = true)
+    private String nickname;
+
     // 카카오 장소 ID
     @Column(nullable = true)
     private String placeId;
-    
-    
+
     // 식당 이름
     @Column(nullable = true)
     private String restaurantName;
@@ -46,4 +53,12 @@ public class Review {
     // 카카오맵 URL
     @Column(nullable = true)
     private String restaurantUrl;
+
+    @CreationTimestamp
+    @Column(nullable = true, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private String status = "NORMAL";
 }

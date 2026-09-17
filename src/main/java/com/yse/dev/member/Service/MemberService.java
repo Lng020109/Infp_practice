@@ -30,7 +30,7 @@ public class MemberService {
     @org.springframework.beans.factory.annotation.Value("${gemini.api.key}")
     private String apikey;
 
-    private final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=";
+    private final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=";
 
     private final java.util.List<String> forbiddenWords = java.util.Arrays.asList(
     		"바보", "qkqhdi", 
@@ -207,7 +207,7 @@ public class MemberService {
     }
 
     // =========================
-    // 로그인
+    // 로그인(9/14 수정)
     // =========================
     public boolean login(String username, String password) {
 
@@ -218,9 +218,13 @@ public class MemberService {
             return false;
         }
 
-        return findMember.get()
-                .getPassword()
-                .equals(password);
+        Member member = findMember.get();
+
+        if (member.isWithdrawn()) {
+            return false;
+        }
+
+        return member.getPassword().equals(password);
     }
 
     // =========================
@@ -381,7 +385,7 @@ public class MemberService {
     }
 
     // =========================
-    // 회원탈퇴
+    // 회원탈퇴 (9/14 변경)
     // =========================
     public boolean deleteMember(String username) {
         Optional<Member> findMember =
@@ -391,7 +395,12 @@ public class MemberService {
             return false;
         }
 
-        memberRepository.delete(findMember.get());
+        Member member = findMember.get();
+
+        member.setWithdrawn(true);
+
+        memberRepository.save(member);
+
         return true;
     }
 
