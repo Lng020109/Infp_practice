@@ -1826,68 +1826,68 @@ footer::before {
 
 .main-content::before {
 
-    content: "";
+	content: "";
 
-    display: block !important;
+	display: block !important;
 
-    position: absolute;
+	position: absolute;
 
-    top: -36px;
+	top: -36px;
 
-    left: 50%;
+	left: 50%;
 
-    width: 100vw;
+	width: 100vw;
 
-    height: calc(100% + 36px);
+	height: calc(100% + 36px);
 
-    transform: translateX(-50%);
+	transform: translateX(-50%);
 
-    background-repeat: no-repeat;
+	background-repeat: no-repeat;
 
-    background-size: 100% 100%, 100% 100%;
+	background-size: 100% 100%, 100% 100%;
 
-    background-position: center top, center top;
+	background-position: center top, center top;
 
-    z-index: 0;
+	z-index: 0;
 
-    pointer-events: none;
+	pointer-events: none;
 
 }
 
 .main-content>* {
 
-    position: relative;
+	position: relative;
 
-    z-index: 1;
+	z-index: 1;
 
 }
+
 .main-content::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 160px;
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 160px;
 
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.08) 35%,
-        rgba(255, 255, 255, 0.25) 70%,
-        rgba(255, 255, 255, 0.5) 100%
-    );
+	background: linear-gradient(to bottom,
+			rgba(255, 255, 255, 0) 0%,
+			rgba(255, 255, 255, 0.08) 35%,
+			rgba(255, 255, 255, 0.25) 70%,
+			rgba(255, 255, 255, 0.5) 100%);
 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 
-    z-index: 1;
-    pointer-events: none;
+	z-index: 1;
+	pointer-events: none;
 }
 
-.main-content > * {
-    position: relative;
-    z-index: 2;
+.main-content>* {
+	position: relative;
+	z-index: 2;
 }
+
 /* =========================================================
    🌊 메인 배경 하단 자연스러운 블렌딩
    - travel-main-bg.png는 그대로 유지
@@ -1899,7 +1899,7 @@ footer::before {
 
 /* 메인 영역 아래쪽 여백 제거 */
 .main-content {
-    margin-bottom: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 /* =========================================================
@@ -1907,79 +1907,73 @@ footer::before {
    ========================================================= */
 
 .main-content::after {
-    content: "";
+	content: "";
 
-    position: absolute;
+	position: absolute;
 
-    left: 0;
-    bottom: 0;
+	left: 0;
+	bottom: 0;
 
-    width: 100%;
-    height: 180px;
+	width: 100%;
+	height: 180px;
 
-    /*
+	/*
      * 배경 이미지를 한 번 더 깔고
      * 아래쪽에서 살짝 흐리게 만듦
      */
-    background-image:
-        linear-gradient(
-            to bottom,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0) 45%,
-            rgba(255, 255, 255, 0.04) 65%,
-            rgba(255, 255, 255, 0.12) 82%,
-            rgba(255, 255, 255, 0.22) 92%,
-            rgba(255, 255, 255, 0.35) 100%
-        ),
-        url('/images/travel-main-bg.png');
+	background-image:
+		linear-gradient(to bottom,
+			rgba(255, 255, 255, 0) 0%,
+			rgba(255, 255, 255, 0) 45%,
+			rgba(255, 255, 255, 0.04) 65%,
+			rgba(255, 255, 255, 0.12) 82%,
+			rgba(255, 255, 255, 0.22) 92%,
+			rgba(255, 255, 255, 0.35) 100%),
+		url('/images/travel-main-bg.png');
 
-    background-repeat: no-repeat;
+	background-repeat: no-repeat;
 
-    background-size:
-        100% 100%,
-        100% 100%;
+	background-size:
+		100% 100%,
+		100% 100%;
 
-    background-position:
-        center,
-        center;
+	background-position:
+		center,
+		center;
 
-    /*
+	/*
      * 위쪽은 자연스럽게 사라지고
      * 아래쪽에서만 흐림 효과가 나타남
      */
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent 25%,
-        rgba(0, 0, 0, 0.15) 45%,
-        rgba(0, 0, 0, 0.45) 65%,
-        rgba(0, 0, 0, 0.75) 82%,
-        black 100%
-    );
+	-webkit-mask-image: linear-gradient(to bottom,
+			transparent 0%,
+			transparent 25%,
+			rgba(0, 0, 0, 0.15) 45%,
+			rgba(0, 0, 0, 0.45) 65%,
+			rgba(0, 0, 0, 0.75) 82%,
+			black 100%);
 
-    mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent 25%,
-        rgba(0, 0, 0, 0.15) 45%,
-        rgba(0, 0, 0, 0.45) 65%,
-        rgba(0, 0, 0, 0.75) 82%,
-        black 100%
-    );
+	mask-image: linear-gradient(to bottom,
+			transparent 0%,
+			transparent 25%,
+			rgba(0, 0, 0, 0.15) 45%,
+			rgba(0, 0, 0, 0.45) 65%,
+			rgba(0, 0, 0, 0.75) 82%,
+			black 100%);
 
-    filter: blur(6px);
+	filter: blur(6px);
 
-    transform: scale(1.015);
+	transform: scale(1.015);
 
-    z-index: 1;
-    pointer-events: none;
+	z-index: 1;
+	pointer-events: none;
 }
 
 
 /* 메인 안의 실제 내용은 흐려지지 않도록 */
-.main-content > * {
-    position: relative;
-    z-index: 2;
+.main-content>* {
+	position: relative;
+	z-index: 2;
 }
 
 
@@ -1988,36 +1982,37 @@ footer::before {
    ========================================================= */
 
 footer {
-    margin-top: 0 !important;
+	margin-top: 0 !important;
 }
+
 /* =========================================================
    🏝️ 홈 배경 최종 정리
    ========================================================= */
 
 /* 1. 배경 사진은 홈 영역에서만 보이게 */
 body {
-    background-image: url('/images/hero-bg.png');
-    background-size: 100% auto;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-color: #ffffff;
+	background-image: url('/images/hero-bg.png');
+	background-size: 100% auto;
+	background-position: center top;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-color: #ffffff;
 }
 
 /* 2. 헤더는 흰색 */
 header {
-    background: #ffffff !important;
+	background: #ffffff !important;
 }
 
 /* 3. 히어로와 메인은 사진이 보이도록 */
 .hero-section,
 .main-content {
-    background: transparent !important;
+	background: transparent !important;
 }
 
 /* 4. 네가 표시한 가로 흰색 선 제거 */
 .hero-section {
-    border-bottom: none !important;
+	border-bottom: none !important;
 }
 
 /* 5. 푸터는 사진이 비치지 않도록 완전히 남색/파란색으로 */
@@ -2033,28 +2028,31 @@ footer::before {
 	transform: rotate(-5deg);
 	pointer-events: none;
 }
+
 /* 안내 메시지 공통 */
 .auth-msg {
-    font-size: 0.78rem;
-    line-height: 1.2;
-    min-height: 16px;
-    margin-top: 2px;
+	font-size: 0.78rem;
+	line-height: 1.2;
+	min-height: 16px;
+	margin-top: 2px;
 }
 
 /* 에러 (빨간 글씨 및 테두리) */
 .auth-msg.error {
-    color: #ef4444;
+	color: #ef4444;
 }
+
 input.input-error {
-    border-color: #ef4444 !important;
+	border-color: #ef4444 !important;
 }
 
 /* 성공 / 일치 (초록 글씨 및 테두리) */
 .auth-msg.success {
-    color: #10b981;
+	color: #10b981;
 }
+
 input.input-success {
-    border-color: #10b981 !important;
+	border-color: #10b981 !important;
 }
 
 /* =========================================================
@@ -2064,107 +2062,107 @@ input.input-success {
    - 화면 너비에 맞춰 높이는 자동 계산
    ========================================================= */
 
-   body {
-       background-image: url('/images/hero-bg.png');
+body {
+	background-image: url('/images/hero-bg.png');
 
-       /* 가로와 세로를 영역에 맞게 강제 조정 */
-       background-size: 100% 100%;
+	/* 가로와 세로를 영역에 맞게 강제 조정 */
+	background-size: 100% 100%;
 
-       background-position: center top;
-       background-repeat: no-repeat;
-       background-attachment: scroll;
-   }
+	background-position: center top;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+}
 
 /* 헤더 아래 히어로 영역이 이미지 위에 자연스럽게 표시되도록 */
 .hero-section,
 .main-content {
-    background-color: transparent !important;
+	background-color: transparent !important;
 }
 
 /* 작은 화면에서도 이미지 비율 유지 */
 @media (max-width: 700px) {
-    body {
-        background-size: cover;
-        background-position: center top;
-        background-attachment: fixed;
-    }
+	body {
+		background-size: cover;
+		background-position: center top;
+		background-attachment: fixed;
+	}
 }
+
 /* =========================================================
    🌊 홈 상단 전체를 하나의 박스로 묶기
    위치와 기존 배치는 그대로 유지
    ========================================================= */
 
 .hero-inner {
-    background: rgba(255, 255, 255, 0.65);
-    border-radius: 24px;
-    box-shadow: 0 8px 30px rgba(43, 166, 207, 0.12);
-	
+	background: rgba(255, 255, 255, 0.65);
+	border-radius: 24px;
+	box-shadow: 0 8px 30px rgba(43, 166, 207, 0.12);
+
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
+
 /* =========================================================
    ✈️ 상단 헤더 여행 느낌 추가
    - 기존 헤더 구조/기능 유지
    - 흰색 헤더에 입체감만 추가
    ========================================================= */
 
-   header {
-       position: relative;
-       z-index: 100;
+header {
+	position: relative;
+	z-index: 100;
 
-       background: rgba(255, 255, 255, 0.96) !important;
+	background: rgba(255, 255, 255, 0.96) !important;
 
-       border-bottom: none !important;
+	border-bottom: none !important;
 
-       box-shadow: 0 3px 15px rgba(43, 166, 207, 0.10);
+	box-shadow: 0 3px 15px rgba(43, 166, 207, 0.10);
 
-       /* 아래쪽 양쪽만 둥글게 */
-       border-radius: 0 0 28px 28px !important;
-   }
+	/* 아래쪽 양쪽만 둥글게 */
+	border-radius: 0 0 28px 28px !important;
+}
 
 /* 헤더 아래쪽에 부드러운 하늘색 포인트 */
 header::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 100%;
-    height: 10px;
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: -5px;
+	width: 100%;
+	height: 10px;
 
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0),
-        rgba(43, 166, 207, 0.12)
-    );
+	background: linear-gradient(to bottom,
+			rgba(255, 255, 255, 0),
+			rgba(43, 166, 207, 0.12));
 
-    pointer-events: none;
+	pointer-events: none;
 }
 
 /* 로고가 살짝 떠 있는 느낌 */
 .brand-logo {
-    position: relative;
-    z-index: 2;
+	position: relative;
+	z-index: 2;
 }
 
 /* 메뉴에 마우스를 올렸을 때 여행 사이트 느낌 */
 .menu-item {
-    transition: transform 0.2s ease, color 0.2s ease;
+	transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .menu-item:hover {
-    transform: translateY(-2px);
-    color: #2ba6cf;
+	transform: translateY(-2px);
+	color: #2ba6cf;
 }
 
 /* 로그인 버튼도 살짝 입체감 */
 #header-auth-btn {
-    box-shadow: 0 4px 10px rgba(43, 166, 207, 0.20);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 4px 10px rgba(43, 166, 207, 0.20);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #header-auth-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(43, 166, 207, 0.28);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 14px rgba(43, 166, 207, 0.28);
 }
 
 /* =========================================================
@@ -2233,6 +2231,7 @@ header::after {
 	color: #334155;
 	border: 1.5px solid #cbd5e1;
 }
+
 /* =========================================================
    🎵 플레이리스트 버튼 - 심플한 여행 스타일
    기존 기능 / HTML / JS 그대로 유지
@@ -2312,4 +2311,142 @@ header::after {
 		font-size: 18px;
 	}
 
+}
+
+/* =========================================================
+   🔔 알림 종 빨간 점(Badge) 스타일
+   ========================================================= */
+.noti-red-dot {
+	position: absolute;
+	top: 0px;
+	right: 12px;
+	width: 8px;
+	height: 8px;
+	background-color: #ef4444;
+	border-radius: 50%;
+	border: 1.5px solid #ffffff;
+}
+
+/* =========================================================
+   🔔 알림 팝업 모달 디자인 
+   ========================================================= */
+.noti-modal-window {
+	background: #ffffff;
+	width: 440px;
+	max-height: 75vh;
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: modalFadeIn 0.25s ease-out;
+}
+
+/* 필터 알약 탭 */
+.noti-filter-bar {
+	display: flex;
+	gap: 8px;
+	padding: 12px 18px;
+	background: #ffffff;
+	border-bottom: 1px solid #f1f5f9;
+	overflow-x: auto;
+}
+
+.noti-filter-bar::-webkit-scrollbar {
+	display: none;
+}
+
+.noti-tab-btn {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #64748b;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.2s;
+}
+
+.noti-tab-btn.active {
+	background: #202b36;
+	color: #ffffff;
+	border-color: #202b36;
+}
+
+.noti-modal-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 0;
+	background: #f8fafc;
+	min-height: 280px;
+}
+
+/* 알림 항목 카드 */
+.noti-item-card {
+	padding: 16px 20px;
+	background: #ffffff;
+	border-bottom: 1px solid #f1f5f9;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.noti-item-card:hover {
+	background: #f8fafc;
+}
+
+.noti-item-card.read {
+	opacity: 0.7;
+}
+
+.noti-card-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #64748b;
+	margin-bottom: 6px;
+}
+
+.noti-card-title {
+	font-size: 14px;
+	font-weight: 700;
+	color: #1e293b;
+	line-height: 1.4;
+	margin-bottom: 4px;
+}
+
+.noti-card-content {
+	font-size: 13px;
+	color: #475569;
+	line-height: 1.4;
+}
+
+/* 알림 없음 빈 상태 UI */
+.noti-empty-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60px 20px;
+	text-align: center;
+}
+
+.noti-empty-icon {
+	font-size: 48px;
+	margin-bottom: 16px;
+	filter: grayscale(30%);
+}
+
+.noti-empty-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: #1e293b;
+	margin-bottom: 6px;
+}
+
+.noti-empty-sub {
+	font-size: 12.5px;
+	color: #94a3b8;
 }

@@ -25,6 +25,13 @@
 				</div>
 			</div>
 			<div class="header-menu">
+				<div class="menu-item" id="notification-btn" style="display: none; position: relative;"
+					onclick="openNotificationModal()">
+					<i class="fa-regular fa-bell"></i>
+					<span>알림</span>
+					<!-- 빨간 점 (기본은 숨김) -->
+					<span id="notification-badge" class="noti-red-dot" style="display: none;"></span>
+				</div>
 				<!-- 찜한 맛집 -->
 				<div class="menu-item" onclick="openFavoriteModal()">
 					<i class="fa-regular fa-heart"></i>
@@ -270,6 +277,32 @@
 					</div>
 				</div>
 
+			</div>
+		</div>
+	</div>
+
+	<!-- 🔔 알림 목록 모달 팝업창 -->
+	<div class="modal-overlay" id="notification-modal" onclick="closeNotificationModal(event)">
+		<div class="noti-modal-window" onclick="event.stopPropagation()">
+			<div class="modal-header">
+				<h3 style="font-size: 1.15rem; color: #202b36; font-weight: 800;">
+					<i class="fa-solid fa-bell" style="color: #2ba6cf;"></i> 알림
+				</h3>
+				<button class="modal-close-btn" onclick="closeNotificationModal()"><i
+						class="fa-solid fa-xmark"></i></button>
+			</div>
+
+			<!-- 올리브영 스타일 카테고리 필터 탭 -->
+			<div class="noti-filter-bar">
+				<button type="button" class="noti-tab-btn active" onclick="filterNoti('ALL')">전체</button>
+				<button type="button" class="noti-tab-btn" onclick="filterNoti('LIKE_REVIEW')">리뷰</button>
+				<button type="button" class="noti-tab-btn" onclick="filterNoti('LIKE_POST')">게시물</button>
+				<button type="button" class="noti-tab-btn" onclick="filterNoti('COMMENT')">댓글</button>
+			</div>
+
+			<!-- 알림 목록 내용 영역 -->
+			<div class="noti-modal-body" id="notification-list-content">
+				<!-- JS를 통해 알림 카드 or 빈 상태 문구가 렌더링됩니다 -->
 			</div>
 		</div>
 	</div>

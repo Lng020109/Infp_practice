@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", function() {
         try {
             currentLoggedInUser = JSON.parse(savedUser);
             document.getElementById("header-auth-btn").innerText = "로그아웃";
-            document.getElementById("my-page-btn").style.display = "flex";
+            document.getElementById("my-page-btn").style.display = "flex"; document.getElementById("notification-btn").style.display = "flex";
+            checkUnreadNotifications(currentLoggedInUser.username);
         } catch (e) {
             sessionStorage.removeItem("currentLoggedInUser");
             currentLoggedInUser = null;
@@ -930,6 +931,8 @@ function openAuthModal() {
             sessionStorage.removeItem("currentLoggedInUser");
             document.getElementById("header-auth-btn").innerText = "로그인";
             document.getElementById("my-page-btn").style.display = "none";
+            document.getElementById("notification-btn").style.display = "none";
+            document.getElementById("notification-badge").style.display = "none";
             alert("로그아웃되었습니다.");
         }
         return;
@@ -1186,6 +1189,8 @@ function requestLogin() {
                     sessionStorage.setItem("currentLoggedInUser", JSON.stringify(currentLoggedInUser));
                     document.getElementById("header-auth-btn").innerText = "로그아웃";
                     document.getElementById("my-page-btn").style.display = "flex";
+                    document.getElementById("notification-btn").style.display = "flex";
+                    checkUnreadNotifications(id);
                     alert(`${member.nickname}님, 환영합니다!`);
                     document.getElementById("login-id").value = "";
                     document.getElementById("login-pw").value = "";
@@ -2590,6 +2595,173 @@ function updatePlaylistPosition() {
         // 전체 화면 / 모바일에서는 JS가 위치를 건드리지 않음
         playlistWidget.style.removeProperty("bottom");
     }
+}
+
+// 안 읽은 알림이 있는지 조회하여 빨간 점 표시/숨김
+function checkUnreadNotifications(username) {
+    if (!username) return;
+
+    fetch(`/api/notifications/unread-status?username=${encodeURIComponent(username)}`)
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(hasUnread => {
+            const badge = document.getElementById("notification-badge");
+            if (badge) {
+                badge.style.display = hasUnread ? "block" : "none";
+            }
+        })
+        .catch(err => console.error("알림 상태 조회 실패:", err));
+}
+
+// =========================================================
+// 🔔 알림 팝업 모달 상세 로직
+// =========================================================
+let allNotificationList = [];
+let currentNotiFilter = 'ALL';
+
+// 알림 모달 열기
+function openNotificationModal() {
+    if (!currentLoggedInUser) {
+        alert("로그인 후 이용할 수 있습니다.");
+        return;
+    }
+
+    const modal = document.getElementById("notification-modal");
+    if (modal) modal.style.display = "flex";
+
+    // 1. 빨간 점 끄기 및 서버 전체 읽음 처리
+    const badge = document.getElementById("notification-badge");
+    if (badge) badge.style.display = "none";
+
+    fetch(`/api/notifications/read-all?username=${encodeURIComponent(currentLoggedInUser.username)}`, {
+        method: "PATCH"
+    }).catch(err => console.error("알림 전체 읽음 처리 오류:", err));
+
+    // 2. 알림 목록 불러오기
+    loadNotificationList();
+}
+
+// 알림 모달 닫기
+function closeNotificationModal(event) {
+    if (event && event.target !== event.currentTarget && !event.target.closest('.modal-close-btn')) {
+        return;
+    }
+    const modal = document.getElementById("notification-modal");
+    if (modal) modal.style.display = "none";
+}
+
+// 알림 목록 API 호출
+function loadNotificationList() {
+    const container = document.getElementById("notification-list-content");
+    if (!container) return;
+
+    container.innerHTML = `<p style="text-align:center; padding: 40px; color:#94a3b8; font-size:13px;">알림을 불러오는 중...</p>`;
+
+    fetch(`/api/notifications?username=${encodeURIComponent(currentLoggedInUser.username)}`)
+        .then(res => res.json())
+        .then(data => {
+            allNotificationList = data || [];
+            renderNotificationUI();
+        })
+        .catch(err => {
+            console.error("알림 목록 불러오기 실패:", err);
+            container.innerHTML = `<p style="text-align:center; padding: 40px; color:#ef4444; font-size:13px;">알림을 불러오지 못했습니다.</p>`;
+        });
+}
+
+// 탭 필터링 변경
+function filterNoti(category) {
+    currentNotiFilter = category;
+
+    // 탭 버튼 스타일 갱신
+    document.querySelectorAll(".noti-tab-btn").forEach(btn => btn.classList.remove("active"));
+    if (event && event.target) {
+        event.target.classList.add("active");
+    }
+
+    renderNotificationUI();
+}
+
+// 알림 목록 화면 렌더링
+function renderNotificationUI() {
+    const container = document.getElementById("notification-list-content");
+    if (!container) return;
+
+    // 필터링 적용
+    let filteredList = allNotificationList;
+    if (currentNotiFilter !== 'ALL') {
+        filteredList = allNotificationList.filter(item => item.type === currentNotiFilter);
+    }
+
+    // 1. 알림이 없을 때 (올리브영 스타일 빈 상태)
+    if (filteredList.length === 0) {
+        container.innerHTML = `
+            <div class="noti-empty-box">
+                <div class="noti-empty-icon">🔔</div>
+                <div class="noti-empty-title">도착한 알림이 없어요</div>
+                <div class="noti-empty-sub">곧 새로운 소식을 알려드릴게요.</div>
+            </div>
+        `;
+        return;
+    }
+
+    // 2. 알림이 있을 때 (에이블리 스타일 카드 목록)
+    container.innerHTML = "";
+    filteredList.forEach(item => {
+        let tagEmoji = "📬";
+        let tagLabel = "소식";
+
+        if (item.type === "LIKE_REVIEW") {
+            tagEmoji = "📝";
+            tagLabel = "리뷰 추천";
+        } else if (item.type === "LIKE_POST") {
+            tagEmoji = "❤️";
+            tagLabel = "게시물 좋아요";
+        } else if (item.type === "COMMENT") {
+            tagEmoji = "💬";
+            tagLabel = "댓글/답글";
+        }
+
+        // 시간 계산 (방금 전, N분 전, N일 전)
+        const timeDisplay = formatTimeAgo(item.createdAt);
+
+        const card = document.createElement("div");
+        card.className = `noti-item-card ${item.read ? 'read' : ''}`;
+        card.innerHTML = `
+            <div class="noti-card-header">
+                <span>${tagEmoji} <strong>${tagLabel}</strong></span>
+                <span>·</span>
+                <span>${timeDisplay}</span>
+            </div>
+            <div class="noti-card-content">
+                ${item.content}
+            </div>
+        `;
+
+        // 클릭 시 해당 상세 주소로 이동
+        card.onclick = () => {
+            if (item.targetUrl) {
+                location.href = item.targetUrl;
+            }
+        };
+
+        container.appendChild(card);
+    });
+}
+
+// 날짜 포맷팅 보조 함수 (방금 전, N분 전, N시간 전, N일 전)
+function formatTimeAgo(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffSec = Math.floor((now - date) / 1000);
+
+    if (diffSec < 60) return "방금 전";
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}분 전`;
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}시간 전`;
+    return `${Math.floor(diffSec / 86400)}일 전`;
 }
 
 window.addEventListener("scroll", updatePlaylistPosition);
