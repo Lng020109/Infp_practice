@@ -1729,13 +1729,6 @@ footer::before {
    🌊 맛따라 여행따라 - 이미지 배경 적용
    기존 CSS / HTML / JS 유지
    ========================================================= */
-/* 상단 여행 배경 */
-.hero-section {
-	background-image: url('/images/hero-bg.png');
-	background-size: cover;
-	background-position: center center;
-	background-repeat: no-repeat;
-}
 
 /* 기존 장식용 CSS 이미지/문구는 유지하되
    실제 배경 이미지 위에서 자연스럽게 보이도록 */
@@ -1849,21 +1842,6 @@ footer::before {
 
     transform: translateX(-50%);
 
-    background-image:
-
-        linear-gradient(
-            to bottom,
-
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(255, 255, 255, 0) 2%,
-            rgba(255, 255, 255, 0) 88%,
-            rgba(255, 255, 255, 0.15) 94%,
-            rgba(255, 255, 255, 0.45) 98%,
-            rgba(255, 255, 255, 0.75) 100%
-        ),
-
-        url('/images/travel-main-bg.png');
-
     background-repeat: no-repeat;
 
     background-size: 100% 100%, 100% 100%;
@@ -1923,33 +1901,6 @@ footer::before {
 .main-content {
     margin-bottom: 0 !important;
 }
-
-
-/* 메인 배경 이미지 */
-.main-content::before {
-    content: "";
-    display: block !important;
-
-    position: absolute;
-    top: -36px;
-    left: 50%;
-
-    width: 100vw;
-    height: calc(100% + 36px);
-
-    transform: translateX(-50%);
-
-    background-image:
-        url('/images/travel-main-bg.png');
-
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: center top;
-
-    z-index: 0;
-    pointer-events: none;
-}
-
 
 /* =========================================================
    하단 흐림 효과
@@ -2038,4 +1989,247 @@ footer::before {
 
 footer {
     margin-top: 0 !important;
+}
+/* =========================================================
+   🏝️ 홈 배경 최종 정리
+   ========================================================= */
+
+/* 1. 배경 사진은 홈 영역에서만 보이게 */
+body {
+    background-image: url('/images/hero-bg.png');
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: #ffffff;
+}
+
+/* 2. 헤더는 흰색 */
+header {
+    background: #ffffff !important;
+}
+
+/* 3. 히어로와 메인은 사진이 보이도록 */
+.hero-section,
+.main-content {
+    background: transparent !important;
+}
+
+/* 4. 네가 표시한 가로 흰색 선 제거 */
+.hero-section {
+    border-bottom: none !important;
+}
+
+/* 5. 푸터는 사진이 비치지 않도록 완전히 남색/파란색으로 */
+footer::before {
+	content: "";
+	position: absolute;
+	width: 450px;
+	height: 120px;
+	left: 10%;
+	top: -80px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, .10);
+	transform: rotate(-5deg);
+	pointer-events: none;
+}
+/* 안내 메시지 공통 */
+.auth-msg {
+    font-size: 0.78rem;
+    line-height: 1.2;
+    min-height: 16px;
+    margin-top: 2px;
+}
+
+/* 에러 (빨간 글씨 및 테두리) */
+.auth-msg.error {
+    color: #ef4444;
+}
+input.input-error {
+    border-color: #ef4444 !important;
+}
+
+/* 성공 / 일치 (초록 글씨 및 테두리) */
+.auth-msg.success {
+    color: #10b981;
+}
+input.input-success {
+    border-color: #10b981 !important;
+}
+
+/* =========================================================
+   🖼️ hero-bg.png 비율 및 위치 보정
+   - 원본 이미지 비율(1768 : 432) 유지
+   - 헤더(70px) 아래부터 배경 이미지 시작
+   - 화면 너비에 맞춰 높이는 자동 계산
+   ========================================================= */
+
+   body {
+       background-image: url('/images/hero-bg.png');
+
+       /* 가로와 세로를 영역에 맞게 강제 조정 */
+       background-size: 100% 100%;
+
+       background-position: center top;
+       background-repeat: no-repeat;
+       background-attachment: scroll;
+   }
+
+/* 헤더 아래 히어로 영역이 이미지 위에 자연스럽게 표시되도록 */
+.hero-section,
+.main-content {
+    background-color: transparent !important;
+}
+
+/* 작은 화면에서도 이미지 비율 유지 */
+@media (max-width: 700px) {
+    body {
+        background-size: cover;
+        background-position: center top;
+        background-attachment: fixed;
+    }
+}
+/* =========================================================
+   🌊 홈 상단 전체를 하나의 박스로 묶기
+   위치와 기존 배치는 그대로 유지
+   ========================================================= */
+
+.hero-inner {
+    background: rgba(255, 255, 255, 0.65);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(43, 166, 207, 0.12);
+	
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+/* =========================================================
+   ✈️ 상단 헤더 여행 느낌 추가
+   - 기존 헤더 구조/기능 유지
+   - 흰색 헤더에 입체감만 추가
+   ========================================================= */
+
+   header {
+       position: relative;
+       z-index: 100;
+
+       background: rgba(255, 255, 255, 0.96) !important;
+
+       border-bottom: none !important;
+
+       box-shadow: 0 3px 15px rgba(43, 166, 207, 0.10);
+
+       /* 아래쪽 양쪽만 둥글게 */
+       border-radius: 0 0 28px 28px !important;
+   }
+
+/* 헤더 아래쪽에 부드러운 하늘색 포인트 */
+header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 10px;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        rgba(43, 166, 207, 0.12)
+    );
+
+    pointer-events: none;
+}
+
+/* 로고가 살짝 떠 있는 느낌 */
+.brand-logo {
+    position: relative;
+    z-index: 2;
+}
+
+/* 메뉴에 마우스를 올렸을 때 여행 사이트 느낌 */
+.menu-item {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-2px);
+    color: #2ba6cf;
+}
+
+/* 로그인 버튼도 살짝 입체감 */
+#header-auth-btn {
+    box-shadow: 0 4px 10px rgba(43, 166, 207, 0.20);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#header-auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(43, 166, 207, 0.28);
+}
+
+/* =========================================================
+   소셜 간편 로그인 (카카오, 네이버, 구글) 모달 스타일
+   ========================================================= */
+.social-auth-divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	margin: 18px 0 12px;
+	color: #94a3b8;
+	font-size: 12px;
+}
+
+.social-auth-divider::before,
+.social-auth-divider::after {
+	content: '';
+	flex: 1;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.social-auth-divider span {
+	padding: 0 10px;
+}
+
+.social-login-list {
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+}
+
+.btn-social-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 11px 0;
+	border-radius: 10px;
+	font-size: 13.5px;
+	font-weight: 700;
+	text-decoration: none;
+	transition: opacity 0.2s, transform 0.15s;
+	box-sizing: border-box;
+}
+
+.btn-social-item:hover {
+	opacity: 0.92;
+	transform: translateY(-1px);
+}
+
+/* 카카오: 공식 노란색 */
+.btn-social-item.btn-kakao {
+	background-color: #FEE500;
+	color: #191919;
+}
+
+/* 네이버: 공식 초록색 */
+.btn-social-item.btn-naver {
+	background-color: #03C75A;
+	color: #ffffff;
+}
+
+/* 구글: 흰색 + 은은한 테두리 */
+.btn-social-item.btn-google {
+	background-color: #ffffff;
+	color: #334155;
+	border: 1.5px solid #cbd5e1;
 }

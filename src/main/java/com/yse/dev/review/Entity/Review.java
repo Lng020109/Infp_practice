@@ -1,5 +1,4 @@
 package com.yse.dev.review.Entity;
-
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -61,4 +60,7 @@ public class Review {
     @Column(nullable = false)
     @Builder.Default
     private String status = "NORMAL";
+    
+    @Column(length = 100)
+    private String hiddenReason;
 }

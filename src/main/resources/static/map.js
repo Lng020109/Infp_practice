@@ -1195,36 +1195,205 @@ function requestLogin() {
         .catch(() => alert("아이디 또는 비밀번호를 다시 확인해주세요."));
 }
 
+// =========================================================
+// 회원가입 실시간 유효성 검사 및 중복 체크
+// =========================================================
+let isNicknameValid = false;
+let isIdValid = false;
+let isPasswordValid = false;
+let isPasswordMatch = false;
+
+let nicknameTimer = null;
+let idTimer = null;
+
+// 1. 닉네임 실시간 중복 체크 (MySQL DB 연동)
+function checkNicknameDuplicate() {
+    const nickInput = document.getElementById("reg-nickname");
+    const nickMsg = document.getElementById("reg-nickname-msg");
+    const nickname = nickInput.value.trim();
+
+    clearTimeout(nicknameTimer);
+    nickMsg.innerText = "";
+    nickMsg.className = "auth-msg";
+    nickInput.classList.remove("input-error", "input-success");
+    isNicknameValid = false;
+
+    if (!nickname) return;
+
+    // 닉네임 유효성 검사 (한글, 영문, 숫자 2~20자)
+    const nickRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
+    if (!nickRegex.test(nickname)) {
+        nickMsg.innerText = "닉네임은 한글, 영문, 숫자 2~20자리여야 합니다.";
+        nickMsg.className = "auth-msg error";
+        nickInput.classList.add("input-error");
+        return;
+    }
+
+    // 디바운스 (0.3초 대기 후 DB 조회)
+    nicknameTimer = setTimeout(() => {
+        fetch(`/api/member/check-nickname?nickname=${encodeURIComponent(nickname)}`)
+            .then(res => res.json())
+            .then(isDuplicate => {
+                if (isDuplicate) {
+                    nickMsg.innerText = "존재하는 닉네임입니다.";
+                    nickMsg.className = "auth-msg error";
+                    nickInput.classList.add("input-error");
+                    isNicknameValid = false;
+                } else {
+                    nickMsg.innerText = "사용 가능한 닉네임입니다.";
+                    nickMsg.className = "auth-msg success";
+                    nickInput.classList.add("input-success");
+                    isNicknameValid = true;
+                }
+            })
+            .catch(err => {
+                console.error("닉네임 중복확인 오류:", err);
+            });
+    }, 300);
+}
+
+// 2. 아이디 실시간 중복 체크 (MySQL DB 연동)
+function checkIdDuplicate() {
+    const idInput = document.getElementById("reg-id");
+    const idMsg = document.getElementById("reg-id-msg");
+    const id = idInput.value.trim();
+
+    clearTimeout(idTimer);
+    idMsg.innerText = "";
+    idMsg.className = "auth-msg";
+    idInput.classList.remove("input-error", "input-success");
+    isIdValid = false;
+
+    if (!id) return;
+
+    // 영문/숫자 4~12자리 검증
+    const idRegex = /^[a-zA-Z0-9]{4,12}$/;
+    if (!idRegex.test(id)) {
+        idMsg.innerText = "아이디는 영문 또는 숫자 4~12자리여야 합니다.";
+        idMsg.className = "auth-msg error";
+        idInput.classList.add("input-error");
+        return;
+    }
+
+    // 디바운스 (0.3초 대기 후 DB 조회)
+    idTimer = setTimeout(() => {
+        fetch(`/api/member/check-id?username=${encodeURIComponent(id)}`)
+            .then(res => res.json())
+            .then(isDuplicate => {
+                if (isDuplicate) {
+                    idMsg.innerText = "존재하는 아이디입니다.";
+                    idMsg.className = "auth-msg error";
+                    idInput.classList.add("input-error");
+                    isIdValid = false;
+                } else {
+                    idMsg.innerText = "사용 가능한 아이디입니다.";
+                    nickMsg = document.getElementById("reg-id-msg");
+                    idMsg.className = "auth-msg success";
+                    idInput.classList.add("input-success");
+                    isIdValid = true;
+                }
+            })
+            .catch(err => {
+                console.error("아이디 중복확인 오류:", err);
+            });
+    }, 300);
+}
+
+// 3. 비밀번호 유효성 검사 (8~16자, 특수문자 포함)
+function validatePassword() {
+    const pwInput = document.getElementById("reg-pw");
+    const pwMsg = document.getElementById("reg-pw-msg");
+    const pw = pwInput.value;
+
+    // 8~16자, 특수문자 1개 이상 포함 정규식
+    const pwRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,16}$/;
+
+    pwInput.classList.remove("input-error", "input-success");
+
+    if (!pw) {
+        pwMsg.innerText = "";
+        isPasswordValid = false;
+        checkPasswordMatch();
+        return;
+    }
+
+    if (!pwRegex.test(pw)) {
+        pwMsg.innerText = "비밀번호는 8~16자에 특수문자를 포함해야 합니다.";
+        pwMsg.className = "auth-msg error";
+        pwInput.classList.add("input-error");
+        isPasswordValid = false;
+    } else {
+        pwMsg.innerText = "";
+        pwInput.classList.add("input-success");
+        isPasswordValid = true;
+    }
+
+    checkPasswordMatch();
+}
+
+// 4. 비밀번호 재입력 확인 (일치/불일치 메시지)
+function checkPasswordMatch() {
+    const pw = document.getElementById("reg-pw").value;
+    const confirmInput = document.getElementById("reg-pw-confirm");
+    const confirmMsg = document.getElementById("reg-pw-confirm-msg");
+    const confirmVal = confirmInput.value;
+
+    confirmInput.classList.remove("input-error", "input-success");
+
+    if (!confirmVal) {
+        confirmMsg.innerText = "";
+        confirmMsg.className = "auth-msg";
+        isPasswordMatch = false;
+        return;
+    }
+
+    if (pw === confirmVal) {
+        confirmMsg.innerText = "비밀번호가 일치합니다.";
+        confirmMsg.className = "auth-msg success";
+        confirmInput.classList.add("input-success");
+        isPasswordMatch = true;
+    } else {
+        confirmMsg.innerText = "비밀번호가 일치하지 않습니다.";
+        confirmMsg.className = "auth-msg error";
+        confirmInput.classList.add("input-error");
+        isPasswordMatch = false;
+    }
+}
+
+// 5. 최종 회원가입 버튼 클릭 함수 (requestRegister 대체)
 function requestRegister() {
     const nickname = document.getElementById("reg-nickname").value.trim();
     const id = document.getElementById("reg-id").value.trim();
     const pw = document.getElementById("reg-pw").value.trim();
+    const confirmPw = document.getElementById("reg-pw-confirm").value.trim();
 
     const questionEl = document.getElementById("reg-question");
     const answerEl = document.getElementById("reg-answer");
     const question = questionEl ? questionEl.value : "";
     const answer = answerEl ? answerEl.value.trim() : "";
 
-    if (!nickname || !id || !pw || !answer) {
-        alert("닉네임, 아이디, 비밀번호, 보안 질문 답변을 모두 입력해주세요.");
+    if (!nickname || !id || !pw || !confirmPw || !answer) {
+        alert("모든 입력란을 작성해주세요.");
         return;
     }
 
-    const idRegex = /^[a-zA-Z0-9]{4,12}$/;
-    if (!idRegex.test(id)) {
-        alert("아이디는 영문 또는 숫자 4~12자리로 입력해주세요.");
+    if (!isNicknameValid) {
+        alert("닉네임을 다시 확인해주세요. (중복 확인 필요)");
         return;
     }
 
-    const pwRegex = /^[a-zA-Z0-9]{4,16}$/;
-    if (!pwRegex.test(pw)) {
-        alert("비밀번호는 영문 또는 숫자 4~16자리로 입력해주세요.");
+    if (!isIdValid) {
+        alert("아이디를 다시 확인해주세요. (중복 확인 필요)");
         return;
     }
 
-    const nickRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
-    if (!nickRegex.test(nickname)) {
-        alert("닉네임은 한글, 영문, 숫자 2~20자리로 입력해주세요.");
+    if (!isPasswordValid) {
+        alert("비밀번호 형식을 확인해주세요. (8~16자, 특수문자 포함)");
+        return;
+    }
+
+    if (!isPasswordMatch) {
+        alert("비밀번호가 일치하지 않습니다.");
         return;
     }
 
@@ -1248,10 +1417,16 @@ function requestRegister() {
         })
         .then(() => {
             alert("회원가입이 완료되었습니다! 로그인해 주세요.");
+            // 폼 필드 및 상태 초기화
             document.getElementById("reg-nickname").value = "";
             document.getElementById("reg-id").value = "";
             document.getElementById("reg-pw").value = "";
+            document.getElementById("reg-pw-confirm").value = "";
             if (answerEl) answerEl.value = "";
+            document.getElementById("reg-nickname-msg").innerText = "";
+            document.getElementById("reg-id-msg").innerText = "";
+            document.getElementById("reg-pw-msg").innerText = "";
+            document.getElementById("reg-pw-confirm-msg").innerText = "";
             switchAuthTab('login');
         })
         .catch(err => {
@@ -2419,4 +2594,4 @@ function updatePlaylistPosition() {
 
 window.addEventListener("scroll", updatePlaylistPosition);
 window.addEventListener("resize", updatePlaylistPosition);
-window.addEventListener("load", updatePlaylistPosition);
+window.addEventListener("load", updatePlaylistPosition); ㄴ

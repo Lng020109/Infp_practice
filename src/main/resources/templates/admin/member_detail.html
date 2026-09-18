@@ -1,61 +1,285 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>회원 상세 정보</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            color: #536b83;
+            background: linear-gradient(
+                135deg,
+                #e8f6ff 0%,
+                #d7efff 45%,
+                #c6e6f9 100%
+            );
+            min-height: 100vh;
         }
+
+        /* =========================
+           배경 구름
+        ========================= */
+
+        .bg-clouds {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.62);
+            border-radius: 999px;
+            filter: blur(1px);
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .cloud-one {
+            width: 210px;
+            height: 70px;
+            top: 100px;
+            left: -45px;
+        }
+
+        .cloud-one::before {
+            width: 95px;
+            height: 95px;
+            left: 40px;
+            bottom: 15px;
+        }
+
+        .cloud-one::after {
+            width: 70px;
+            height: 70px;
+            left: 105px;
+            bottom: 10px;
+        }
+
+        .cloud-two {
+            width: 260px;
+            height: 82px;
+            top: 310px;
+            right: -75px;
+        }
+
+        .cloud-two::before {
+            width: 110px;
+            height: 110px;
+            left: 50px;
+            bottom: 15px;
+        }
+
+        .cloud-two::after {
+            width: 82px;
+            height: 82px;
+            left: 135px;
+            bottom: 10px;
+        }
+
+        .cloud-three {
+            width: 180px;
+            height: 60px;
+            bottom: 95px;
+            left: 8%;
+        }
+
+        .cloud-three::before {
+            width: 80px;
+            height: 80px;
+            left: 35px;
+            bottom: 10px;
+        }
+
+        .cloud-three::after {
+            width: 60px;
+            height: 60px;
+            left: 95px;
+            bottom: 8px;
+        }
+
+        /* =========================
+           전체 컨테이너
+        ========================= */
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 92%;
+            max-width: 1100px;
+            margin: 42px auto 60px;
+        }
+
+        /* =========================
+           헤더
+        ========================= */
 
         .header {
-            background: #333;
-            color: white;
-            padding: 20px 40px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 18px rgba(86, 128, 160, 0.10);
+        }
+
+        .brand-icon svg {
+            width: 25px;
+            height: 25px;
+            fill: none;
+            stroke: #91afd0;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-text {
+            font-size: 21px;
+            font-weight: 600;
+            color: #425b78;
         }
 
         .back-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #637c96;
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
+            box-shadow: 0 5px 16px rgba(86, 128, 160, 0.09);
+            transition: 0.2s ease;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .back-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.9);
         }
+
+        .back-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: none;
+            stroke: #7f9bb8;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* =========================
+           메인 패널
+        ========================= */
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.89);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 26px;
+            padding: 29px 30px 32px;
+            box-shadow:
+                0 18px 40px rgba(79, 123, 158, 0.12),
+                0 3px 10px rgba(79, 123, 158, 0.05);
+            backdrop-filter: blur(12px);
+        }
+
+        /* =========================
+           제목
+        ========================= */
 
         .title {
-            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 26px;
         }
 
+        .title-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #eee9ff;
+            border: 1px solid #e0d9fa;
+        }
+
+        .title-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #a08fc9;
+            stroke-width: 1.55;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .title-text h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #536b83;
+        }
+
+        .title-text p {
+            margin: 0;
+            font-size: 11px;
+            color: #98a9b8;
+        }
+
+        /* =========================
+           회원 정보 카드
+        ========================= */
+
         .member-card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid #edf2f6;
+            border-radius: 18px;
+            padding: 8px 22px;
+            box-shadow: 0 5px 18px rgba(82, 119, 148, 0.06);
         }
 
         .member-row {
             display: flex;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            align-items: center;
+            min-height: 62px;
+            padding: 13px 0;
+            border-bottom: 1px solid #edf2f6;
         }
 
         .member-row:last-child {
@@ -64,97 +288,302 @@
 
         .label {
             width: 150px;
-            font-weight: bold;
-            color: #555;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 500;
+            color: #7890a7;
         }
 
         .value {
             flex: 1;
+            font-size: 13px;
+            font-weight: 400;
+            color: #536b83;
         }
 
+        /* =========================
+           버튼
+        ========================= */
+
         .actions {
-            margin-top: 30px;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 9px;
+            margin-top: 24px;
         }
 
         .list-btn,
         .delete-btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 38px;
+            padding: 0 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
             cursor: pointer;
+            transition: 0.2s ease;
         }
 
         .list-btn {
-            background: #333;
-            color: white;
+            border: 1px solid #dbeaf5;
+            background: #eef7ff;
+            color: #6684a0;
         }
 
         .delete-btn {
-            background: #d9534f;
-            color: white;
+            border: 1px solid #f1dada;
+            background: #fff2f2;
+            color: #c27d7d;
+        }
+
+        .list-btn:hover,
+        .delete-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .list-btn:hover {
+            background: #e7f3fc;
+        }
+
+        .delete-btn:hover {
+            background: #ffebeb;
+        }
+
+        .list-btn svg,
+        .delete-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .list-btn svg {
+            stroke: #7899b6;
+        }
+
+        .delete-btn svg {
+            stroke: #c27d7d;
+        }
+
+        /* =========================
+           반응형
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: 94%;
+                margin-top: 25px;
+            }
+
+            .main-panel {
+                padding: 23px 18px 25px;
+                border-radius: 21px;
+            }
+
+            .brand-text {
+                font-size: 17px;
+            }
+
+            .back-btn {
+                padding: 9px 11px;
+            }
+
+            .member-card {
+                padding: 6px 16px;
+            }
+
+            .member-row {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+                padding: 13px 0;
+            }
+
+            .label {
+                width: auto;
+                font-size: 11px;
+            }
+
+            .value {
+                font-size: 12px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .list-btn,
+            .delete-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<header class="header">
-
-    <h1>맛따라 여행따라 관리자</h1>
-
-    <button class="back-btn" onclick="goToMembers()">
-        회원 목록으로
-    </button>
-
-</header>
+<div class="bg-clouds">
+    <div class="cloud cloud-one"></div>
+    <div class="cloud cloud-two"></div>
+    <div class="cloud cloud-three"></div>
+</div>
 
 <div class="container">
 
-    <div class="title">
-        <h2>👤 회원 상세 정보</h2>
-        <p>회원의 상세 정보를 확인합니다.</p>
-    </div>
+    <!-- 헤더 -->
+    <header class="header">
 
-    <div class="member-card">
+        <div class="brand">
 
-        <div class="member-row">
-            <div class="label">회원 번호</div>
-            <div class="value" th:text="${member.id}"></div>
-        </div>
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 10.5h16"></path>
+                    <path d="M6 10.5v8h12v-8"></path>
+                    <path d="M8 7.5c0-1.5 1-2.5 2.5-2.5S13 6 13 7.5"></path>
+                    <path d="M13 7.5c0-1.5 1-2.5 2.5-2.5S18 6 18 7.5"></path>
+                    <path d="M4 10.5c0-1.7 1.4-3 3-3h10c1.7 0 3 1.3 3 3"></path>
+                </svg>
+            </div>
 
-        <div class="member-row">
-            <div class="label">아이디</div>
-            <div class="value" th:text="${member.username}"></div>
-        </div>
-
-        <div class="member-row">
-            <div class="label">닉네임</div>
-            <div class="value" th:text="${member.nickname}"></div>
-        </div>
-
-        <div class="member-row">
-            <div class="label">보안 질문</div>
-            <div class="value" th:text="${member.securityQuestion}"></div>
-        </div>
-
-        <div class="actions">
-
-            <button class="list-btn" onclick="goToMembers()">
-                회원 목록
-            </button>
-
-            <button class="delete-btn"
-                    th:onclick="'deleteMember(' + ${member.id} + ')'">
-                회원 삭제
-            </button>
+            <div class="brand-text">
+                맛따라 여행따라 관리자
+            </div>
 
         </div>
 
-    </div>
+        <button class="back-btn" onclick="goToMembers()">
+
+            <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"></path>
+            </svg>
+
+            회원 목록으로
+
+        </button>
+
+    </header>
+
+
+    <!-- 메인 -->
+    <main class="main-panel">
+
+        <div class="title">
+
+            <div class="title-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="3.2"></circle>
+                    <path d="M5.5 19c.7-3.1 3.1-5 6.5-5s5.8 1.9 6.5 5"></path>
+                </svg>
+            </div>
+
+            <div class="title-text">
+                <h2>회원 상세 정보</h2>
+                <p>회원의 상세 정보를 확인합니다.</p>
+            </div>
+
+        </div>
+
+
+        <!-- 회원 정보 -->
+        <div class="member-card">
+
+            <div class="member-row">
+
+                <div class="label">
+                    회원 번호
+                </div>
+
+                <div class="value"
+                     th:text="${member.id}">
+                </div>
+
+            </div>
+
+
+            <div class="member-row">
+
+                <div class="label">
+                    아이디
+                </div>
+
+                <div class="value"
+                     th:text="${member.username}">
+                </div>
+
+            </div>
+
+
+            <div class="member-row">
+
+                <div class="label">
+                    닉네임
+                </div>
+
+                <div class="value"
+                     th:text="${member.nickname}">
+                </div>
+
+            </div>
+
+
+            <div class="member-row">
+
+                <div class="label">
+                    보안 질문
+                </div>
+
+                <div class="value"
+                     th:text="${member.securityQuestion}">
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button class="list-btn"
+                        onclick="goToMembers()">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 18l-6-6 6-6"></path>
+                        <path d="M3 12h18"></path>
+                    </svg>
+
+                    회원 목록
+
+                </button>
+
+
+                <button class="delete-btn"
+                        th:onclick="'deleteMember(' + ${member.id} + ')'">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 7h16"></path>
+                        <path d="M9 7V4h6v3"></path>
+                        <path d="M7 7l1 13h8l1-13"></path>
+                        <path d="M10 11v5"></path>
+                        <path d="M14 11v5"></path>
+                    </svg>
+
+                    회원 삭제
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
+
 
 <script>
 
@@ -162,35 +591,39 @@
         location.href = "/api/admin/members";
     }
 
-	function deleteMember(id) {
+    function deleteMember(id) {
 
-	    const confirmed = confirm("정말 이 회원을 삭제하시겠습니까?");
+        const confirmed = confirm("정말 이 회원을 삭제하시겠습니까?");
 
-	    if (!confirmed) {
-	        return;
-	    }
+        if (!confirmed) {
+            return;
+        }
 
-	    fetch("/api/admin/members/" + id, {
-	        method: "DELETE"
-	    })
-	    .then(response => {
-	        if (!response.ok) {
-	            throw new Error("회원 삭제에 실패했습니다.");
-	        }
+        fetch("/api/admin/members/" + id, {
+            method: "DELETE"
+        })
+        .then(response => {
 
-	        return response.text();
-	    })
-	    .then(message => {
-	        alert(message);
-	        location.href = "/api/admin/members";
-	    })
-	    .catch(error => {
-	        alert(error.message);
-	    });
-	}
+            if (!response.ok) {
+                throw new Error("회원 삭제에 실패했습니다.");
+            }
+
+            return response.text();
+        })
+        .then(message => {
+
+            alert(message);
+            location.href = "/api/admin/members";
+
+        })
+        .catch(error => {
+
+            alert(error.message);
+
+        });
+    }
 
 </script>
 
 </body>
-
 </html>

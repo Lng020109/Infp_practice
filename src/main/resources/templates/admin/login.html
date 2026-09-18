@@ -1,138 +1,713 @@
 <!DOCTYPE html>
-
 <html lang="ko">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>관리자 로그인</title>
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
+    <style>
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        * {
+            box-sizing: border-box;
+        }
 
-        min-height: 100vh;
-    }
+        /* =========================
+           전체 배경
+        ========================= */
 
-    .login-box {
-        width: 350px;
-        padding: 40px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
 
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-    }
+            background:
+                linear-gradient(
+                    135deg,
+                    #e8f6ff 0%,
+                    #d7efff 45%,
+                    #c6e6f9 100%
+                );
 
-    input {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 12px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
+            min-height: 100vh;
 
-    button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 5px;
-        background: #333;
-        color: white;
-        cursor: pointer;
-    }
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    button:hover {
-        background: #555;
-    }
+            position: relative;
+            overflow: hidden;
 
-    #message {
-        margin-top: 15px;
-        text-align: center;
-    }
-</style>
+            color: #3f5875;
+        }
+
+
+        /* =========================
+           배경 구름
+        ========================= */
+
+        .bg-clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            pointer-events: none;
+            overflow: hidden;
+
+            z-index: 0;
+        }
+
+        .cloud {
+            position: absolute;
+
+            background: rgba(255, 255, 255, 0.62);
+
+            border-radius: 100px;
+
+            filter: blur(1px);
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+
+            position: absolute;
+
+            background: rgba(255, 255, 255, 0.62);
+
+            border-radius: 50%;
+        }
+
+
+        /* 왼쪽 위 구름 */
+
+        .cloud-one {
+            width: 330px;
+            height: 85px;
+
+            top: 12%;
+            left: -80px;
+        }
+
+        .cloud-one::before {
+            width: 125px;
+            height: 125px;
+
+            top: -62px;
+            left: 65px;
+        }
+
+        .cloud-one::after {
+            width: 150px;
+            height: 150px;
+
+            top: -75px;
+            left: 150px;
+        }
+
+
+        /* 오른쪽 아래 구름 */
+
+        .cloud-two {
+            width: 380px;
+            height: 95px;
+
+            bottom: 10%;
+            right: -100px;
+        }
+
+        .cloud-two::before {
+            width: 140px;
+            height: 140px;
+
+            top: -70px;
+            left: 70px;
+        }
+
+        .cloud-two::after {
+            width: 165px;
+            height: 165px;
+
+            top: -82px;
+            left: 175px;
+        }
+
+
+        /* 작은 구름 */
+
+        .cloud-three {
+            width: 180px;
+            height: 50px;
+
+            top: 22%;
+            right: 8%;
+
+            opacity: 0.55;
+
+            transform: scale(0.7);
+        }
+
+
+        /* =========================
+           로그인 카드
+        ========================= */
+
+        .login-box {
+            position: relative;
+            z-index: 2;
+
+            width: 400px;
+
+            padding: 43px 44px 42px;
+
+            background: rgba(255, 255, 255, 0.90);
+
+            border: 1px solid rgba(255, 255, 255, 0.95);
+
+            border-radius: 30px;
+
+            box-shadow:
+                0 18px 42px rgba(88, 139, 178, 0.15);
+
+            backdrop-filter: blur(14px);
+        }
+
+
+        /* =========================
+           카드 내부 장식 구름
+        ========================= */
+
+        .cloud-icon {
+            position: absolute;
+
+            color: #a8d4ef;
+
+            font-size: 23px;
+
+            opacity: 0.7;
+
+            line-height: 1;
+        }
+
+        .cloud-icon.one {
+            top: 24px;
+            right: 28px;
+        }
+
+        .cloud-icon.two {
+            bottom: 25px;
+            left: 28px;
+
+            font-size: 19px;
+
+            opacity: 0.55;
+        }
+
+
+        /* =========================
+           로고 영역
+        ========================= */
+
+        .logo-area {
+            text-align: center;
+
+            margin-bottom: 31px;
+        }
+
+
+        /* SVG 로고 */
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 50%;
+
+            background: #eef7ff;
+
+            border: 1px solid #cfe6f7;
+
+            box-shadow:
+                0 7px 17px rgba(116, 185, 255, 0.13);
+        }
+
+        .logo-icon svg {
+            width: 34px;
+            height: 34px;
+
+            fill: none;
+
+            stroke: #91afd0;
+
+            stroke-width: 1.65;
+
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+
+        /* =========================
+           제목
+        ========================= */
+
+        h1 {
+            margin: 0;
+
+            color: #425b78;
+
+            font-size: 24px;
+
+            font-weight: 600;
+
+            letter-spacing: -0.6px;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+
+            color: #91a5ba;
+
+            font-size: 11px;
+
+            letter-spacing: 0.45px;
+        }
+
+
+        /* =========================
+           입력 영역
+        ========================= */
+
+        .input-group {
+            position: relative;
+
+            margin-bottom: 12px;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            top: 50%;
+            left: 15px;
+
+            width: 18px;
+            height: 18px;
+
+            transform: translateY(-50%);
+
+            pointer-events: none;
+        }
+
+        .input-icon svg {
+            width: 18px;
+            height: 18px;
+
+            fill: none;
+
+            stroke: #9db5ca;
+
+            stroke-width: 1.55;
+
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px 16px 14px 43px;
+
+            border: 1px solid #d8e8f4;
+
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.90);
+
+            color: #405a77;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 13px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #a2b2c1;
+        }
+
+        input:focus {
+            border-color: #a5d2ef;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 3px rgba(143, 200, 245, 0.12);
+        }
+
+
+        /* =========================
+           로그인 버튼
+        ========================= */
+
+        button {
+            width: 100%;
+
+            padding: 14px;
+
+            margin-top: 7px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #8fc8ee;
+
+            color: #ffffff;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.1px;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+            box-shadow:
+                0 7px 16px rgba(116, 185, 255, 0.20);
+        }
+
+        button:hover {
+            background: #7dbbe4;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 9px 19px rgba(116, 185, 255, 0.25);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+
+        /* =========================
+           로그인 메시지
+        ========================= */
+
+        #message {
+            min-height: 18px;
+
+            margin-top: 14px;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: #df8585;
+        }
+
+
+        /* =========================
+           하단 장식
+        ========================= */
+
+        .login-footer {
+            margin-top: 19px;
+
+            text-align: center;
+
+            color: #a5b5c4;
+
+            font-size: 10px;
+
+            letter-spacing: 0.2px;
+        }
+
+        .login-footer span {
+            color: #91afd0;
+        }
+
+
+        /* =========================
+           반응형
+        ========================= */
+
+        @media (max-width: 500px) {
+
+            .login-box {
+                width: calc(100% - 30px);
+
+                padding: 36px 25px 34px;
+
+                border-radius: 25px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .logo-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-icon svg {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="login-box">
 
-<h1>관리자 로그인</h1>
+    <!-- =========================
+         배경 구름
+    ========================= -->
 
-<input
-    type="text"
-    id="username"
-    placeholder="관리자 아이디">
+    <div class="bg-clouds">
 
-<input
-    type="password"
-    id="password"
-    placeholder="관리자 비밀번호">
+        <div class="cloud cloud-one"></div>
 
-<button onclick="adminLogin()">로그인</button>
+        <div class="cloud cloud-two"></div>
 
-<div id="message"></div>
+        <div class="cloud cloud-three"></div>
 
-</div>
+    </div>
 
-<script>
-    async function adminLogin() {
 
-        const username =
-            document.getElementById("username").value;
+    <!-- =========================
+         로그인 카드
+    ========================= -->
 
-        const password =
-            document.getElementById("password").value;
+    <div class="login-box">
 
-        const message =
-            document.getElementById("message");
 
-        try {
+        <!-- 작은 구름 장식 -->
 
-            const response = await fetch("/api/admin/login", {
+        <div class="cloud-icon one">
+            ☁
+        </div>
 
-                method: "POST",
+        <div class="cloud-icon two">
+            ☁
+        </div>
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
 
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            });
+        <!-- =========================
+             로고
+        ========================= -->
 
-            const result = await response.text();
+        <div class="logo-area">
 
-			if (response.ok) {
+			<div class="logo-icon">
+			    🍳
+			</div>
 
-			    sessionStorage.setItem("adminLoggedIn", "true");
+            <h1>
+                맛따라 여행따라
+            </h1>
 
-			    location.href = "/api/admin/dashboard";
+            <div class="subtitle">
+                food &amp; travel admin
+            </div>
 
-			} else {
+        </div>
 
-			    message.textContent = result;
-			}
 
-        } catch (error) {
+        <!-- =========================
+             아이디
+        ========================= -->
 
-            message.textContent =
-                "서버와 연결할 수 없습니다.";
+        <div class="input-group">
+
+            <div class="input-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="8"
+                        r="3.2"
+                    />
+
+                    <path
+                        d="M5.5 20
+                           c.8-4
+                           3-6
+                           6.5-6
+                           s5.7 2
+                           6.5 6"
+                    />
+
+                </svg>
+
+            </div>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="관리자 아이디"
+                autocomplete="username"
+            >
+
+        </div>
+
+
+        <!-- =========================
+             비밀번호
+        ========================= -->
+
+        <div class="input-group">
+
+            <div class="input-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                >
+
+                    <rect
+                        x="5"
+                        y="10"
+                        width="14"
+                        height="10"
+                        rx="2.2"
+                    />
+
+                    <path
+                        d="M8.5 10
+                           V7.5
+                           a3.5 3.5 0 0 1 7 0
+                           V10"
+                    />
+
+                </svg>
+
+            </div>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="관리자 비밀번호"
+                autocomplete="current-password"
+            >
+
+        </div>
+
+        <!-- =========================
+             로그인 버튼
+        ========================= -->
+
+        <button onclick="adminLogin()">
+            로그인
+        </button>
+
+        <!-- =========================
+             메시지
+        ========================= -->
+
+        <div id="message"></div>
+
+        <!-- =========================
+             하단 문구
+        ========================= -->
+
+        <div class="login-footer">
+            <span>☁</span>
+            맛있는 여행을 관리하는 공간
+            <span>☁</span>
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function adminLogin() {
+
+            const username =
+                document.getElementById("username").value;
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+            try {
+                const response = await fetch(
+                    "/api/admin/login",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    }
+                );
+
+                const result =
+                    await response.text();
+
+                if (response.ok) {
+                    sessionStorage.setItem(
+                        "adminLoggedIn",
+                        "true"
+                    );
+
+                    location.href =
+                        "/api/admin/dashboard";
+                } else {
+                    message.textContent =
+                        result;
+                }
+
+            } catch (error) {
+                message.textContent =
+                    "서버와 연결할 수 없습니다.";
+            }
+
         }
-    }
-</script>
+
+    </script>
+
 
 </body>
+
 </html>

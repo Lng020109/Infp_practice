@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yse.dev.TourReview.Entity.TourReview;
+import com.yse.dev.admin.ReactionStats.ReactionStats;
 import com.yse.dev.admin.Service.AdminService;
 import com.yse.dev.community.Service.CommunityService;
 import com.yse.dev.member.Entity.Member;
@@ -216,5 +217,84 @@ public class AdminController {
         adminService.deleteTourReview(id);
 
         return ResponseEntity.ok("관광지 리뷰 삭제 성공");
+    }
+    
+    // =========================
+    // 좋아요 / 싫어요 상세 통계
+    // =========================
+
+    @GetMapping("/reaction-stats/{target}/{reaction}")
+    public String reactionStatsPage(
+            @PathVariable("target") String target,
+            @PathVariable("reaction") String reaction,
+            @org.springframework.web.bind.annotation.RequestParam(
+                    value = "page",
+                    defaultValue = "0") int page,
+            Model model) {
+
+        List<ReactionStats> stats;
+
+        // 맛집
+        if ("restaurant".equals(target)
+                && "LIKE".equals(reaction)) {
+
+            stats = adminService.getRestaurantLikeStats();
+
+        } else if ("restaurant".equals(target)
+                && "DISLIKE".equals(reaction)) {
+
+            stats = adminService.getRestaurantDislikeStats();
+
+        // 관광지
+        } else if ("tour".equals(target)
+                && "LIKE".equals(reaction)) {
+
+            stats = adminService.getTourLikeStats();
+
+        } else if ("tour".equals(target)
+                && "DISLIKE".equals(reaction)) {
+
+            stats = adminService.getTourDislikeStats();
+
+        } else {
+            return "redirect:/api/admin/dashboard";
+        }
+
+        // 페이지당 10개
+        int pageSize = 10;
+
+        int totalCount = stats.size();
+        int totalPages = (int) Math.ceil(
+                (double) totalCount / pageSize
+        );
+
+        // 잘못된 페이지 번호 방지
+        if (page < 0) {
+            page = 0;
+        }
+
+        if (totalPages > 0 && page >= totalPages) {
+            page = totalPages - 1;
+        }
+
+        int start = page * pageSize;
+        int end = Math.min(
+                start + pageSize,
+                totalCount
+        );
+
+        List<ReactionStats> pageStats =
+                totalCount == 0
+                        ? List.of()
+                        : stats.subList(start, end);
+
+        model.addAttribute("stats", pageStats);
+        model.addAttribute("target", target);
+        model.addAttribute("reaction", reaction);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalCount", totalCount);
+
+        return "admin/reaction_stats";
     }
 }

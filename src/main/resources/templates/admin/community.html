@@ -3,257 +3,692 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>커뮤니티 관리</title>
 
     <style>
         * {
             box-sizing: border-box;
         }
+
         body {
             margin: 0;
             font-family: Arial, "Noto Sans KR", sans-serif;
-            background: #f5f7fa;
-            color: #333;
+            background: linear-gradient(
+                135deg,
+                #e8f6ff 0%,
+                #d7efff 45%,
+                #c6e6f9 100%
+            );
+            color: #4d6277;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* =========================
+           배경 구름
+        ========================= */
+
+        .bg-clouds {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 100px;
+            filter: blur(1px);
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .cloud-one {
+            width: 210px;
+            height: 65px;
+            top: 90px;
+            left: -40px;
+        }
+
+        .cloud-one::before {
+            width: 80px;
+            height: 80px;
+            left: 35px;
+            bottom: 15px;
+        }
+
+        .cloud-one::after {
+            width: 105px;
+            height: 105px;
+            left: 90px;
+            bottom: 5px;
+        }
+
+        .cloud-two {
+            width: 260px;
+            height: 72px;
+            top: 310px;
+            right: -70px;
+            opacity: 0.7;
+        }
+
+        .cloud-two::before {
+            width: 90px;
+            height: 90px;
+            left: 45px;
+            bottom: 18px;
+        }
+
+        .cloud-two::after {
+            width: 115px;
+            height: 115px;
+            left: 115px;
+            bottom: 3px;
+        }
+
+        .cloud-three {
+            width: 190px;
+            height: 58px;
+            bottom: 90px;
+            left: 8%;
+            opacity: 0.45;
+        }
+
+        .cloud-three::before {
+            width: 72px;
+            height: 72px;
+            left: 30px;
+            bottom: 12px;
+        }
+
+        .cloud-three::after {
+            width: 90px;
+            height: 90px;
+            left: 82px;
+            bottom: 2px;
+        }
+
+        /* =========================
+           전체 컨테이너
+        ========================= */
+
         .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 40px auto;
+            width: 92%;
+            max-width: 1100px;
+            margin: 42px auto 60px;
+            position: relative;
+            z-index: 2;
         }
+
+        /* =========================
+           상단 헤더
+        ========================= */
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 16px rgba(95, 130, 160, 0.08);
+        }
+
+        .brand-icon svg {
+            width: 25px;
+            height: 25px;
+            fill: none;
+            stroke: #91afd0;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-text {
+            font-size: 21px;
+            font-weight: 600;
+            color: #425b78;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.72);
+            color: #61778d;
+            padding: 9px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(95, 130, 160, 0.08);
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+
+        .back-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: none;
+            stroke: #71879b;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* =========================
+           메인 패널
+        ========================= */
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.89);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 26px;
+            padding: 29px 30px 32px;
+            box-shadow:
+                0 14px 35px rgba(95, 130, 160, 0.10),
+                0 3px 10px rgba(95, 130, 160, 0.05);
+            backdrop-filter: blur(12px);
+        }
+
+        /* =========================
+           제목
+        ========================= */
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 13px;
             margin-bottom: 25px;
         }
-        .header h1 {
+
+        .title-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            background: #e9f7ed;
+            border: 1px solid #d7eddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .title-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #79ad88;
+            stroke-width: 1.55;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .title-text h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #536b83;
+        }
+
+        .title-text p {
             margin: 0;
-            font-size: 28px;
+            font-size: 11px;
+            color: #98a9b8;
+            font-weight: 400;
         }
-        .back-btn {
-            border: none;
-            background: #555;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+
+        /* =========================
+           게시글 테이블 카드
+        ========================= */
+
         .table-box {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            background: rgba(248, 252, 255, 0.72);
+            border: 1px solid #edf2f6;
+            border-radius: 18px;
+            padding: 16px;
             overflow-x: auto;
         }
+
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 8px;
             min-width: 850px;
         }
+
         th {
-            background: #f0f2f5;
-            padding: 14px 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            color: #899aaa;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
         }
+
         td {
             padding: 13px 10px;
             text-align: center;
-            border-bottom: 1px solid #eee;
+            background: #ffffff;
+            border-top: 1px solid #eef2f5;
+            border-bottom: 1px solid #eef2f5;
+            color: #63788b;
+            font-size: 12px;
+            white-space: nowrap;
         }
+
+        tbody tr {
+            transition: transform 0.18s ease;
+        }
+
+        tbody tr:hover {
+            transform: translateY(-1px);
+        }
+
+        tbody td:first-child {
+            border-left: 1px solid #eef2f5;
+            border-radius: 13px 0 0 13px;
+            color: #8ca0b2;
+        }
+
+        tbody td:last-child {
+            border-right: 1px solid #eef2f5;
+            border-radius: 0 13px 13px 0;
+        }
+
         td.title {
             text-align: left;
             max-width: 300px;
-        }
-        .delete-btn {
-            border: none;
-            background: #e74c3c;
-            color: white;
-            padding: 7px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .delete-btn:hover {
-            background: #c0392b;
-        }
-        .empty {
-            padding: 50px;
-            text-align: center;
-            color: #888;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #536b83;
+            font-weight: 500;
         }
 
-        /* 페이지네이션 */
+        /* =========================
+           삭제 버튼
+        ========================= */
+
+        .delete-btn {
+            border: 1px solid #f0dada;
+            background: #fff4f4;
+            color: #d98585;
+            padding: 6px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #fdeaea;
+            border-color: #eccaca;
+        }
+
+        /* =========================
+           빈 상태
+        ========================= */
+
+        .empty {
+            padding: 55px 20px;
+            text-align: center;
+            color: #9aa9b6;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid #edf2f6;
+            border-radius: 18px;
+            font-size: 12px;
+        }
+
+        /* =========================
+           페이지네이션
+        ========================= */
+
         .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            margin-top: 25px;
+            gap: 6px;
+            margin-top: 22px;
         }
 
         .pagination button {
-            min-width: 38px;
-            height: 38px;
-            padding: 0 10px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 6px;
+            min-width: 31px;
+            height: 31px;
+            padding: 0 8px;
+            border: 1px solid #e1e8ee;
+            background: rgba(255, 255, 255, 0.82);
+            color: #7c8fa1;
+            border-radius: 9px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 11px;
+            font-weight: 400;
+            transition: 0.2s ease;
         }
 
-        .pagination button:hover {
-            background: #f0f2f5;
+        .pagination button:hover:not(:disabled) {
+            background: #f1f8f4;
+            border-color: #cfe4d5;
+            color: #719b7d;
         }
 
         .pagination button.active {
-            background: #555;
+            background: #8bb69a;
             color: white;
-            border-color: #555;
+            border-color: #8bb69a;
         }
 
         .pagination button:disabled {
-            color: #aaa;
-            background: #f5f5f5;
+            color: #c0cad2;
+            background: #f7f9fa;
             cursor: default;
+        }
+
+        /* =========================
+           반응형
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: 94%;
+                margin-top: 25px;
+            }
+
+            .header {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .brand-text {
+                font-size: 18px;
+            }
+
+            .main-panel {
+                padding: 22px 16px 25px;
+                border-radius: 21px;
+            }
+
+            .title-text h2 {
+                font-size: 18px;
+            }
+
+            .table-box {
+                padding: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
 
+<!-- 배경 구름 -->
+<div class="bg-clouds">
+    <div class="cloud cloud-one"></div>
+    <div class="cloud cloud-two"></div>
+    <div class="cloud cloud-three"></div>
+</div>
+
 <div class="container">
+
+    <!-- 상단 헤더 -->
     <div class="header">
-        <h1>💬 커뮤니티 관리</h1>
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <!-- 커뮤니티 SVG -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M7 17.5L3.5 20l1-4.5A7.5 7.5 0 0 1 4 12.5C4 8.36 7.58 5 12 5s8 3.36 8 7.5-3.58 7.5-8 7.5c-1.85 0-3.55-.57-4.9-1.55L7 17.5z"></path>
+                    <path d="M8 11h8"></path>
+                    <path d="M8 14h5"></path>
+                </svg>
+            </div>
+
+            <div class="brand-text">
+                관리자 페이지
+            </div>
+
+        </div>
 
         <button class="back-btn"
                 onclick="location.href='/api/admin/dashboard'">
+
+            <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"></path>
+            </svg>
+
             관리자 페이지로
         </button>
+
     </div>
 
-    <div class="table-box">
+    <!-- 메인 -->
+    <div class="main-panel">
 
-        <table th:if="${posts != null and !posts.isEmpty()}">
+        <div class="title">
 
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>작성일</th>
-                <th>조회수</th>
-                <th>좋아요</th>
-                <th>싫어요</th>
-                <th>관리</th>
-            </tr>
-            </thead>
+            <div class="title-icon">
+                <!-- 커뮤니티 관리 아이콘 -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M6 18.5L3.5 21l.8-4.2A7.3 7.3 0 0 1 3 12.5C3 8.36 6.58 5 11 5s8 3.36 8 7.5-3.58 7.5-8 7.5c-1.7 0-3.28-.48-4.6-1.3L6 18.5z"></path>
+                    <path d="M8 10.5h6"></path>
+                    <path d="M8 13.5h4"></path>
+                </svg>
+            </div>
 
-            <tbody id="postTableBody">
-            <tr th:each="post : ${posts}">
-                <td th:text="${post.id}"></td>
-                <td class="title"
-                    th:text="${post.title}">
-                </td>
-                <td th:text="${post.username}"></td>
-                <td th:text="${post.createdAt}"></td>
-                <td th:text="${post.viewCount}"></td>
-                <td th:text="${post.likeCount}"></td>
-                <td th:text="${post.dislikeCount}"></td>
-                <td>
-                    <button class="delete-btn"
-                            th:onclick="'deletePost(' + ${post.id} + ')'">
-                        삭제
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="empty"
-             th:if="${posts == null or posts.isEmpty()}">
-            등록된 커뮤니티 게시글이 없습니다.
+            <div class="title-text">
+                <h2>커뮤니티 관리</h2>
+                <p>등록된 커뮤니티 게시글을 확인하고 관리할 수 있습니다.</p>
+            </div>
+
         </div>
 
-        <!-- 페이지네이션 -->
-        <div id="pagination"
-             class="pagination"
-             th:if="${posts != null and !posts.isEmpty()}">
+        <div class="table-box">
+
+            <table th:if="${posts != null and !posts.isEmpty()}">
+
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                    <th>조회수</th>
+                    <th>좋아요</th>
+                    <th>싫어요</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+
+                <tbody id="postTableBody">
+
+                <tr th:each="post : ${posts}">
+
+                    <td th:text="${post.id}"></td>
+
+                    <td class="title"
+                        th:text="${post.title}">
+                    </td>
+
+                    <td th:text="${post.username}"></td>
+
+                    <td th:text="${post.createdAt}"></td>
+
+                    <td th:text="${post.viewCount}"></td>
+
+                    <td th:text="${post.likeCount}"></td>
+
+                    <td th:text="${post.dislikeCount}"></td>
+
+                    <td>
+
+                        <button class="delete-btn"
+                                th:onclick="'deletePost(' + ${post.id} + ')'">
+                            삭제
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="empty"
+                 th:if="${posts == null or posts.isEmpty()}">
+
+                등록된 커뮤니티 게시글이 없습니다.
+
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div id="pagination"
+                 class="pagination"
+                 th:if="${posts != null and !posts.isEmpty()}">
+            </div>
+
         </div>
+
     </div>
+
 </div>
+
 <script>
 
     /* ================================
        페이지네이션
        한 페이지에 10개씩 표시
-       ================================ */
+    ================================= */
+
     const rowsPerPage = 10;
     const tableBody = document.getElementById("postTableBody");
     const pagination = document.getElementById("pagination");
 
     if (tableBody && pagination) {
+
         const rows = Array.from(
             tableBody.querySelectorAll("tr")
         );
+
         const totalPages =
             Math.ceil(rows.length / rowsPerPage);
+
         let currentPage = 1;
+
         function showPage(page) {
+
             currentPage = page;
+
             const start =
                 (page - 1) * rowsPerPage;
+
             const end =
                 start + rowsPerPage;
+
             rows.forEach((row, index) => {
+
                 if (index >= start && index < end) {
                     row.style.display = "";
                 } else {
                     row.style.display = "none";
                 }
+
             });
+
             createPagination();
         }
+
         function createPagination() {
+
             pagination.innerHTML = "";
 
             /* 이전 버튼 */
             const prevButton =
                 document.createElement("button");
+
             prevButton.textContent = "‹";
+
             prevButton.disabled =
                 currentPage === 1;
+
             prevButton.onclick = function () {
+
                 if (currentPage > 1) {
                     showPage(currentPage - 1);
                 }
+
             };
+
             pagination.appendChild(prevButton);
 
             /* 페이지 번호 */
             for (let i = 1; i <= totalPages; i++) {
+
                 const pageButton =
                     document.createElement("button");
+
                 pageButton.textContent = i;
+
                 if (i === currentPage) {
                     pageButton.classList.add("active");
                 }
+
                 pageButton.onclick = function () {
                     showPage(i);
                 };
+
                 pagination.appendChild(pageButton);
             }
 
             /* 다음 버튼 */
             const nextButton =
                 document.createElement("button");
+
             nextButton.textContent = "›";
+
             nextButton.disabled =
                 currentPage === totalPages;
+
             nextButton.onclick = function () {
+
                 if (currentPage < totalPages) {
                     showPage(currentPage + 1);
                 }
+
             };
+
             pagination.appendChild(nextButton);
         }
 
@@ -264,27 +699,45 @@
     /* ================================
        게시글 삭제
        기존 기능 그대로 유지
-       ================================ */
+    ================================= */
+
     async function deletePost(id) {
-        if (!confirm("정말 이 게시글을 삭제하시겠습니까?")) {return;}
+
+        if (!confirm("정말 이 게시글을 삭제하시겠습니까?")) {
+            return;
+        }
+
         try {
+
             const response =
                 await fetch(`/api/community/${id}`, {
                     method: "DELETE"
                 });
 
             if (response.ok) {
+
                 alert("게시글이 삭제되었습니다.");
+
                 location.reload();
+
             } else {
+
                 alert("게시글 삭제에 실패했습니다.");
+
             }
+
         } catch (error) {
+
             console.error(error);
+
             alert("삭제 중 오류가 발생했습니다.");
+
         }
+
     }
 
 </script>
+
 </body>
+
 </html>

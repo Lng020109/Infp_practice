@@ -1,275 +1,1763 @@
 <!DOCTYPE html>
-<html lang="ko">
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 페이지</title>
+
+    <title>맛따라 여행따라 관리자</title>
 
 <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
     body {
         margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
+        min-height: 100%;
     }
-    .header {
-        background: #333;
-        color: white;
-        padding: 20px 40px;
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #173f7a;
+
+        background: linear-gradient(
+            180deg,
+            #a9daf7 0%,
+            #ccecff 48%,
+            #a9ddf8 100%
+        );
+
+        overflow-x: hidden;
+    }
+
+
+    /* =========================================================
+       하늘 배경
+       ========================================================= */
+
+    .sky {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .cloud {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.72);
+        border-radius: 999px;
+        filter: blur(1px);
+
+        box-shadow:
+            0 8px 25px rgba(255, 255, 255, 0.25);
+    }
+
+    .cloud::before,
+    .cloud::after {
+        content: "";
+        position: absolute;
+        background: inherit;
+        border-radius: 50%;
+    }
+
+    .cloud::before {
+        width: 65%;
+        height: 140%;
+        left: 13%;
+        bottom: 0;
+    }
+
+    .cloud::after {
+        width: 48%;
+        height: 115%;
+        right: 12%;
+        bottom: 0;
+    }
+
+    .cloud-1 {
+        width: 260px;
+        height: 75px;
+        top: 105px;
+        left: -70px;
+    }
+
+    .cloud-2 {
+        width: 230px;
+        height: 65px;
+        top: 260px;
+        right: -60px;
+        opacity: 0.62;
+    }
+
+    .cloud-3 {
+        width: 310px;
+        height: 80px;
+        top: 480px;
+        left: -90px;
+        opacity: 0.58;
+    }
+
+    .cloud-4 {
+        width: 300px;
+        height: 82px;
+        top: 780px;
+        right: -100px;
+        opacity: 0.68;
+    }
+
+    .cloud-5 {
+        width: 340px;
+        height: 85px;
+        bottom: -10px;
+        left: -80px;
+        opacity: 0.8;
+    }
+
+    .cloud-6 {
+        width: 390px;
+        height: 95px;
+        bottom: -18px;
+        right: -100px;
+        opacity: 0.75;
+    }
+
+    .cloud-7 {
+        width: 240px;
+        height: 62px;
+        top: 850px;
+        left: 38%;
+        opacity: 0.32;
+    }
+
+
+    /* =========================================================
+       전체 컨텐츠
+       ========================================================= */
+
+    .page {
+        position: relative;
+        z-index: 2;
+
+        width: 100%;
+        min-height: 100vh;
+
+        padding: 18px 0 85px;
+    }
+
+    .content-width {
+        width: calc(100% - 120px);
+        max-width: 1165px;
+
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       상단 헤더
+       ========================================================= */
+
+    .top-header {
+        height: 76px;
+        padding: 0 32px;
+
         display: flex;
-        justify-content: space-between;
         align-items: center;
-    }
-    .header h1 {
-        margin: 0;
-        font-size: 24px;
-    }
-    .logout-btn {
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .container {
-        max-width: 900px;
-        margin: 30px auto;
-        padding: 0 20px;
-    }
-    .welcome {
-        margin-bottom: 30px;
-    }
-    .welcome h2 {
-        margin-bottom: 10px;
+        justify-content: space-between;
+
+        background: rgba(255, 255, 255, 0.82);
+
+        border-radius: 24px;
+
+        box-shadow:
+            0 8px 25px rgba(72, 139, 190, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
 
-    /* 기본 통계 */
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-    .stat-card {
-        background: white;
-        padding: 18px;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        text-align: center;
-    }
-    .stat-card h3 {
-        margin: 0 0 12px 0;
-        font-size: 16px;
-        color: #555;
-    }
-    .stat-number {
-        font-size: 26px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    /* 반응 통계 */
-    .reaction-title {
-        margin: 0 0 15px 0;
-        font-size: 20px;
-    }
-    .reaction-group {
-        margin-bottom: 30px;
-    }
-    .reaction-stats {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+    .brand {
+        display: flex;
+        align-items: center;
         gap: 15px;
     }
 
-    /* 관리자 메뉴 */
-    .menu-title {
-        margin: 0 0 15px 0;
-        font-size: 20px;
+    .brand-logo {
+        width: 49px;
+        height: 49px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: linear-gradient(
+            145deg,
+            #ffffff,
+            #d9edff
+        );
+
+        border: 3px solid #2c548d;
+
+        box-shadow:
+            0 4px 9px rgba(36, 82, 135, 0.15);
+
+        font-size: 25px;
     }
-    .menu {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+
+    .brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
     }
-    .menu-card {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+
+    .brand-title {
+        font-size: 19px;
+        font-weight: 700;
+
+        color: #1c477f;
+
+        letter-spacing: -0.6px;
+    }
+
+    .brand-subtitle {
+        font-size: 12px;
+        color: #7196bd;
+        letter-spacing: 0.2px;
+    }
+
+    .header-cloud {
+        color: #75aef0;
+        font-size: 23px;
+
+        margin-left: 3px;
+        opacity: 0.8;
+    }
+
+    .logout-btn {
+        border: none;
+
+        padding: 10px 20px;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        border-radius: 22px;
+
+        background: #d9ebff;
+        color: #2863a4;
+
+        font-size: 13px;
+        font-weight: 600;
+
         cursor: pointer;
-        transition: 0.2s;
+
+        box-shadow:
+            0 4px 12px rgba(86, 145, 197, 0.12);
+
+        transition: 0.2s ease;
     }
+
+    .logout-btn:hover {
+        background: #cce5ff;
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       Hero
+       ========================================================= */
+
+    .hero {
+        min-height: 165px;
+
+        padding: 48px 40px 20px;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .hero-left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero-title {
+        margin: 0;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        font-size: 31px;
+        line-height: 1.2;
+
+        font-weight: 700;
+        letter-spacing: -1.4px;
+
+        color: #17427f;
+    }
+
+    .hero-title-cloud {
+        font-size: 34px;
+        color: #82b7f1;
+        font-weight: 400;
+    }
+
+    .hero-subtitle {
+        margin: 10px 0 0;
+
+        font-size: 15px;
+        color: #6391bd;
+
+        letter-spacing: -0.3px;
+    }
+
+    .hero-message {
+        margin-top: 7px;
+        margin-right: 78px;
+
+        color: #6ba4d5;
+
+        font-size: 15px;
+        line-height: 1.55;
+
+        text-align: center;
+
+        transform: rotate(-7deg);
+
+        opacity: 0.85;
+    }
+
+    .hero-message span {
+        display: block;
+    }
+
+
+    /* =========================================================
+       큰 흰색 메인 패널
+       ========================================================= */
+
+    .main-panel {
+        position: relative;
+
+        width: 100%;
+
+        padding: 22px 36px 34px;
+
+        background: rgba(255, 255, 255, 0.79);
+
+        border-radius: 24px;
+
+        box-shadow:
+            0 12px 40px rgba(71, 133, 180, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.88);
+
+        overflow: hidden;
+    }
+
+    .main-panel::before {
+        content: "";
+
+        position: absolute;
+        inset: 0;
+
+        background:
+            radial-gradient(
+                circle at 18% 15%,
+                rgba(255, 255, 255, 0.78),
+                transparent 24%
+            ),
+            radial-gradient(
+                circle at 80% 30%,
+                rgba(255, 255, 255, 0.65),
+                transparent 23%
+            );
+
+        pointer-events: none;
+    }
+
+    .panel-content {
+        position: relative;
+        z-index: 1;
+    }
+
+
+    /* =========================================================
+       섹션
+       ========================================================= */
+
+    .section {
+        margin-bottom: 32px;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        height: 37px;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin: 0 0 15px;
+
+        color: #17427d;
+
+        font-size: 18px;
+        font-weight: 700;
+
+        letter-spacing: -0.6px;
+    }
+
+    .section-icon {
+        width: 28px;
+        height: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+    }
+
+    .section-icon svg {
+        width: 19px;
+        height: 19px;
+
+        fill: none;
+
+        stroke-width: 1.7;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .section-basic {
+        background: #edf5ff;
+    }
+
+    .section-basic svg {
+        stroke: #91afd0;
+    }
+
+    .section-food {
+        background: #fff1ea;
+    }
+
+    .section-food svg {
+        stroke: #d6a18c;
+    }
+
+    .section-tour {
+        background: #eaf8f2;
+    }
+
+    .section-tour svg {
+        stroke: #83b99f;
+    }
+
+    .section-management {
+        background: #f1edff;
+    }
+
+    .section-management svg {
+        stroke: #a294c9;
+    }
+
+
+    /* =========================================================
+       SVG 아이콘 공통
+       ========================================================= */
+
+    .icon-svg {
+        width: 26px;
+        height: 26px;
+
+        fill: none;
+
+        stroke-width: 1.7;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    /* =========================================================
+       기본 통계 카드
+       ========================================================= */
+
+    .basic-grid {
+        display: grid;
+
+        grid-template-columns: repeat(4, 1fr);
+
+        gap: 24px;
+    }
+
+    .basic-card {
+        min-height: 124px;
+
+        padding: 17px 21px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 17px;
+
+        background: rgba(255, 255, 255, 0.88);
+
+        border: 1px solid rgba(225, 236, 249, 0.95);
+
+        border-radius: 18px;
+
+        box-shadow:
+            0 8px 20px rgba(81, 143, 193, 0.10);
+
+        transition: transform 0.2s ease;
+    }
+
+    .basic-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-icon {
+        width: 53px;
+        height: 53px;
+
+        flex: 0 0 53px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+    }
+
+    .stat-icon svg {
+        width: 27px;
+        height: 27px;
+
+        fill: none;
+
+        stroke-width: 1.65;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .icon-member {
+        background: #eee9ff;
+    }
+
+    .icon-member svg {
+        stroke: #a08fc9;
+    }
+
+    .icon-restaurant {
+        background: #fff0e9;
+    }
+
+    .icon-restaurant svg {
+        stroke: #d59d86;
+    }
+
+    .icon-tour {
+        background: #e8f7f0;
+    }
+
+    .icon-tour svg {
+        stroke: #80b49b;
+    }
+
+    .icon-withdraw {
+        background: #edf2f8;
+    }
+
+    .icon-withdraw svg {
+        stroke: #8fa5ba;
+    }
+
+    .stat-info {
+        min-width: 0;
+    }
+
+    .stat-name {
+        margin-bottom: 11px;
+
+        font-size: 13px;
+        font-weight: 600;
+
+        color: #214d86;
+
+        white-space: nowrap;
+    }
+
+    .stat-number {
+        font-size: 27px;
+        line-height: 1;
+
+        font-weight: 700;
+
+        color: #173f7c;
+    }
+
+
+    /* =========================================================
+       반응 통계
+       ========================================================= */
+
+    .reaction-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 24px;
+    }
+
+
+    /*
+     * 기존 구름 모양 대신 깔끔한 알약형 카드
+     */
+
+    .cloud-card {
+        position: relative;
+
+        min-height: 92px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 13px 26px;
+
+        text-decoration: none;
+
+        background: rgba(255, 255, 255, 0.91);
+
+        border: 1px solid rgba(225, 237, 250, 0.96);
+
+        border-radius: 999px;
+
+        box-shadow:
+            0 8px 20px rgba(87, 151, 207, 0.11);
+
+        overflow: hidden;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .cloud-card::before,
+    .cloud-card::after {
+        display: none;
+    }
+
+    .cloud-card:hover {
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 13px 26px rgba(73, 139, 198, 0.16);
+    }
+
+    .reaction-icon {
+        width: 55px;
+        height: 55px;
+
+        flex: 0 0 55px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+    }
+
+    .reaction-icon svg {
+        width: 27px;
+        height: 27px;
+
+        fill: none;
+
+        stroke-width: 1.65;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .like-icon {
+        background: #ffeaf0;
+    }
+
+    .like-icon svg {
+        stroke: #d99aaa;
+    }
+
+    .dislike-icon {
+        background: #e8f2ff;
+    }
+
+    .dislike-icon svg {
+        stroke: #91b1d5;
+    }
+
+    .reaction-info {
+        margin-left: 17px;
+
+        display: flex;
+        align-items: baseline;
+
+        gap: 13px;
+    }
+
+    .reaction-name {
+        margin: 0;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        color: #244d84;
+    }
+
+    .reaction-number {
+        font-size: 25px;
+        font-weight: 700;
+
+        line-height: 1;
+
+        color: #173f7c;
+    }
+
+    .cloud-mini {
+        position: absolute;
+
+        right: 52px;
+        bottom: 12px;
+
+        font-size: 23px;
+
+        opacity: 0.25;
+    }
+
+    .cloud-arrow {
+        position: absolute;
+
+        right: 22px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        font-size: 27px;
+        font-weight: 300;
+
+        color: #78a2ca;
+    }
+
+
+    /* =========================================================
+       관리 메뉴
+       ========================================================= */
+
+    .menu-grid {
+        display: grid;
+
+        grid-template-columns: repeat(4, 1fr);
+
+        gap: 24px;
+    }
+
+    .menu-card {
+        min-height: 101px;
+
+        display: flex;
+        align-items: flex-start;
+
+        position: relative;
+
+        padding: 16px 18px;
+
+        background: rgba(255, 255, 255, 0.88);
+
+        border: 1px solid rgba(224, 237, 250, 0.96);
+
+        border-radius: 17px;
+
+        box-shadow:
+            0 8px 20px rgba(80, 143, 193, 0.10);
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
     .menu-card:hover {
         transform: translateY(-3px);
+
+        box-shadow:
+            0 13px 25px rgba(74, 137, 191, 0.15);
     }
-    .menu-card h3 {
-        margin-top: 0;
+
+    .menu-icon {
+        width: 42px;
+        height: 42px;
+
+        flex: 0 0 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        margin-right: 15px;
     }
-    .menu-card p {
-        color: #666;
+
+    .menu-icon svg {
+        width: 21px;
+        height: 21px;
+
+        fill: none;
+
+        stroke-width: 1.7;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
-    @media (max-width: 700px) {
-        .stats {
+
+    .menu-member {
+        background: #eee9ff;
+    }
+
+    .menu-member svg {
+        stroke: #a08fc9;
+    }
+
+    .menu-review {
+        background: #fff0e4;
+    }
+
+    .menu-review svg {
+        stroke: #d8a07e;
+    }
+
+    .menu-withdraw {
+        background: #eee9ff;
+    }
+
+    .menu-withdraw svg {
+        stroke: #9d8bc9;
+    }
+
+    .menu-community {
+        background: #e8f7f1;
+    }
+
+    .menu-community svg {
+        stroke: #7eb39e;
+    }
+
+    .menu-info {
+        padding-top: 2px;
+        padding-right: 18px;
+    }
+
+    .menu-title {
+        margin-bottom: 7px;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        color: #245087;
+    }
+
+    .menu-description {
+        font-size: 11.5px;
+
+        line-height: 1.45;
+
+        color: #7b9dc3;
+
+        word-break: keep-all;
+    }
+
+    .menu-arrow {
+        position: absolute;
+
+        right: 17px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        color: #79a1c9;
+
+        font-size: 22px;
+    }
+
+
+    /* =========================================================
+       반응 통계 정렬용
+       ========================================================= */
+
+    .reaction-grid.sorted {
+        display: flex;
+        gap: 24px;
+    }
+
+    .reaction-grid.sorted .cloud-card {
+        flex: 1;
+    }
+
+
+    /* =========================================================
+       반응형
+       ========================================================= */
+
+    @media (max-width: 1050px) {
+
+        .content-width {
+            width: calc(100% - 70px);
+        }
+
+        .basic-grid,
+        .menu-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .reaction-grid {
+            gap: 20px;
+        }
+    }
+
+
+    @media (max-width: 720px) {
+
+        .page {
+            padding-top: 12px;
+        }
+
+        .content-width {
+            width: calc(100% - 28px);
+        }
+
+        .top-header {
+            height: auto;
+            min-height: 70px;
+
+            padding: 12px 17px;
+        }
+
+        .brand-title {
+            font-size: 15px;
+        }
+
+        .brand-subtitle {
+            font-size: 10px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+
+            font-size: 21px;
+        }
+
+        .logout-btn {
+            padding: 9px 13px;
+            font-size: 12px;
+        }
+
+        .hero {
+            padding: 32px 15px 18px;
+            min-height: 145px;
+        }
+
+        .hero-title {
+            font-size: 27px;
+        }
+
+        .hero-message {
+            display: none;
+        }
+
+        .main-panel {
+            padding: 18px 17px 25px;
+            border-radius: 20px;
+        }
+
+        .basic-grid,
+        .menu-grid,
+        .reaction-grid {
             grid-template-columns: 1fr;
         }
-        .reaction-stats {
-            grid-template-columns: 1fr;
+
+        .reaction-grid {
+            display: grid;
+            gap: 18px;
         }
-        .menu {
-            grid-template-columns: 1fr;
+
+        .reaction-grid.sorted {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .cloud-card {
+            min-height: 86px;
+
+            padding-left: 22px;
+            padding-right: 43px;
+        }
+
+        .reaction-icon {
+            width: 50px;
+            height: 50px;
+
+            flex-basis: 50px;
+        }
+
+        .reaction-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .reaction-info {
+            margin-left: 14px;
+            gap: 10px;
+        }
+
+        .reaction-name {
+            font-size: 13px;
+        }
+
+        .reaction-number {
+            font-size: 23px;
         }
     }
+
 </style>
+
 </head>
+
 <body>
 
-<header class="header">
-    <h1>맛따라 여행따라 관리자</h1>
-    <button class="logout-btn" onclick="logout()">
-        로그아웃
+<div class="sky">
+
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+    <div class="cloud cloud-5"></div>
+    <div class="cloud cloud-6"></div>
+    <div class="cloud cloud-7"></div>
+
+</div>
+
+<div class="page">
+
+<!-- =========================================================
+     상단 헤더
+     ========================================================= -->
+
+<header class="top-header content-width">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            🍳
+        </div>
+
+        <div class="brand-text">
+
+            <div>
+
+                <span class="brand-title">
+                    맛따라 여행따라 관리자
+                </span>
+
+                <span class="header-cloud">
+                    ☁
+                </span>
+
+            </div>
+
+            <div class="brand-subtitle">
+                food &amp; travel admin
+            </div>
+
+        </div>
+
+    </div>
+
+    <button class="logout-btn"
+            type="button"
+            onclick="logout()">
+
+        ↪
+        <span>로그아웃</span>
     </button>
+
 </header>
 
-<div class="container">
-    <div class="welcome">
-        <h2>관리자 페이지</h2>
-        <p>관리자님, 환영합니다.</p>
+<!-- =========================================================
+     Hero
+     ========================================================= -->
+
+<section class="hero content-width">
+
+    <div class="hero-left">
+
+        <h1 class="hero-title">
+
+            관리자 페이지
+
+            <span class="hero-title-cloud">
+                ☁
+            </span>
+
+        </h1>
+        <p class="hero-subtitle">
+            관리자님, 환영합니다.
+        </p>
     </div>
 
-    <!-- 기본 통계 -->
-    <div class="stats">
-        <div class="stat-card">
-            <h3>👥 전체 회원 수</h3>
-            <div class="stat-number" th:text="${memberCount}">
-                0
-            </div>
-        </div>
 
-        <div class="stat-card">
-            <h3>🍽️ 맛집 리뷰 수</h3>
-            <div class="stat-number" th:text="${restaurantReviewCount}">
-                0
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-            <h3>🏞️ 관광지 리뷰 수</h3>
-            <div class="stat-number" th:text="${tourReviewCount}">
-                0
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <h3>🗑️ 탈퇴 회원 수</h3>
-            <div class="stat-number" th:text="${withdrawnMemberCount}">
-                0
-            </div>
-        </div>
+    <div class="hero-message">
+        <span>맛있는 순간,</span>
+        <span>더 특별한 여행 ♡</span>
     </div>
 
-    <!-- 맛집 반응 -->
-    <div class="reaction-group">
-        <h3 class="reaction-title">
-            🍴 맛집 반응 통계
-        </h3>
+</section>
 
-        <div class="reaction-stats">
-            <div class="stat-card">
-                <h3>❤️ 좋아요</h3>
-                <div class="stat-number" th:text="${likeCount}">
-                    0
+
+<!-- =========================================================
+     큰 메인 패널
+     ========================================================= -->
+
+<main class="main-panel content-width">
+
+    <div class="panel-content">
+
+        <!-- =====================================================
+             기본 통계
+             ===================================================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+
+                <span class="section-icon section-basic">
+
+                    <!-- Bar Chart -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 20V10"></path>
+                        <path d="M12 20V5"></path>
+                        <path d="M19 20V8"></path>
+                    </svg>
+
+                </span>
+
+                <span>
+                    기본 통계
+                </span>
+
+            </h2>
+
+            <div class="basic-grid">
+
+                <!-- 전체 회원 -->
+
+                <div class="basic-card">
+
+                    <div class="stat-icon icon-member">
+
+                        <!-- Users -->
+                        <svg class="icon-svg"
+                             viewBox="0 0 24 24">
+                            <circle cx="9" cy="8" r="3"></circle>
+                            <path d="M3.5 19c.5-3 2.3-5 5.5-5s5 2 5.5 5"></path>
+                            <path d="M15 5.5c1.8.2 3 1.4 3 3.1 0 1.4-.8 2.5-2 3"></path>
+                            <path d="M17 14c2 .5 3.2 2 3.5 4"></path>
+                        </svg>
+
+                    </div>
+
+
+                    <div class="stat-info">
+
+                        <div class="stat-name">
+                            전체 회원 수
+                        </div>
+
+                        <div class="stat-number"
+                             th:text="${memberCount}">
+                            0
+                        </div>
+
+                    </div>
+
                 </div>
+
+                <!-- 맛집 리뷰 -->
+
+                <div class="basic-card">
+
+                    <div class="stat-icon icon-restaurant">
+
+                        <!-- Restaurant / Cutlery -->
+
+                        <svg class="icon-svg"
+                             viewBox="0 0 24 24">
+                            <path d="M7 3v7"></path>
+                            <path d="M5 3v7"></path>
+                            <path d="M9 3v7"></path>
+                            <path d="M7 10v11"></path>
+                            <path d="M16 3c-1.7 1.8-2.5 4-2.5 6.2 0 2 1 3.2 2.5 3.8V21"></path>
+                            <path d="M16 3v10"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <div class="stat-name">
+                            맛집 리뷰 수
+                        </div>
+
+                        <div class="stat-number"
+                             th:text="${restaurantReviewCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 관광지 리뷰 -->
+
+                <div class="basic-card">
+
+                    <div class="stat-icon icon-tour">
+
+                        <!-- Mountain -->
+                        <svg class="icon-svg"
+                             viewBox="0 0 24 24">
+                            <path d="M3 19l7-12 4 7 2-3 5 8"></path>
+                            <path d="M8 19l3-5 3 5"></path>
+                            <path d="M16 5h.01"></path>
+                        </svg>
+
+                    </div>
+
+
+                    <div class="stat-info">
+
+                        <div class="stat-name">
+                            관광지 리뷰 수
+                        </div>
+
+                        <div class="stat-number"
+                             th:text="${tourReviewCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 탈퇴 회원 -->
+
+                <div class="basic-card">
+
+                    <div class="stat-icon icon-withdraw">
+
+                        <!-- Trash -->
+                        <svg class="icon-svg"
+                             viewBox="0 0 24 24">
+                            <path d="M4 7h16"></path>
+                            <path d="M9 7V4h6v3"></path>
+                            <path d="M6 7l1 13h10l1-13"></path>
+                            <path d="M10 11v5"></path>
+                            <path d="M14 11v5"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="stat-info">
+
+                        <div class="stat-name">
+                            탈퇴 회원 수
+                        </div>
+
+                        <div class="stat-number"
+                             th:text="${withdrawnMemberCount}">
+                            0
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="stat-card">
-                <h3>👎 싫어요</h3>
-                <div class="stat-number" th:text="${dislikeCount}">
-                    0
-                </div>
+        </section>
+
+        <!-- =====================================================
+             맛집 반응 통계
+             ===================================================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+
+                <span class="section-icon section-food">
+
+                    <!-- Plate -->
+                    <svg viewBox="0 0 24 24">
+                        <ellipse cx="12" cy="12" rx="8" ry="5"></ellipse>
+                        <path d="M4 12c0 4 3.6 7 8 7s8-3 8-7"></path>
+                    </svg>
+
+                </span>
+
+                <span>
+                    맛집 반응 통계
+                </span>
+
+            </h2>
+
+            <div class="reaction-grid"
+                 id="restaurantReactionGrid">
+
+                <!-- 맛집 좋아요 -->
+
+                <a class="cloud-card reaction-card"
+                   href="/api/admin/reaction-stats/restaurant/LIKE"
+                   data-count="0">
+
+                    <div class="reaction-icon like-icon">
+
+                        <!-- Heart -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7C3.2 5.7 5.3 4 7.8 4c1.6 0 3.2.8 4.2 2.1C13 4.8 14.6 4 16.2 4c2.5 0 4.6 1.7 4.6 4.7z"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="reaction-info">
+
+                        <div class="reaction-name">
+                            좋아요
+                        </div>
+
+                        <div class="reaction-number"
+                             th:text="${likeCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                    <div class="cloud-mini">
+                        ☁
+                    </div>
+
+                    <div class="cloud-arrow">
+                        ›
+                    </div>
+
+                </a>
+
+                <!-- 맛집 싫어요 -->
+
+                <a class="cloud-card reaction-card"
+                   href="/api/admin/reaction-stats/restaurant/DISLIKE"
+                   data-count="0">
+
+                    <div class="reaction-icon dislike-icon">
+
+                        <!-- Thumbs Down -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 4h8v10h-6l-3 6-2-1 2-5H5c-1 0-2-.8-2-2V7c0-1 .8-2 2-2h5"></path>
+                            <path d="M18 6h3v8h-3"></path>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="reaction-info">
+
+                        <div class="reaction-name">
+                            싫어요
+                        </div>
+
+                        <div class="reaction-number"
+                             th:text="${dislikeCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                    <div class="cloud-mini">
+                        ☁
+                    </div>
+
+                    <div class="cloud-arrow">
+                        ›
+                    </div>
+                </a>
+
             </div>
-        </div>
+
+        </section>
+
+        <!-- =====================================================
+             관광지 반응 통계
+             ===================================================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+
+                <span class="section-icon section-tour">
+
+                    <!-- Location / Mountain -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 21s6-5.1 6-11a6 6 0 0 0-12 0c0 5.9 6 11 6 11z"></path>
+                        <path d="M9.5 10.5l2-2 3 3"></path>
+                        <path d="M10 14l2-2 2.5 2.5"></path>
+                    </svg>
+
+                </span>
+
+                <span>
+                    관광지 반응 통계
+                </span>
+
+            </h2>
+
+            <div class="reaction-grid"
+                 id="tourReactionGrid">
+
+                <!-- 관광지 좋아요 -->
+
+                <a class="cloud-card reaction-card"
+                   href="/api/admin/reaction-stats/tour/LIKE"
+                   data-count="0">
+
+                    <div class="reaction-icon like-icon">
+
+                        <!-- Heart -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7C3.2 5.7 5.3 4 7.8 4c1.6 0 3.2.8 4.2 2.1C13 4.8 14.6 4 16.2 4c2.5 0 4.6 1.7 4.6 4.7z"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="reaction-info">
+
+                        <div class="reaction-name">
+                            좋아요
+                        </div>
+
+                        <div class="reaction-number"
+                             th:text="${tourLikeCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                    <div class="cloud-mini">
+                        ☁
+                    </div>
+
+
+                    <div class="cloud-arrow">
+                        ›
+                    </div>
+
+                </a>
+
+                <!-- 관광지 싫어요 -->
+
+                <a class="cloud-card reaction-card"
+                   href="/api/admin/reaction-stats/tour/DISLIKE"
+                   data-count="0">
+
+                    <div class="reaction-icon dislike-icon">
+
+                        <!-- Thumbs Down -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 4h8v10h-6l-3 6-2-1 2-5H5c-1 0-2-.8-2-2V7c0-1 .8-2 2-2h5"></path>
+                            <path d="M18 6h3v8h-3"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="reaction-info">
+
+                        <div class="reaction-name">
+                            싫어요
+                        </div>
+
+                        <div class="reaction-number"
+                             th:text="${tourDislikeCount}">
+                            0
+                        </div>
+
+                    </div>
+
+                    <div class="cloud-mini">
+                        ☁
+                    </div>
+
+                    <div class="cloud-arrow">
+                        ›
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             관리 메뉴
+             ===================================================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+
+                <span class="section-icon section-management">
+
+                    <!-- Settings -->
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.5-1H6v-2.5h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 6.7l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V5h2.5v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1V14h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+                    </svg>
+
+                </span>
+
+                <span>
+                    관리 메뉴
+                </span>
+
+            </h2>
+
+            <div class="menu-grid">
+
+                <!-- 회원 관리 -->
+
+                <div class="menu-card"
+                     onclick="goToMembers()">
+
+                    <div class="menu-icon menu-member">
+
+                        <!-- Users -->
+
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="9" cy="8" r="3"></circle>
+                            <path d="M3.5 19c.5-3 2.3-5 5.5-5s5 2 5.5 5"></path>
+                            <path d="M15 5.5c1.8.2 3 1.4 3 3.1 0 1.4-.8 2.5-2 3"></path>
+                            <path d="M17 14c2 .5 3.2 2 3.5 4"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="menu-info">
+
+                        <div class="menu-title">
+                            회원 관리
+                        </div>
+
+                        <div class="menu-description">
+                            전체 회원 정보를<br>
+                            조회하고 관리합니다.
+                        </div>
+
+                    </div>
+
+                    <div class="menu-arrow">
+                        ›
+                    </div>
+
+                </div>
+
+
+
+                <!-- 리뷰 관리 -->
+
+                <div class="menu-card"
+                     onclick="goToReviews()">
+
+                    <div class="menu-icon menu-review">
+
+                        <!-- Review -->
+
+                        <svg viewBox="0 0 24 24">
+
+                            <rect x="5" y="4" width="14" height="16" rx="2"></rect>
+
+                            <path d="M8 8h8"></path>
+                            <path d="M8 12h8"></path>
+                            <path d="M8 16h5"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="menu-info">
+
+                        <div class="menu-title">
+                            리뷰 관리
+                        </div>
+
+                        <div class="menu-description">
+                            전체 리뷰를 조회하고<br>
+                            관리합니다.
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-arrow">
+                        ›
+                    </div>
+
+                </div>
+
+
+
+                <!-- 탈퇴 회원 관리 -->
+
+                <div class="menu-card"
+                     onclick="goToWithdrawn()">
+
+                    <div class="menu-icon menu-withdraw">
+
+                        <!-- Trash -->
+
+                        <svg viewBox="0 0 24 24">
+
+                            <path d="M4 7h16"></path>
+
+                            <path d="M9 7V4h6v3"></path>
+
+                            <path d="M6 7l1 13h10l1-13"></path>
+
+                            <path d="M10 11v5"></path>
+
+                            <path d="M14 11v5"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="menu-info">
+
+                        <div class="menu-title">
+                            탈퇴 회원 관리
+                        </div>
+
+                        <div class="menu-description">
+                            탈퇴 회원을 조회하고<br>
+                            복구할 수 있습니다.
+                        </div>
+
+                    </div>
+
+
+                    <div class="menu-arrow">
+                        ›
+                    </div>
+
+                </div>
+
+
+
+                <!-- 커뮤니티 관리 -->
+
+                <div class="menu-card"
+                     onclick="goToCommunity()">
+
+                    <div class="menu-icon menu-community">
+
+                        <!-- Chat -->
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-4 2 1.5-4A7.5 7.5 0 1 1 20 11.5z"></path>
+
+                            <path d="M8 11h.01"></path>
+                            <path d="M12 11h.01"></path>
+                            <path d="M16 11h.01"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="menu-info">
+
+                        <div class="menu-title">
+                            커뮤니티 관리
+                        </div>
+
+                        <div class="menu-description">
+                            전체 커뮤니티 게시글을<br>
+                            조회하고 관리합니다.
+                        </div>
+
+                    </div>
+
+                    <div class="menu-arrow">
+                        ›
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
     </div>
 
-    <!-- 관광지 반응 -->
-    <div class="reaction-group">
-        <h3 class="reaction-title">
-            🏞️ 관광지 반응 통계
-        </h3>
+</main>
 
-        <div class="reaction-stats">
-            <div class="stat-card">
-                <h3>❤️ 좋아요</h3>
-                <div class="stat-number" th:text="${tourLikeCount}">
-                    0
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <h3>👎 싫어요</h3>
-                <div class="stat-number" th:text="${tourDislikeCount}">
-                    0
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- 관리자 메뉴 -->
-    <h3 class="menu-title">
-        관리 메뉴
-    </h3>
-
-    <div class="menu">
-
-        <!-- 회원 관리 -->
-        <div class="menu-card" onclick="goToMembers()">
-            <h3>👥 회원 관리</h3>
-            <p>
-                전체 회원 정보를 조회하고 관리합니다.
-            </p>
-        </div>
-
-        <!-- 리뷰 관리 -->
-        <div class="menu-card" onclick="goToReviews()">
-            <h3>📝 리뷰 관리</h3>
-            <p>
-                전체 리뷰를 조회하고 관리합니다.
-            </p>
-        </div>
-
-        <!-- AI 맛집 추천 -->
-        <div class="menu-card" onclick="goToChatbot()">
-            <h3>🤖 AI 맛집 추천</h3>
-            <p>
-                Gemini를 이용한 맛집 추천 서비스를 관리합니다.
-            </p>
-        </div>
-
-        <!-- 탈퇴 회원 관리 -->
-        <div class="menu-card" onclick="goToWithdrawn()">
-            <h3>🗑️ 탈퇴 회원 관리</h3>
-            <p>
-                탈퇴 회원을 조회하고 복구할 수 있습니다.
-            </p>
-        </div>
-
-        <!-- 커뮤니티 관리 -->
-        <div class="menu-card" onclick="goToCommunity()">
-            <h3>💬 커뮤니티 관리</h3>
-            <p>
-                전체 커뮤니티 게시글을 조회하고 관리합니다.
-            </p>
-        </div>
-		
-    </div>
 </div>
+
+
 <script>
-    const adminLoggedIn =
-        sessionStorage.getItem("adminLoggedIn");
-    if (adminLoggedIn !== "true") {
+
+    /* =========================================================
+       로그인 여부 확인
+       ========================================================= */
+
+    if (sessionStorage.getItem("adminLoggedIn") !== "true") {
         location.href = "/api/admin/login";
     }
+
+
+    /* =========================================================
+       로그아웃
+       ========================================================= */
+
+    function logout() {
+        sessionStorage.removeItem("adminLoggedIn");
+        location.href = "/api/admin/login";
+    }
+
+
+    /* =========================================================
+       관리 메뉴 이동
+       ========================================================= */
 
     function goToMembers() {
         location.href = "/api/admin/members";
@@ -279,24 +1767,86 @@
         location.href = "/api/admin/reviews";
     }
 
-    function goToChatbot() {
-        alert("AI 맛집 추천 페이지는 다음 단계에서 만들 예정입니다.");
-    }
-
     function goToWithdrawn() {
         location.href = "/api/admin/withdrawn-members";
     }
 
-    // 커뮤니티 관리
     function goToCommunity() {
         location.href = "/api/admin/community";
     }
 
-    function logout() {
-        sessionStorage.removeItem("adminLoggedIn");
-        location.href = "/api/admin/login";
+    /* =========================================================
+       반응 통계 정렬
+       좋아요 / 싫어요 중
+       반응 수가 많은 카드가 먼저 표시되도록 정렬
+       ========================================================= */
+
+    function sortReactionCards(gridId) {
+
+        const grid = document.getElementById(gridId);
+
+        if (!grid) {
+            return;
+        }
+
+        const cards = Array.from(
+            grid.querySelectorAll(".reaction-card")
+        );
+
+        cards.sort(function (a, b) {
+
+            const aText =
+                a.querySelector(".reaction-number")?.textContent.trim() || "0";
+
+            const bText =
+                b.querySelector(".reaction-number")?.textContent.trim() || "0";
+
+            /*
+             * 1,234 같은 숫자도 정상적으로 비교하도록
+             * 콤마 제거 후 숫자로 변환
+             */
+
+            const aNumber =
+                parseInt(
+                    aText.replace(/,/g, ""),
+                    10
+                ) || 0;
+
+            const bNumber =
+                parseInt(
+                    bText.replace(/,/g, ""),
+                    10
+                ) || 0;
+
+            return bNumber - aNumber;
+
+        });
+
+
+        cards.forEach(function (card) {
+
+            grid.appendChild(card);
+
+        });
+
     }
+
+
+    /* =========================================================
+       페이지 로딩 후 반응 통계 정렬
+       ========================================================= */
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        sortReactionCards("restaurantReactionGrid");
+
+        sortReactionCards("tourReactionGrid");
+
+    });
+
 </script>
 
+
 </body>
+
 </html>
