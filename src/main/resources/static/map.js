@@ -2594,4 +2594,4 @@ function updatePlaylistPosition() {
 
 window.addEventListener("scroll", updatePlaylistPosition);
 window.addEventListener("resize", updatePlaylistPosition);
-window.addEventListener("load", updatePlaylistPosition); ㄴ
+window.addEventListener("load", updatePlaylistPosition);

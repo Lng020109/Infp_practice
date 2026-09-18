@@ -1114,6 +1114,27 @@ async function renderReplies() {
                                         답글
                                     </button>
 
+                                    ${getUsername() &&
+                                      reply.username &&
+                                      String(reply.username) === String(getUsername())
+                                        ? `
+                                            <button
+                                                type="button"
+                                                onclick="editReply(${reply.id})"
+                                            >
+                                                수정
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onclick="deleteReply(${reply.id})"
+                                            >
+                                                삭제
+                                            </button>
+                                          `
+                                        : ""
+                                    }
+
                                 </div>
                             </div>
                         `;
@@ -1222,6 +1243,231 @@ function replyTo(username) {
         " ";
 
     input.focus();
+}
+
+
+/* =========================================================
+   댓글 수정
+========================================================= */
+
+async function editReply(replyId) {
+
+    if (!currentPost) {
+        return;
+    }
+
+    const username =
+        getUsername();
+
+    if (!username) {
+        alert("로그인이 필요한 기능입니다.");
+        return;
+    }
+
+    const replies =
+        localReplies[currentPost.id] || [];
+
+    const reply =
+        replies.find(
+            item =>
+                String(item.id) ===
+                String(replyId)
+        );
+
+    if (!reply) {
+        alert("댓글을 찾을 수 없습니다.");
+        return;
+    }
+
+    // 화면에서도 한 번 더 본인 댓글인지 확인
+    if (
+        !reply.username ||
+        String(reply.username) !== String(username)
+    ) {
+        alert("본인이 작성한 댓글만 수정할 수 있습니다.");
+        return;
+    }
+
+    const content =
+        prompt(
+            "수정할 댓글 내용을 입력하세요.",
+            reply.content || ""
+        );
+
+    if (content === null) {
+        return;
+    }
+
+    if (!content.trim()) {
+        alert("댓글 내용을 입력해주세요.");
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/community/replies/${replyId}?username=${encodeURIComponent(username)}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            content:
+                                content.trim()
+                        })
+                }
+            );
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                errorText ||
+                "댓글 수정에 실패했습니다."
+            );
+        }
+
+        const updatedReply =
+            await response.json();
+
+        const index =
+            replies.findIndex(
+                item =>
+                    String(item.id) ===
+                    String(replyId)
+            );
+
+        if (index !== -1) {
+            replies[index] =
+                updatedReply;
+        }
+
+        alert("댓글이 수정되었습니다.");
+
+        await renderReplies();
+
+        renderPosts();
+
+    } catch (error) {
+
+        console.error(
+            "댓글 수정 오류:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "댓글 수정에 실패했습니다."
+        );
+    }
+}
+
+
+/* =========================================================
+   댓글 삭제
+========================================================= */
+
+async function deleteReply(replyId) {
+
+    if (!currentPost) {
+        return;
+    }
+
+    const username =
+        getUsername();
+
+    if (!username) {
+        alert("로그인이 필요한 기능입니다.");
+        return;
+    }
+
+    const replies =
+        localReplies[currentPost.id] || [];
+
+    const reply =
+        replies.find(
+            item =>
+                String(item.id) ===
+                String(replyId)
+        );
+
+    if (!reply) {
+        alert("댓글을 찾을 수 없습니다.");
+        return;
+    }
+
+    // 화면에서도 한 번 더 본인 댓글인지 확인
+    if (
+        !reply.username ||
+        String(reply.username) !== String(username)
+    ) {
+        alert("본인이 작성한 댓글만 삭제할 수 있습니다.");
+        return;
+    }
+
+    const ok =
+        confirm(
+            "이 댓글을 삭제하시겠습니까?"
+        );
+
+    if (!ok) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/community/replies/${replyId}?username=${encodeURIComponent(username)}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                errorText ||
+                "댓글 삭제에 실패했습니다."
+            );
+        }
+
+        localReplies[currentPost.id] =
+            replies.filter(
+                item =>
+                    String(item.id) !==
+                    String(replyId)
+            );
+
+        alert("댓글이 삭제되었습니다.");
+
+        await renderReplies();
+
+        renderPosts();
+
+    } catch (error) {
+
+        console.error(
+            "댓글 삭제 오류:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "댓글 삭제에 실패했습니다."
+        );
+    }
 }
 
 function handleReplyKey(event) {

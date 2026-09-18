@@ -2,6 +2,7 @@ package com.yse.dev.community.Service;
 
 import com.yse.dev.community.Entity.Community;
 import com.yse.dev.community.Entity.CommunityRepository;
+import com.yse.dev.community.Entity.CommunityReply;
 import com.yse.dev.community.Entity.CommunityReplyRepository;
 import com.yse.dev.member.Entity.Member;
 import com.yse.dev.member.Entity.MemberRepository;
@@ -324,6 +325,79 @@ public class CommunityService {
 
             return "";
         }
+    }
+
+
+    // ==========================================
+    // 댓글 수정
+    // ==========================================
+    @Transactional
+    public CommunityReply updateReply(
+            Long replyId,
+            String username,
+            String content) {
+
+        CommunityReply reply =
+                replyRepository.findById(replyId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "댓글을 찾을 수 없습니다."
+                                )
+                        );
+
+        // 댓글 작성자 본인인지 확인
+        if (reply.getUsername() == null ||
+                !reply.getUsername().equals(username)) {
+
+            throw new RuntimeException(
+                    "본인이 작성한 댓글만 수정할 수 있습니다."
+            );
+        }
+
+        if (content == null ||
+                content.trim().isEmpty()) {
+
+            throw new IllegalArgumentException(
+                    "댓글 내용을 입력해주세요."
+            );
+        }
+
+        // 댓글 수정 시에도 기존 댓글과 동일하게
+        // 금칙어 검사를 적용합니다.
+        validateChatContent(content);
+
+        reply.setContent(content.trim());
+
+        return replyRepository.save(reply);
+    }
+
+
+    // ==========================================
+    // 댓글 삭제
+    // ==========================================
+    @Transactional
+    public void deleteReply(
+            Long replyId,
+            String username) {
+
+        CommunityReply reply =
+                replyRepository.findById(replyId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "댓글을 찾을 수 없습니다."
+                                )
+                        );
+
+        // 댓글 작성자 본인인지 확인
+        if (reply.getUsername() == null ||
+                !reply.getUsername().equals(username)) {
+
+            throw new RuntimeException(
+                    "본인이 작성한 댓글만 삭제할 수 있습니다."
+            );
+        }
+
+        replyRepository.delete(reply);
     }
 
 

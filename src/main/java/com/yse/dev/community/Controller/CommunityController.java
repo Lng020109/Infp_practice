@@ -184,14 +184,57 @@ public class CommunityController {
     }
 
 	// ==========================================
+	// 답글 수정
+	// ==========================================
+	@PutMapping("/replies/{replyId}")
+	public ResponseEntity<?> updateReply(
+			@PathVariable("replyId") Long replyId,
+			@RequestParam("username") String username,
+			@RequestBody CommunityReply reply) {
+
+		try {
+
+			CommunityReply updatedReply =
+					communityService.updateReply(
+							replyId,
+							username,
+							reply.getContent()
+					);
+
+			return ResponseEntity.ok(updatedReply);
+
+		} catch (IllegalArgumentException e) {
+
+			return ResponseEntity.badRequest().body(e.getMessage());
+
+		} catch (RuntimeException e) {
+
+			return ResponseEntity.status(404).body(e.getMessage());
+		}
+	}
+
+
+	// ==========================================
 	// 답글 삭제
 	// ==========================================
 	@DeleteMapping("/replies/{replyId}")
-	public ResponseEntity<String> deleteReply(@PathVariable("replyId") Long replyId) {
+	public ResponseEntity<String> deleteReply(
+			@PathVariable("replyId") Long replyId,
+			@RequestParam("username") String username) {
 
-		replyRepository.deleteById(replyId);
+		try {
 
-		return ResponseEntity.ok("답글이 삭제되었습니다.");
+			communityService.deleteReply(
+					replyId,
+					username
+			);
+
+			return ResponseEntity.ok("답글이 삭제되었습니다.");
+
+		} catch (RuntimeException e) {
+
+			return ResponseEntity.status(404).body(e.getMessage());
+		}
 	}
 
 	// ==========================================
